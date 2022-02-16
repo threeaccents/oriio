@@ -19,6 +19,7 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/mahi>.
 
+A distributed file upload server
 
 # Chunk Uploader
  - A global process per upload using horde registry
@@ -33,5 +34,6 @@ client sends a request to tell the api we are going to initialize a chunk upload
  - once a client sends all the chunks it sends a final request to see if the upload was completed successfully
   - If it was the server returns the url to the uploaded file
   - if it was not the server returns the chunk numbers that it is missing.
+ - each chunk can be a max of 2mb
 
 
