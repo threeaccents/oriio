@@ -8,6 +8,10 @@ defmodule Mahi.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      {Cluster.Supervisor, [topologies(), [name: Mahi.ClusterSupervisor]]},
+      Mahi.ChunkUploadRegistry,
+      Mahi.ChunkUploadSupervisor,
+      Mahi.NodeObserver
       # Starts a worker by calling: Mahi.Worker.start_link(arg)
       # {Mahi.Worker, arg}
     ]
@@ -16,5 +20,13 @@ defmodule Mahi.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Mahi.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  defp topologies do
+    [
+      mahi: [
+        strategy: Cluster.Strategy.Gossip
+      ]
+    ]
   end
 end
