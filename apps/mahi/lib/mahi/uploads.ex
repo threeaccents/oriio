@@ -30,6 +30,10 @@ defmodule Mahi.Uploads do
 
     file_path = ChunkUploadServer.complete_upload(pid)
 
+    mime = Mahi.Mime.check_magic_bytes(file_path)
+
+    url = generate_url("name.png")
+
     # get metadata
     # generate url
     # upload to storage
@@ -47,5 +51,12 @@ defmodule Mahi.Uploads do
     end
   end
 
-  defp upload_id, do: for(_ <- 1..10, into: "", do: <<Enum.random('0123456789abcdef')>>)
+  defp generate_url(file_name) do
+    base_file_url() <> "/mahi/" <> timestamp <> file_name
+  end
+
+  defp upload_id,
+    do: for(_ <- 1..12, into: "", do: <<Enum.random('0123456789abcdefghijklmnopqrstuvwxyz')>>)
+
+  defp base_file_url, Application.get_env(:mahi, :base_file_url, "https://localhost:4000")
 end

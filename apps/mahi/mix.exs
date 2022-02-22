@@ -44,7 +44,16 @@ defmodule Mahi.MixProject do
       {:horde, "~> 0.8.6"},
       {:libcluster, "~> 3.3.1"},
       {:delta_crdt, "~> 0.6.4"},
-      {:briefly, "~> 0.3"}
+      {:briefly, "~> 0.3"},
+      {:timex, "~> 3.0"},
+      {:statix, "~>1.4"},
+      {:statsd_logger, "~> 1.1", only: [:dev, :test]},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+      {:vix, "~> 0.7.0"},
+      {:kino, "~> 0.3.0"},
+      {:telemetry_metrics_statsd, "~> 0.3.0"},
+      {:ex_aws, "~> 2.1"},
+      {:ex_aws_s3, "~> 2.0"}
     ]
   end
 
