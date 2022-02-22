@@ -97,7 +97,7 @@ defmodule Mahi.Uploads do
   end
 
   defp generate_url(remote_file_location) do
-    base_file_url() <> remote_file_location
+    base_file_url() <> "/" <> remote_file_location
   end
 
   defp upload_id,

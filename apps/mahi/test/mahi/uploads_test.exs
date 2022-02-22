@@ -6,7 +6,6 @@ defmodule Mahi.UploadsTest do
   @upload_files_path "#{__DIR__}/../fixtures/uploads"
 
   test "merge file chunks" do
-    IO.inspect(__DIR__)
     original_file_hash = "1DA01AE7787DD239587F7DE7D901552B"
 
     file_paths =

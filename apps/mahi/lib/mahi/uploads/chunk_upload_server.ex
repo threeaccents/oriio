@@ -53,7 +53,6 @@ defmodule Mahi.Uploads.ChunkUploadServer do
   def handle_call(:complete_upload, _from, state) do
     case missing_chunks(state) do
       [] ->
-        IO.inspect("we have no missing chunks!")
         # no missing chunks lets build the file
         file_path = merge_file_chunks(state)
         {:reply, {:ok, file_path}, state}
