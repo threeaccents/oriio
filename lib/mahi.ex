@@ -32,6 +32,12 @@ defmodule Mahi do
     ChunkUploader.append_chunk(pid, {chunk_number, chunk_file_path})
   end
 
+  def complete_chunk_upload(upload_id) do
+    pid = get_chunk_upload_pid!(upload_id)
+
+    ChunkUploader.complete_upload(pid)
+  end
+
   def get_chunk_upload_pid!(upload_id) do
     case GenServer.whereis({:via, Horde.Registry, {ChunkUploadRegistry, upload_id}}) do
       nil ->

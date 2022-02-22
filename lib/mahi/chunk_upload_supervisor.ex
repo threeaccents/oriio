@@ -4,7 +4,7 @@ defmodule Mahi.ChunkUploadSupervisor do
   def start_link(_opts) do
     Horde.DynamicSupervisor.start_link(
       __MODULE__,
-      [strategy: :one_for_one],
+      [strategy: :one_for_one, members: :auto, shutdown: 10_000],
       name: __MODULE__
     )
   end
