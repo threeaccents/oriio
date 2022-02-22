@@ -1,53 +1,28 @@
-defmodule Mahi.ChunkUpload.StateHandoff do
-  use GenServer
+defmodule MahiTest do
+  use ExUnit.Case
 
-  @crdt Mahi.ChunkUpload.StateHandoff.Crdt
+  test "merge file chunks" do
+    original_file_hash = "AE06AFD6F4E33F438B38DD4EA9D0C6259016BE222D7088E067AE5CE9303C8C4B"
 
-  def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: opts[:name])
-  end
+    file_paths = Path.wildcard("#{File.cwd!()}/test/files/segment**") |> Enum.sort()
 
-  @impl true
-  def init(opts) do
-    members = Horde.NodeListener.make_members(opts[:name])
+    id = Mahi.new_chunk_upload("test.png", 11111, length(file_paths))
 
-    state =
-      opts
-      |> Enum.into(%{})
-      |> Map.put(:members, members)
-
-    {:ok, state}
-  end
-
-  def handoff(upload_id, state) do
-    DeltaCrdt.put(@crdt, upload_id, state)
-  end
-
-  def pickup(upload_id) do
-    case DeltaCrdt.get(@crdt, upload_id) do
-      nil ->
-        nil
-
-      state ->
-        DeltaCrdt.delete(@crdt, upload_id)
-        state
+    for {file_path, chunk_number} <- Enum.with_index(file_paths, 1) do
+      Mahi.append_chunk(id, {chunk_number, file_path})
     end
+
+    merged_file_path = Mahi.complete_chunk_upload(id)
+
+    merged_file_hash = file_hash(merged_file_path)
+
+    assert merged_file_hash == original_file_hash
   end
 
-  @impl true
-  def handle_call({:set_members, members}, _from, state = %{crdt: crdt, name: name}) do
-    neighbors =
-      members
-      |> Stream.filter(fn member -> member != {name, Node.self()} end)
-      |> Enum.map(fn {_, node} -> {crdt, node} end)
-
-    DeltaCrdt.set_neighbours(crdt, neighbors)
-
-    {:reply, :ok, %{state | members: members}}
-  end
-
-  @impl true
-  def handle_call(:members, _from, state = %{members: members}) do
-    {:reply, members, state}
+  defp file_hash(file_path) do
+    File.stream!(file_path, [], 2048)
+    |> Enum.reduce(:crypto.hash_init(:sha256), fn line, acc -> :crypto.hash_update(acc, line) end)
+    |> :crypto.hash_final()
+    |> Base.encode16()
   end
 end

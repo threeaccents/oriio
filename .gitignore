@@ -24,3 +24,8 @@ mahi-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+test/files/ephermal
+
+.Ds_Store
+.DS_Store

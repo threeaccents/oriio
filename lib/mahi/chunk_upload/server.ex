@@ -10,7 +10,8 @@ defmodule Mahi.ChunkUploader do
           file_size: non_neg_integer(),
           total_chunks: non_neg_integer(),
           chunk_file_paths: Keyword.t(),
-          received_all_chunks?: boolean()
+          received_all_chunks?: boolean(),
+          file_extension: String.t()
         }
 
   def start_link(new_chunk_upload) do
@@ -25,7 +26,9 @@ defmodule Mahi.ChunkUploader do
           into: Keyword.new(),
           do: {int_to_atom(chunk_number), nil}
 
-    state = Map.put(new_chunk_upload, :chunk_file_paths, chunk_file_paths)
+    state =
+      Map.put(new_chunk_upload, :chunk_file_paths, chunk_file_paths)
+      |> Map.put(:file_extension, "png")
 
     {:ok, state, {:continue, :load_state}}
   end
@@ -85,7 +88,27 @@ defmodule Mahi.ChunkUploader do
     |> Enum.map(&atom_to_int/1)
   end
 
-  defp merge_file_chunks(_state), do: ""
+  defp merge_file_chunks(%{chunk_file_paths: chunk_file_paths, file_extension: ext}) do
+    full_file_path = Briefly.create!() <> "." <> ext
+
+    file_streams =
+      chunk_file_paths
+      |> Enum.sort(&sort_chunk_numbers/2)
+      |> Enum.map(&File.stream!(elem(&1, 1), [], 200_000))
+
+    Stream.concat(file_streams)
+    |> Stream.into(File.stream!(full_file_path))
+    |> Stream.run()
+
+    full_file_path
+  end
+
+  defp sort_chunk_numbers(a, b) do
+    {aint, _} = Integer.parse(Atom.to_string(a |> elem(0)))
+    {bint, _} = Integer.parse(Atom.to_string(b |> elem(0)))
+
+    aint < bint
+  end
 
   defp atom_to_int(atom) do
     atom
