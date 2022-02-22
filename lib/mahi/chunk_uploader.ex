@@ -21,11 +21,11 @@ defmodule Mahi.ChunkUploader do
     Process.flag(:trap_exit, true)
 
     chunk_file_paths =
-      for chunk_number <- 1..total_chunks, into: Keyword.new(), do: {chunk_number, nil}
+      for chunk_number <- 1..total_chunks,
+          into: Keyword.new(),
+          do: {int_to_atom(chunk_number), nil}
 
-    state =
-      new_chunk_upload
-      |> Map.put(:chunk_file_paths, chunk_file_paths)
+    state = Map.put(new_chunk_upload, :chunk_file_paths, chunk_file_paths)
 
     {:ok, state, {:continue, :load_state}}
   end
@@ -43,35 +43,24 @@ defmodule Mahi.ChunkUploader do
         _from,
         %{chunk_file_paths: chunk_file_paths} = state
       ) do
-    chunk_key =
-      chunk_number
-      |> Integer.to_string()
-      |> String.to_atom()
+    chunk_key = int_to_atom(chunk_number)
 
     chunk_file_paths = Keyword.put(chunk_file_paths, chunk_key, chunk_file_path)
 
     {:reply, :ok, %{state | chunk_file_paths: chunk_file_paths}}
   end
 
-  def handle_call(state) do
+  def handle_call(:complete_upload, _from, state) do
     case missing_chunks(state) do
       [] ->
         # no missing chunks lets build the file
-        file_path = build_file(state)
+        file_path = merge_file_chunks(state)
         {:reply, file_path, state}
 
       missing_chunks ->
         {:reply, {:error, "missing chunks #{inspect(missing_chunks)}"}, state}
     end
   end
-
-  defp missing_chunks(%{chunk_file_paths: chunk_file_paths}) do
-    chunk_file_paths
-    |> Enum.filter(fn {_key, value} -> is_nil(value) end)
-    |> Keyword.keys()
-  end
-
-  defp build_file(_state), do: ""
 
   def handle_continue(:load_state, %{id: id} = state) do
     new_state =
@@ -87,6 +76,27 @@ defmodule Mahi.ChunkUploader do
     StateHandoff.handoff(id, state)
     # timeout to make sure the CRDT is propegated to other nodes
     :timer.sleep(1000)
+  end
+
+  defp missing_chunks(%{chunk_file_paths: chunk_file_paths}) do
+    chunk_file_paths
+    |> Enum.filter(fn {_key, value} -> is_nil(value) end)
+    |> Keyword.keys()
+    |> Enum.map(&atom_to_int/1)
+  end
+
+  defp merge_file_chunks(_state), do: ""
+
+  defp atom_to_int(atom) do
+    atom
+    |> Atom.to_string()
+    |> String.to_integer()
+  end
+
+  defp int_to_atom(int) do
+    int
+    |> Integer.to_string()
+    |> String.to_atom()
   end
 
   defp via_tuple(name),
