@@ -6,6 +6,11 @@ defmodule Mahi.ChunkUploader.StateHandoff do
   end
 
   def pickup(upload_id) do
-    DeltaCrdt.get(@crdt, upload_id)
+    state = DeltaCrdt.get(@crdt, upload_id)
+
+    # delete state if exists
+    DeltaCrdt.delete(@crdt, upload_id)
+
+    state
   end
 end

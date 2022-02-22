@@ -85,7 +85,8 @@ defmodule Mahi.ChunkUploader do
 
   def terminate(_reason, %{id: id} = state) do
     StateHandoff.handoff(id, state)
-    :timer.sleep(4000)
+    # timeout to make sure the CRDT is propegated to other nodes
+    :timer.sleep(1000)
   end
 
   defp via_tuple(name),
