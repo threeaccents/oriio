@@ -53,9 +53,10 @@ defmodule Mahi.Uploads.ChunkUploadServer do
   def handle_call(:complete_upload, _from, state) do
     case missing_chunks(state) do
       [] ->
+        IO.inspect("we have no missing chunks!")
         # no missing chunks lets build the file
         file_path = merge_file_chunks(state)
-        {:reply, file_path, state}
+        {:reply, {:ok, file_path}, state}
 
       missing_chunks ->
         {:reply, {:error, "missing chunks #{inspect(missing_chunks)}"}, state}
@@ -85,8 +86,10 @@ defmodule Mahi.Uploads.ChunkUploadServer do
     |> Enum.map(&atom_to_int/1)
   end
 
-  defp merge_file_chunks(%{chunk_file_paths: chunk_file_paths}) do
-    full_file_path = Briefly.create!()
+  defp merge_file_chunks(%{chunk_file_paths: chunk_file_paths, file_name: file_name}) do
+    file_dir = Briefly.create!(directory: true)
+
+    merged_file_path = Path.join(file_dir, file_name)
 
     file_streams =
       chunk_file_paths
@@ -94,10 +97,10 @@ defmodule Mahi.Uploads.ChunkUploadServer do
       |> Enum.map(&File.stream!(elem(&1, 1), [], 200_000))
 
     Stream.concat(file_streams)
-    |> Stream.into(File.stream!(full_file_path))
+    |> Stream.into(File.stream!(merged_file_path))
     |> Stream.run()
 
-    full_file_path
+    merged_file_path
   end
 
   defp sort_chunk_numbers(a, b) do

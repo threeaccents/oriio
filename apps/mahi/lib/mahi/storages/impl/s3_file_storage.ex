@@ -1,13 +1,13 @@
-defimpl Mahi.Storages.FileStorage, for: Mahi.Files.S3FileStorage do
+defimpl Mahi.Storages.FileStorage, for: Mahi.Storages.S3FileStorage do
   alias Mahi.Storages.S3FileStorage
   alias Mahi.Storages.FileStorage
   alias ExAws.S3
 
   require Logger
 
-  @type file_blob() :: StorageEngine.file_blob()
-  @type file_path() :: StorageEngine.file_path()
-  @type remote_location() :: StorageEngine.remote_location()
+  @type file_blob() :: FileStorage.file_blob()
+  @type file_path() :: StorFileStorageageEngine.file_path()
+  @type remote_location() :: FileStorage.remote_location()
 
   @spec upload_file(S3FileStorage.t(), file_blob()) ::
           :ok | {:error, :failed_to_upload_file}
@@ -18,7 +18,7 @@ defimpl Mahi.Storages.FileStorage, for: Mahi.Files.S3FileStorage do
     object_opts = [content_type: mime <> "/" <> mimetype]
 
     file_path
-    |> S3.Upload.stream_file!()
+    |> S3.Upload.stream_file()
     |> S3.upload(s3.bucket, remote_location, object_opts)
     |> ExAws.request(
       access_key_id: s3.access_key,

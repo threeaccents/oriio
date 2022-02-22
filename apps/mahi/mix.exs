@@ -53,7 +53,8 @@ defmodule Mahi.MixProject do
       {:kino, "~> 0.3.0"},
       {:telemetry_metrics_statsd, "~> 0.3.0"},
       {:ex_aws, "~> 2.1"},
-      {:ex_aws_s3, "~> 2.0"}
+      {:ex_aws_s3, "~> 2.0"},
+      {:sweet_xml, "~> 0.7.1"}
     ]
   end
 

@@ -1,4 +1,4 @@
-defprotocol Mahi.Storage do
+defprotocol Mahi.Storages.FileStorage do
   @type file_blob() :: %{
           remote_location: String.t(),
           mime: String.t() | atom(),
