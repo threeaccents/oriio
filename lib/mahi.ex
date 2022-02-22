@@ -1,7 +1,7 @@
 defmodule Mahi do
   alias Mahi.ChunkUploader
-  alias Mahi.ChunkUploadSupervisor
-  alias Mahi.ChunkUploadRegistry
+  alias Mahi.ChunkUpload.Supervisor, as: ChunkUploadSupervisor
+  alias Mahi.ChunkUpload.Registry, as: ChunkUploadRegistry
 
   defmodule ChunkUploadNotFound do
     @moduledoc """

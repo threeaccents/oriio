@@ -1,4 +1,4 @@
-defmodule Mahi.ChunkUploadRegistry do
+defmodule Mahi.ChunkUpload.Registry do
   use Horde.Registry
 
   def start_link(_) do

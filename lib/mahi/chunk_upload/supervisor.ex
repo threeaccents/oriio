@@ -1,4 +1,4 @@
-defmodule Mahi.ChunkUploadSupervisor do
+defmodule Mahi.ChunkUpload.Supervisor do
   use Horde.DynamicSupervisor
 
   def start_link(_opts) do

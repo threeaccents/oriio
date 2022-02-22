@@ -1,8 +1,8 @@
 defmodule Mahi.ChunkUploader do
   use GenServer
 
-  alias Mahi.ChunkUploadRegistry
-  alias Mahi.ChunkUploader.StateHandoff
+  alias Mahi.ChunkUpload.Registry, as: ChunkUploadRegistry
+  alias Mahi.ChunkUpload.StateHandoff
 
   @type state() :: %{
           id: String.t(),

@@ -4,12 +4,12 @@ defmodule Mahi.ChunkUpload.StateHandoff do
   @crdt Mahi.ChunkUpload.StateHandoff.Crdt
 
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: opts[:name])
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   @impl true
   def init(opts) do
-    members = Horde.NodeListener.make_members(opts[:name])
+    members = Horde.NodeListener.make_members(__MODULE__)
 
     state =
       opts
@@ -35,13 +35,13 @@ defmodule Mahi.ChunkUpload.StateHandoff do
   end
 
   @impl true
-  def handle_call({:set_members, members}, _from, state = %{crdt: crdt, name: name}) do
+  def handle_call({:set_members, members}, _from, state) do
     neighbors =
       members
-      |> Stream.filter(fn member -> member != {name, Node.self()} end)
-      |> Enum.map(fn {_, node} -> {crdt, node} end)
+      |> Stream.filter(fn member -> member != {__MODULE__, Node.self()} end)
+      |> Enum.map(fn {_, node} -> {@crdt, node} end)
 
-    DeltaCrdt.set_neighbours(crdt, neighbors)
+    DeltaCrdt.set_neighbours(@crdt, neighbors)
 
     {:reply, :ok, %{state | members: members}}
   end

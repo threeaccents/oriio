@@ -9,9 +9,9 @@ defmodule Mahi.Application do
   def start(_type, _args) do
     children = [
       {Cluster.Supervisor, [topologies(), [name: Mahi.ClusterSupervisor]]},
-      Mahi.ChunkUploader.StateHandoff,
-      Mahi.ChunkUploadRegistry,
-      Mahi.ChunkUploadSupervisor
+      Mahi.ChunkUpload.StateHandoff.Supervisor,
+      Mahi.ChunkUpload.Registry,
+      Mahi.ChunkUpload.Supervisor
 
       # Starts a worker by calling: Mahi.Worker.start_link(arg)
       # {Mahi.Worker, arg}
