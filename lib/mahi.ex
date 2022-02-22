@@ -35,7 +35,13 @@ defmodule Mahi do
   def complete_chunk_upload(upload_id) do
     pid = get_chunk_upload_pid!(upload_id)
 
-    ChunkUploader.complete_upload(pid)
+    file_path = ChunkUploader.complete_upload(pid)
+
+    # get metadata
+    # generate url
+    # upload to storage
+
+    file_path
   end
 
   def get_chunk_upload_pid!(upload_id) do

@@ -2,7 +2,7 @@ defmodule MahiTest do
   use ExUnit.Case
 
   test "merge file chunks" do
-    original_file_hash = "AE06AFD6F4E33F438B38DD4EA9D0C6259016BE222D7088E067AE5CE9303C8C4B"
+    original_file_hash = "1DA01AE7787DD239587F7DE7D901552B"
 
     file_paths = Path.wildcard("#{File.cwd!()}/test/files/segment**") |> Enum.sort()
 
@@ -21,7 +21,7 @@ defmodule MahiTest do
 
   defp file_hash(file_path) do
     File.stream!(file_path, [], 2048)
-    |> Enum.reduce(:crypto.hash_init(:sha256), fn line, acc -> :crypto.hash_update(acc, line) end)
+    |> Enum.reduce(:crypto.hash_init(:md5), fn line, acc -> :crypto.hash_update(acc, line) end)
     |> :crypto.hash_final()
     |> Base.encode16()
   end
