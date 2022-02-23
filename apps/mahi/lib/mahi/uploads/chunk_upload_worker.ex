@@ -47,7 +47,13 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
       ) do
     chunk_key = int_to_atom(chunk_number)
 
-    chunk_file_paths = Keyword.put(chunk_file_paths, chunk_key, chunk_file_path)
+    # since most files passed in are temps file they get removed when the calling proccess is killed.
+    # so we need to copy the file to this current process
+    file_path = Briefly.create!()
+
+    File.copy!(chunk_file_path, file_path)
+
+    chunk_file_paths = Keyword.put(chunk_file_paths, chunk_key, file_path)
 
     {:reply, :ok, %{state | chunk_file_paths: chunk_file_paths}}
   end
