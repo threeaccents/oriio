@@ -87,7 +87,7 @@ defmodule Mahi.Uploads do
     file_name_with_no_ext <> ".#{Atom.to_string(mimetype)}"
   end
 
-  def get_chunk_upload_pid!(upload_id) do
+  defp get_chunk_upload_pid!(upload_id) do
     case GenServer.whereis({:via, Horde.Registry, {ChunkUploadRegistry, upload_id}}) do
       nil ->
         raise ChunkUploadNotFound

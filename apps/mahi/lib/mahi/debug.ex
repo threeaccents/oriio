@@ -3,6 +3,8 @@ defmodule Mahi.Debug do
   Helper module for debugging purposes
   """
 
+  alias Mahi.Uploads.ChunkUploadRegistry
+
   @upload_files_path "#{__DIR__}/../../test/fixtures/uploads"
 
   def new_chunk_with_chunks do
@@ -21,5 +23,9 @@ defmodule Mahi.Debug do
     for {file_path, chunk_number} <- Enum.with_index(file_paths, 1) do
       Mahi.Uploads.append_chunk(id, {chunk_number, file_path})
     end
+  end
+
+  def get_chunk_upload_pid(upload_id) do
+    GenServer.whereis({:via, Horde.Registry, {ChunkUploadRegistry, upload_id}})
   end
 end
