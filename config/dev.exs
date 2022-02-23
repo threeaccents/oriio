@@ -63,3 +63,11 @@ config :phoenix, :plug_init_mode, :runtime
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
+
+# File storage engine
+config :mahi, :file_storage,
+  storage_engine: Mahi.Storages.S3FileStorage,
+  access_key: "AKIA53ZJZHZMFRYWSOTO",
+  secret_key: "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",
+  region: "us-east-2",
+  bucket: "mahi-my-4-app-2672"

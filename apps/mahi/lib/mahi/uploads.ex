@@ -4,6 +4,7 @@ defmodule Mahi.Uploads do
   alias Mahi.Uploads.ChunkUploadRegistry
   alias Mahi.ChunkUploadNotFound
   alias Mahi.Storages.S3FileStorage
+  alias Mahi.Storages.MockFileStorage
   alias Mahi.Storages.FileStorage
   alias Mahi.Mime
 
@@ -56,13 +57,18 @@ defmodule Mahi.Uploads do
   end
 
   defp storage_engine do
-    # do a proper check later for config
-    %S3FileStorage{
-      access_key: Application.get_env(:mahi, :file_storage)[:access_key],
-      secret_key: Application.get_env(:mahi, :file_storage)[:secret_key],
-      region: Application.get_env(:mahi, :file_storage)[:region],
-      bucket: Application.get_env(:mahi, :file_storage)[:bucket]
-    }
+    storage_engine = Application.get_env(:mahi, :file_storage)[:storage_engine] || %S3FileStorage{}
+
+    case storage_engine do
+      S3FileStorage ->
+        %S3FileStorage{
+          access_key: Application.get_env(:mahi, :file_storage)[:access_key],
+          secret_key: Application.get_env(:mahi, :file_storage)[:secret_key],
+          region: Application.get_env(:mahi, :file_storage)[:region],
+          bucket: Application.get_env(:mahi, :file_storage)[:bucket]
+        }
+      MockFileStorage -> %MockFileStorage{}
+    end
   end
 
   defp generate_remote_file_location(file_path, mimetype) do

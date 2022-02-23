@@ -22,3 +22,6 @@ config :mahi, Mahi.Mailer, adapter: Swoosh.Adapters.Test
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :mahi, :file_storage,
+  storage_engine: Mahi.Storages.MockFileStorage
