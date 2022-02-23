@@ -12,7 +12,7 @@ defmodule Mahi.UploadsTest do
       Path.wildcard("#{@upload_files_path}/segment**")
       |> Enum.sort()
 
-    id = Uploads.new_chunk_upload("test.png", 11111, length(file_paths))
+    id = Uploads.new_chunk_upload("test.png", length(file_paths))
 
     for {file_path, chunk_number} <- Enum.with_index(file_paths, 1) do
       Uploads.append_chunk(id, {chunk_number, file_path})
