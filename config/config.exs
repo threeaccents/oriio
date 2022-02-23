@@ -20,8 +20,6 @@ config :mahi, :file_storage,
 config :mahi, :file_base_url, "http://localhost:4000"
 
 # Configure Mix tasks and generators
-config :mahi,
-  ecto_repos: [Mahi.Repo]
 
 # Configures the mailer
 #
@@ -36,7 +34,6 @@ config :mahi, Mahi.Mailer, adapter: Swoosh.Adapters.Local
 config :swoosh, :api_client, false
 
 config :mahi_web,
-  ecto_repos: [Mahi.Repo],
   generators: [context_app: :mahi, binary_id: true]
 
 # Configures the endpoint

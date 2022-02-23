@@ -8,8 +8,6 @@ defmodule Mahi.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
-      Mahi.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: Mahi.PubSub},
       # Clustering

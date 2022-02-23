@@ -37,7 +37,7 @@ defmodule Mahi.MixProject do
   defp deps do
     [
       {:phoenix_pubsub, "~> 2.0"},
-      {:ecto_sql, "~> 3.6"},
+      {:ecto, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.2"},
       {:swoosh, "~> 1.3"},
@@ -63,10 +63,8 @@ defmodule Mahi.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup"],
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-      "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
+      setup: ["deps.get"],
+      test: ["test"]
     ]
   end
 end
