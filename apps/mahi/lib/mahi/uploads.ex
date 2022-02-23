@@ -8,6 +8,18 @@ defmodule Mahi.Uploads do
   alias Mahi.Storages.FileStorage
   alias Mahi.Mime
 
+  def upload(file_name, file_path) do
+    file_dir = Briefly.create!(directory: true)
+
+    upload_file_path = Path.join(file_dir, file_name)
+
+    File.copy(file_path, upload_file_path)
+
+    with {:ok, remote_file_location}  <- upload_file_to_storage(upload_file_path) do
+      {:ok, generate_url(remote_file_location)}
+    end
+  end
+
   def new_chunk_upload(file_name, total_chunks) do
     id = upload_id()
 

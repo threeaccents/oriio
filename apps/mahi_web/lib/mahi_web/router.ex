@@ -14,6 +14,7 @@ defmodule MahiWeb.Router do
     pipe_through :multipart
 
     post "/append_chunk", UploadController, :append_chunk
+    post "/uploads", UploadController, :upload
   end
 
   # Enables LiveDashboard only for development
