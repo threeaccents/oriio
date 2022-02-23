@@ -7,10 +7,9 @@ defmodule Mahi.Uploads.ChunkUploadServer do
   @type state() :: %{
           id: String.t(),
           file_name: String.t(),
-          file_size: non_neg_integer(),
           total_chunks: non_neg_integer(),
           chunk_file_paths: Keyword.t(),
-          received_all_chunks?: boolean()
+          merged_chunks?: boolean()
         }
 
   def start_link(new_chunk_upload) do
@@ -25,7 +24,10 @@ defmodule Mahi.Uploads.ChunkUploadServer do
           into: Keyword.new(),
           do: {int_to_atom(chunk_number), nil}
 
-    state = Map.put(new_chunk_upload, :chunk_file_paths, chunk_file_paths)
+    state =
+      new_chunk_upload
+      |> Map.put(:chunk_file_paths, chunk_file_paths)
+      |> Map.put(:merged_chunks?, false)
 
     {:ok, state, {:continue, :load_state}}
   end
@@ -55,7 +57,7 @@ defmodule Mahi.Uploads.ChunkUploadServer do
       [] ->
         # no missing chunks lets build the file
         file_path = merge_file_chunks(state)
-        {:reply, {:ok, file_path}, state}
+        {:reply, {:ok, file_path}, Map.put(state, :merged_chunks?, true)}
 
       missing_chunks ->
         {:reply, {:error, "missing chunks #{inspect(missing_chunks)}"}, state}

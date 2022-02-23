@@ -24,6 +24,8 @@ defmodule MahiWeb do
       import Plug.Conn
       import MahiWeb.Gettext
       alias MahiWeb.Router.Helpers, as: Routes
+
+      import ProperCase, only: [to_camel_case: 1]
     end
   end
 
@@ -98,6 +100,8 @@ defmodule MahiWeb do
       import MahiWeb.ErrorHelpers
       import MahiWeb.Gettext
       alias MahiWeb.Router.Helpers, as: Routes
+
+      import ProperCase, only: [to_camel_case: 1]
     end
   end
 

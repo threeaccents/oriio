@@ -8,7 +8,7 @@ defmodule Mahi.Debug do
   @upload_files_path "#{__DIR__}/../../test/fixtures/uploads"
 
   def new_chunk_with_chunks do
-    id = Mahi.Uploads.new_chunk_upload("nalu.png", 30000, 8)
+    id = Mahi.Uploads.new_chunk_upload("nalu.png", 8)
 
     upload_chunks(id)
 

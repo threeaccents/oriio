@@ -1,29 +1,19 @@
 defmodule MahiWeb.Router do
   use MahiWeb, :router
 
-  pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, {MahiWeb.LayoutView, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-  end
+  import MahiWeb.Pipeline
 
-  pipeline :api do
-    plug :accepts, ["json"]
+  scope "/", MahiWeb do
+    pipe_through :api
+
+    post "/chunk_uploads", UploadController, :new_chunk_upload
   end
 
   scope "/", MahiWeb do
-    pipe_through :browser
+    pipe_through :multipart
 
-    get "/", PageController, :index
+    post "/append_chunk", UploadController, :append_chunk
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", MahiWeb do
-  #   pipe_through :api
-  # end
 
   # Enables LiveDashboard only for development
   #

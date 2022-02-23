@@ -7,13 +7,12 @@ defmodule Mahi.Uploads do
   alias Mahi.Storages.FileStorage
   alias Mahi.Mime
 
-  def new_chunk_upload(file_name, file_size, total_chunks) do
+  def new_chunk_upload(file_name, total_chunks) do
     id = upload_id()
 
     new_chunk_upload =
       Map.new()
       |> Map.put(:file_name, file_name)
-      |> Map.put(:file_size, file_size)
       |> Map.put(:total_chunks, total_chunks)
       |> Map.put(:id, id)
 
@@ -101,8 +100,7 @@ defmodule Mahi.Uploads do
     base_file_url() <> "/" <> remote_file_location
   end
 
-  defp upload_id,
-    do: for(_ <- 1..12, into: "", do: <<Enum.random('0123456789abcdefghijklmnopqrstuvwxyz')>>)
+  defp upload_id, do: Ecto.UUID.generate()
 
   defp base_file_url, do: Application.get_env(:mahi, :base_file_url, "https://localhost:4000")
 end

@@ -50,7 +50,10 @@ defmodule MahiWeb.MixProject do
       {:gettext, "~> 0.18"},
       {:mahi, in_umbrella: true},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:proper_case, "~> 1.0.2"},
+      {:cors_plug, "~> 2.0"},
+      {:tarams, "~> 1.2.1"}
     ]
   end
 
