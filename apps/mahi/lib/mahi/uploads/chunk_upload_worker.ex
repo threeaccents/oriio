@@ -1,4 +1,4 @@
-defmodule Mahi.Uploads.ChunkUploadServer do
+defmodule Mahi.Uploads.ChunkUploadWorker do
   use GenServer, restart: :transient
 
   alias Mahi.Uploads.ChunkUploadRegistry

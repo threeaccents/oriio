@@ -1,5 +1,5 @@
 defmodule Mahi.Uploads do
-  alias Mahi.Uploads.ChunkUploadServer
+  alias Mahi.Uploads.ChunkUploadWorker
   alias Mahi.Uploads.ChunkUploadSupervisor
   alias Mahi.Uploads.ChunkUploadRegistry
   alias Mahi.ChunkUploadNotFound
@@ -17,7 +17,7 @@ defmodule Mahi.Uploads do
       |> Map.put(:total_chunks, total_chunks)
       |> Map.put(:id, id)
 
-    {:ok, _pid} = ChunkUploadSupervisor.start_child({ChunkUploadServer, new_chunk_upload})
+    {:ok, _pid} = ChunkUploadSupervisor.start_child({ChunkUploadWorker, new_chunk_upload})
 
     id
   end
@@ -25,13 +25,13 @@ defmodule Mahi.Uploads do
   def append_chunk(upload_id, {chunk_number, chunk_file_path}) do
     pid = get_chunk_upload_pid!(upload_id)
 
-    ChunkUploadServer.append_chunk(pid, {chunk_number, chunk_file_path})
+    ChunkUploadWorker.append_chunk(pid, {chunk_number, chunk_file_path})
   end
 
   def complete_chunk_upload(upload_id) do
     pid = get_chunk_upload_pid!(upload_id)
 
-    with {:ok, file_path} <- ChunkUploadServer.complete_upload(pid),
+    with {:ok, file_path} <- ChunkUploadWorker.complete_upload(pid),
          {:ok, remote_file_location} <- upload_file_to_storage(file_path) do
       Process.exit(pid, :normal)
       {:ok, generate_url(remote_file_location)}
