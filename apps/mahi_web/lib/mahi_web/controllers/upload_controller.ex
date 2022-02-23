@@ -8,10 +8,11 @@ defmodule MahiWeb.UploadController do
   action_fallback MahiWeb.FallbackController
 
   def upload(conn, params) do
+    IO.inspect(params)
     validate_params = %{
       file: %{
         path: [type: :string, required: true],
-        name: [type: :string, required: true]
+        filename: [type: :string, required: true]
       }
     }
 

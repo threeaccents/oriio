@@ -4,6 +4,18 @@ defmodule MahiWeb.PageControllerTest do
   # move fixtures to the root to share between both.
   @upload_files_dir "#{__DIR__}/../../../../mahi/test/fixtures/uploads"
 
+  describe "POST /uploads" do
+    test "file url is returned", %{conn: conn} do
+      upload = %Plug.Upload{path: "#{@upload_files_dir}/nalu.png", filename: "nalu.png"}
+
+      payload = %{file: upload}
+
+      conn = post(conn, Routes.upload_path(conn, :upload), payload)
+
+      assert %{"url" => _url} = json_response(conn, 201)["data"]
+    end
+  end
+
   describe "POST /chunk_uploads" do
     test "upload id is returned", %{conn: conn} do
       payload = %{
