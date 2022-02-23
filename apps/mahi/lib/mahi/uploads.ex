@@ -33,6 +33,7 @@ defmodule Mahi.Uploads do
 
     with {:ok, file_path} <- ChunkUploadServer.complete_upload(pid),
          {:ok, remote_file_location} <- upload_file_to_storage(file_path) do
+      Process.exit(pid, :normal)
       generate_url(remote_file_location)
     end
   end
@@ -86,7 +87,7 @@ defmodule Mahi.Uploads do
     file_name_with_no_ext <> ".#{Atom.to_string(mimetype)}"
   end
 
-  defp get_chunk_upload_pid!(upload_id) do
+  def get_chunk_upload_pid!(upload_id) do
     case GenServer.whereis({:via, Horde.Registry, {ChunkUploadRegistry, upload_id}}) do
       nil ->
         raise ChunkUploadNotFound

@@ -1,5 +1,5 @@
 defmodule Mahi.Uploads.ChunkUploadServer do
-  use GenServer
+  use GenServer, restart: :transient
 
   alias Mahi.Uploads.ChunkUploadRegistry
   alias Mahi.Uploads.StateHandoff
@@ -71,6 +71,12 @@ defmodule Mahi.Uploads.ChunkUploadServer do
 
     {:noreply, new_state}
   end
+
+  def handle_info({:EXIT, _, :normal}, state) do
+    {:stop, :normal, state}
+  end
+
+  def terminate(:normal, _state), do: :ok
 
   def terminate(_reason, %{id: id} = state) do
     StateHandoff.handoff(id, state)
