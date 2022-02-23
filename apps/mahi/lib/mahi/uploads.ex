@@ -33,7 +33,7 @@ defmodule Mahi.Uploads do
     with {:ok, file_path} <- ChunkUploadServer.complete_upload(pid),
          {:ok, remote_file_location} <- upload_file_to_storage(file_path) do
       Process.exit(pid, :normal)
-      generate_url(remote_file_location)
+      {:ok, generate_url(remote_file_location)}
     end
   end
 

@@ -43,4 +43,20 @@ defmodule MahiWeb.UploadController do
       |> json(data)
     end
   end
+
+  def complete_chunk_upload(conn, params) do
+    validate_params = %{
+      upload_id: [type: :string, required: true]
+    }
+
+    with {:ok, %{upload_id: upload_id}} <- Tarams.cast(params, validate_params),
+         {:ok, file_url} <- Uploads.complete_chunk_upload(upload_id) do
+      data = to_camel_case(%{data: %{url: file_url}})
+
+      conn
+      |> put_status(:created)
+      |> json(data)
+    end
+  end
+
 end

@@ -7,6 +7,7 @@ defmodule MahiWeb.Router do
     pipe_through :api
 
     post "/chunk_uploads", UploadController, :new_chunk_upload
+    post "/chunk_uploads/:upload_id", UploadController, :complete_chunk_upload
   end
 
   scope "/", MahiWeb do
