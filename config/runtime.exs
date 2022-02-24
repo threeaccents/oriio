@@ -19,6 +19,10 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
+  app_name =
+    System.get_env("FLY_APP_NAME") ||
+      raise "FLY_APP_NAME not available"
+
   # File storage engine
   config :mahi, :file_storage,
     storage_engine: System.get_env("MAHI_FILE_STORAGE_ENGINE"),
@@ -28,6 +32,7 @@ if config_env() == :prod do
     bucket: System.get_env("MAHI_FILE_STORAGE_BUCKET")
 
   config :mahi_web, MahiWeb.Endpoint,
+    url: [host: "#{app_name}.fly.dev", port: 8080],
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
@@ -35,10 +40,6 @@ if config_env() == :prod do
       port: String.to_integer(System.get_env("PORT") || "8080")
     ],
     secret_key_base: secret_key_base
-
-  app_name =
-    System.get_env("FLY_APP_NAME") ||
-      raise "FLY_APP_NAME not available"
 
   config :libcluster,
     debug: true,
