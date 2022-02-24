@@ -8,7 +8,7 @@ Mahi currently supports any s3 compatible storage, which includes (AWS s3, DO Sp
  - [Uploads](https://github.com/threeaccents/mahi#uploads) upload files easily via our Web API.
  - [Chunked, Concurrent, Resumable Uploads](https://github.com/threeaccents/mahi#large-file-uploads) upload large files by chunking them and uploading them to our Web API.
  - [Distributed](#) run in cluster
- - [Fault Taulerant](#) distributed process statehandoff
+ - [Fault Taulerant](#) distributed process handoff, with process state handoff.
  - [Flexible File Storage](https://github.com/threeaccents/mahi#applications) store your files in S3, Spaces, Wasabi, B2 with more options coming soon.
  - [Image Processing](https://github.com/threeaccents/mahi#file-transformations) resize, convert, and crop with ease.
 
