@@ -37,7 +37,7 @@ defmodule MahiWeb.UploadController do
 
     with {:ok, %{file_name: file_name, total_chunks: total_chunks}} <-
            Tarams.cast(params, validate_params),
-         upload_id <- Documents.new_chunk_upload(file_name, total_chunks) do
+         {:ok, upload_id} <- Documents.new_chunk_upload(file_name, total_chunks) do
       data = to_camel_case(%{data: %{upload_id: upload_id}})
 
       conn
