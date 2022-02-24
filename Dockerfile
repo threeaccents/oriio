@@ -26,6 +26,7 @@ COPY . /app
 ENV MIX_ENV="prod"
 ENV PORT=8080
 ENV FLY_APP_NAME="mahi"
+ENV SECRET_KEY_BASE="Xah1LYtvnabQ0vLDT7sbLguiT7R4yX7W7J6fnhoGJUMgUdYGKgpirwmTCsnbkXWo"
 
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
