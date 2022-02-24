@@ -57,29 +57,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
 RUN apt-get install -y build-essential \
     libvips-dev
 
-ENV USER="elixir"
 ENV PORT=80
 
-WORKDIR "/home/${USER}/app"
-
-# Create  unprivileged user to run the release
-RUN \
-  addgroup \
-   -g 1000 \
-   -S "${USER}" \
-  && adduser \
-   -s /bin/sh \
-   -u 1000 \
-   -G "${USER}" \
-   -h "/home/${USER}" \
-   -D "${USER}" \
-  && su "${USER}"
-
-# run as user
-USER "${USER}"
-
 # copy release executables
-COPY --from=build --chown="${USER}":"${USER}" /app/_build/"${MIX_ENV}"/rel/mahi ./  
+COPY --from=build  /app/_build/"${MIX_ENV}"/rel/mahi ./  
 
 ENTRYPOINT ["bin/mahi"]
 
