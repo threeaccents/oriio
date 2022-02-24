@@ -7,6 +7,9 @@ defmodule MahiWeb.UploadController do
 
   action_fallback MahiWeb.FallbackController
 
+  @type conn() :: Plug.Conn.t()
+
+  @spec upload(conn(), map()) :: conn()
   def upload(conn, params) do
     validate_params = %{
       file: %{
@@ -25,6 +28,7 @@ defmodule MahiWeb.UploadController do
     end
   end
 
+  @spec new_chunk_upload(conn(), map()) :: conn()
   def new_chunk_upload(conn, params) do
     validate_params = %{
       file_name: [type: :string, required: true],
@@ -42,6 +46,7 @@ defmodule MahiWeb.UploadController do
     end
   end
 
+  @spec append_chunk(conn(), map()) :: conn()
   def append_chunk(conn, params) do
     validate_params = %{
       chunk_number: [type: :integer, required: true],
@@ -62,6 +67,7 @@ defmodule MahiWeb.UploadController do
     end
   end
 
+  @spec complete_chunk_upload(conn(), map()) :: conn()
   def complete_chunk_upload(conn, params) do
     validate_params = %{
       upload_id: [type: :string, required: true]

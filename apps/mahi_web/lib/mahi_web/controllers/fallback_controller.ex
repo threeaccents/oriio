@@ -5,6 +5,9 @@ defmodule MahiWeb.FallbackController do
   """
   use MahiWeb, :controller
 
+  @type conn() :: Plug.Conn.t()
+
+  @spec call(conn(), {:error, term()} | {:error, term(), term()}) :: conn()
   # This clause handles errors returned by Ecto's insert/update/delete.
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
     conn

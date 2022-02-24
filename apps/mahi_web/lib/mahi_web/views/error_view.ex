@@ -1,6 +1,8 @@
 defmodule MahiWeb.ErrorView do
   use MahiWeb, :view
 
+  alias Phoenix.Controller
+
   @unprocessable_entity_status_code 422
   @unauthorized_status_code 401
   @not_found_status_code 404
@@ -14,10 +16,12 @@ defmodule MahiWeb.ErrorView do
   # By default, Phoenix returns the status message from
   # the template name. For example, "404.html" becomes
   # "Not Found".
+  # credo:disable-for-next-line
   def template_not_found(template, _assigns) do
-    Phoenix.Controller.status_message_from_template(template)
+    Controller.status_message_from_template(template)
   end
 
+  @spec render(binary(), map()) :: map()
   def render("error.json", %{message: message}) do
     new_error_payload()
     |> set_status_code(@unprocessable_entity_status_code)

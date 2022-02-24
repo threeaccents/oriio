@@ -8,6 +8,7 @@ defmodule MahiWeb.ErrorHelpers do
   @doc """
   Generates tag for inlined form input errors.
   """
+  @spec error_tag(term(), term()) :: list()
   def error_tag(form, field) do
     Enum.map(Keyword.get_values(form.errors, field), fn error ->
       content_tag(:span, translate_error(error),
@@ -20,6 +21,7 @@ defmodule MahiWeb.ErrorHelpers do
   @doc """
   Translates an error message using gettext.
   """
+  @spec translate_error({binary(), map()}) :: binary()
   def translate_error({msg, opts}) do
     # When using gettext, we typically pass the strings we want
     # to translate as a static argument:

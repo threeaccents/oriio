@@ -1,3 +1,4 @@
+# credo:disable-for-this-file
 defmodule Mahi.Debug do
   @moduledoc """
   Helper module for debugging purposes

@@ -1,6 +1,11 @@
 defmodule Mahi.Mime do
   @moduledoc false
 
+  @type mime() :: atom()
+  @type mimetype() :: atom()
+  @type file_path() :: binary()
+
+  @spec check_magic_bytes(binary() | file_path()) :: {mime(), mimetype()}
   def check_magic_bytes(<<137, 80, 78, 71, 13, 10, 26, 10, _::binary>>), do: {:image, :png}
   def check_magic_bytes(<<37, 80, 68, 70, 45, _::binary>>), do: {:image, :pdf}
   def check_magic_bytes(<<73, 73, 42, 0, _::binary>>), do: {:image, :tiff}

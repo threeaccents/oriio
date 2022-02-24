@@ -5,6 +5,8 @@ defmodule MahiWeb.Application do
 
   use Application
 
+  alias MahiWeb.Endpoint
+
   @impl true
   def start(_type, _args) do
     children = [
@@ -26,7 +28,7 @@ defmodule MahiWeb.Application do
   # whenever the application is updated.
   @impl true
   def config_change(changed, _new, removed) do
-    MahiWeb.Endpoint.config_change(changed, removed)
+    Endpoint.config_change(changed, removed)
     :ok
   end
 end

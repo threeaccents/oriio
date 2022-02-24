@@ -5,6 +5,9 @@ defmodule MahiWeb.FileDeliveryController do
 
   alias Mahi.Documents
 
+  @type conn() :: Plug.Conn.t()
+
+  @spec serve_file(conn(), map()) :: conn()
   def serve_file(conn, params) do
     validate_params = %{
       timestamp: [type: :string, required: true],

@@ -3,7 +3,8 @@ defmodule Mahi.Transformations.Transformer do
   Uses LibVips to handle file transformations.
   """
 
-  alias Vix.Vips
+  alias Vix.Vips.Image
+  alias Vix.Vips.Operation
 
   @type transformations() :: %{
           width: integer(),
@@ -19,14 +20,14 @@ defmodule Mahi.Transformations.Transformer do
   @spec transform_file(document_path, transformations()) ::
           {:ok, document_path} | {:error, term()}
   def transform_file(document_path, transformations) do
-    case Vips.Image.new_from_file(document_path) do
+    case Image.new_from_file(document_path) do
       {:ok, vips_image} ->
         image = transform(vips_image, transformations, &apply_transform/4)
 
         dir = Briefly.create!(directory: true)
         document_path = Path.join(dir, file_name(document_path))
 
-        :ok = Vips.Image.write_to_file(image, document_path)
+        :ok = Image.write_to_file(image, document_path)
 
         {:ok, document_path}
 
@@ -50,22 +51,22 @@ defmodule Mahi.Transformations.Transformer do
   end
 
   defp apply_transform(image, :width, width) do
-    current_width = Vips.Image.width(image)
+    current_width = Image.width(image)
     hscale = width / current_width
-    Vips.Operation.resize!(image, hscale)
+    Operation.resize!(image, hscale)
   end
 
   defp apply_transform(image, :height, height) do
-    current_height = Vips.Image.height(image)
+    current_height = Image.height(image)
 
     vscale = height / current_height
 
     # since we are mainting aspect ration we can just pass the vscale as the hscale for resize
-    Vips.Operation.resize!(image, vscale)
+    Operation.resize!(image, vscale)
   end
 
   defp apply_transform(image, :black_n_white, true) do
-    Vips.Operation.colourspace!(image, :VIPS_INTERPRETATION_B_W)
+    Operation.colourspace!(image, :VIPS_INTERPRETATION_B_W)
   end
 
   defp apply_transform(image, _, _), do: image

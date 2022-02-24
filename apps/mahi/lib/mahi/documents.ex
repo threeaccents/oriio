@@ -13,6 +13,7 @@ defmodule Mahi.Documents do
   alias Mahi.Storages.FileStorage
   alias Mahi.Mime
   alias Mahi.Transformations.Transformer
+  alias Ecto.UUID
 
   require Logger
 
@@ -46,7 +47,7 @@ defmodule Mahi.Documents do
     FileStorage.download_file(storage_engine(), remote_document_path)
   end
 
-  @spec(upload(file_name(), document_path()) :: {:ok, url()}, {:error, term()})
+  @spec upload(file_name(), document_path()) :: {:ok, url()} | {:error, term()}
   def upload(file_name, document_path) do
     file_dir = Briefly.create!(directory: true)
 
@@ -59,7 +60,7 @@ defmodule Mahi.Documents do
     end
   end
 
-  @spec(new_chunk_upload(file_name(), total_chunks()) :: {:ok, upload_id()}, {:error, term()})
+  @spec new_chunk_upload(file_name(), total_chunks()) :: {:ok, upload_id()} | {:error, term()}
   def new_chunk_upload(file_name, total_chunks) do
     id = upload_id()
 
@@ -168,7 +169,7 @@ defmodule Mahi.Documents do
     base_file_url() <> "/" <> remote_document_path
   end
 
-  defp upload_id, do: Ecto.UUID.generate()
+  defp upload_id, do: UUID.generate()
 
   defp base_file_url, do: Application.get_env(:mahi, :base_file_url, "https://localhost:4000")
 end

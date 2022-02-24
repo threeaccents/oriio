@@ -17,13 +17,21 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
           merged_chunks?: boolean()
         }
 
+  @type new_chunk_upload() :: %{
+          id: binary(),
+          file_name: binary(),
+          total_chunks: non_neg_integer()
+        }
+
   @type chunk_number() :: non_neg_integer()
   @type document_path() :: binary()
 
+  @spec start_link(new_chunk_upload()) :: GenServer.on_start()
   def start_link(new_chunk_upload) do
     GenServer.start_link(__MODULE__, new_chunk_upload, name: via_tuple(new_chunk_upload.id))
   end
 
+  @impl true
   def init(%{total_chunks: total_chunks} = new_chunk_upload) do
     Process.flag(:trap_exit, true)
 
@@ -45,10 +53,12 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
     GenServer.call(server, {:append_chunk, {chunk_number, chunk_document_path}})
   end
 
+  @spec complete_upload(pid()) :: {:ok, document_path()} | {:error, term()}
   def complete_upload(server) do
     GenServer.call(server, :complete_upload)
   end
 
+  @impl GenServer
   def handle_call(
         {:append_chunk, {chunk_number, chunk_document_path}},
         _from,
@@ -79,6 +89,7 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
     end
   end
 
+  @impl GenServer
   def handle_continue(:load_state, %{id: id} = state) do
     new_state =
       case StateHandoff.pickup(id) do
@@ -89,10 +100,12 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
     {:noreply, new_state}
   end
 
+  @impl GenServer
   def handle_info({:EXIT, _, :normal}, state) do
     {:stop, :normal, state}
   end
 
+  @impl GenServer
   def terminate(:normal, _state), do: :ok
 
   def terminate(_reason, %{id: id} = state) do
@@ -118,7 +131,8 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
       |> Enum.sort(&sort_chunk_numbers/2)
       |> Enum.map(&File.stream!(elem(&1, 1), [], 200_000))
 
-    Stream.concat(file_streams)
+    file_streams
+    |> Stream.concat()
     |> Stream.into(File.stream!(merged_document_path))
     |> Stream.run()
 

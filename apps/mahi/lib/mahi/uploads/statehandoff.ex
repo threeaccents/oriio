@@ -5,15 +5,28 @@ defmodule Mahi.Uploads.StateHandoff do
 
   use GenServer
 
+  alias Horde.NodeListener
+  alias Mahi.Uploads.ChunkUploadWorker
+
+  @type opts() :: Keyword.t()
+  @type upload_id() :: binary()
+
+  @type state() :: %{
+          members: MapSet.t()
+        }
+
+  @type upload_state() :: ChunkUploadWorker.state()
+
   @crdt Mahi.Uploads.StateHandoff.Crdt
 
+  @spec start_link(opts()) :: GenServer.on_start()
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   @impl true
   def init(opts) do
-    members = Horde.NodeListener.make_members(__MODULE__)
+    members = NodeListener.make_members(__MODULE__)
 
     state =
       opts
@@ -23,18 +36,20 @@ defmodule Mahi.Uploads.StateHandoff do
     {:ok, state}
   end
 
+  @spec handoff(upload_id(), upload_state()) :: DeltaCrdt.t()
   def handoff(upload_id, state) do
     DeltaCrdt.put(@crdt, upload_id, state)
   end
 
+  @spec pickup(upload_id()) :: upload_state() | nil
   def pickup(upload_id) do
     case DeltaCrdt.get(@crdt, upload_id) do
       nil ->
         nil
 
-      state ->
+      upload_state ->
         DeltaCrdt.delete(@crdt, upload_id)
-        state
+        upload_state
     end
   end
 

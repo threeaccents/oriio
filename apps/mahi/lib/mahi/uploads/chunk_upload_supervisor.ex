@@ -6,25 +6,30 @@ defmodule Mahi.Uploads.ChunkUploadSupervisor do
 
   use Horde.DynamicSupervisor
 
+  alias Horde.DynamicSupervisor
+
+  @spec start_link(Supervisor.option()) :: Supervisor.on_start()
   def start_link(_opts) do
-    Horde.DynamicSupervisor.start_link(
+    DynamicSupervisor.start_link(
       __MODULE__,
       [strategy: :one_for_one, members: :auto, shutdown: 10_000],
       name: __MODULE__
     )
   end
 
+  @impl true
   def init(init_arg) do
     [members: members()]
     |> Keyword.merge(init_arg)
-    |> Horde.DynamicSupervisor.init()
+    |> DynamicSupervisor.init()
   end
 
+  @spec start_child(term()) :: Supervisor.on_start_child()
   def start_child(child_spec) do
-    Horde.DynamicSupervisor.start_child(__MODULE__, child_spec)
+    DynamicSupervisor.start_child(__MODULE__, child_spec)
   end
 
-  defp members() do
+  defp members do
     Enum.map([Node.self() | Node.list()], &{__MODULE__, &1})
   end
 end

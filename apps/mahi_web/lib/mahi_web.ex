@@ -17,6 +17,7 @@ defmodule MahiWeb do
   and import those modules here.
   """
 
+  @spec controller() :: Macro.t()
   def controller do
     quote do
       use Phoenix.Controller, namespace: MahiWeb
@@ -29,6 +30,7 @@ defmodule MahiWeb do
     end
   end
 
+  @spec view() :: Macro.t()
   def view do
     quote do
       use Phoenix.View,
@@ -44,6 +46,7 @@ defmodule MahiWeb do
     end
   end
 
+  @spec live_view() :: Macro.t()
   def live_view do
     quote do
       use Phoenix.LiveView,
@@ -53,6 +56,7 @@ defmodule MahiWeb do
     end
   end
 
+  @spec live_component() :: Macro.t()
   def live_component do
     quote do
       use Phoenix.LiveComponent
@@ -61,6 +65,7 @@ defmodule MahiWeb do
     end
   end
 
+  @spec component() :: Macro.t()
   def component do
     quote do
       use Phoenix.Component
@@ -69,6 +74,7 @@ defmodule MahiWeb do
     end
   end
 
+  @spec router() :: Macro.t()
   def router do
     quote do
       use Phoenix.Router
@@ -79,6 +85,7 @@ defmodule MahiWeb do
     end
   end
 
+  @spec channel() :: Macro.t()
   def channel do
     quote do
       use Phoenix.Channel

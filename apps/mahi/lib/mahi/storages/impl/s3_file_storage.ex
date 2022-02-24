@@ -61,7 +61,7 @@ defimpl Mahi.Storages.FileStorage, for: Mahi.Storages.S3FileStorage do
     end
   end
 
-  def file_name(document_path) do
+  defp file_name(document_path) do
     document_path
     |> String.split("/")
     |> List.last()

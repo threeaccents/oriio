@@ -7,10 +7,12 @@ defmodule Mahi.Uploads.StateHandoffSupervisor do
 
   @crdt_name Mahi.Uploads.StateHandoff.Crdt
 
+  @spec start_link(keyword()) :: Supervisor.on_start()
   def start_link(opts) do
     Supervisor.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
+  @impl true
   def init(_opts) do
     crdt_opts = [name: @crdt_name, crdt: DeltaCrdt.AWLWWMap]
 
