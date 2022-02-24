@@ -4,8 +4,9 @@ FROM hexpm/elixir:1.13.3-erlang-24.0.2-ubuntu-bionic-20210325 as build
 ARG MIX_ENV="prod"
 
 # install runtime dependencies
-RUN apt-get update -q \
-    build-essential \
+RUN apt-get update -y 
+    
+RUN apt-get install -y build-essential \
     libvips-dev
 
 # install local Elixir hex and rebar
@@ -41,8 +42,9 @@ FROM ubuntu:18.04 as app
 ARG MIX_ENV
 
 # install runtime dependencies
-RUN apt-get update -q \
-    build-essential \
+RUN apt-get update -y 
+    
+RUN apt-get install -y build-essential \
     libvips-dev
 
 ENV USER="elixir"
