@@ -28,11 +28,9 @@ ENV MIX_ENV="${MIX_ENV}"
 # install mix dependencies
 
 RUN mix deps.get --only $MIX_ENV
+
 # compile dependencies
 RUN mix deps.compile
-
-# Compile assets
-RUN mix assets.deploy
 
 # compile project
 RUN mix compile
@@ -41,7 +39,7 @@ RUN mix compile
 RUN mix release
 
 # app stage
-FROM ubuntu:18.04 as app
+FROM ubuntu:20.04 as app
 
 ARG MIX_ENV
 
