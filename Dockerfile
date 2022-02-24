@@ -7,6 +7,8 @@ ARG MIX_ENV="prod"
 RUN apt-get update -y 
     
 RUN apt-get install -y build-essential \
+    gcc \
+    erlang-dev \
     libvips-dev
 
 # install local Elixir hex and rebar
