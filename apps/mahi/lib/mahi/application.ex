@@ -7,11 +7,13 @@ defmodule Mahi.Application do
 
   @impl true
   def start(_type, _args) do
+    topologies = Application.get_env(:libcluster, :topologies) || topologies()
+
     children = [
       # Start the PubSub system
       {Phoenix.PubSub, name: Mahi.PubSub},
       # Clustering
-      {Cluster.Supervisor, [topologies(), [name: Mahi.ClusterSupervisor]]},
+      {Cluster.Supervisor, [topologies, [name: Mahi.ClusterSupervisor]]},
       # Chunk Uploads
       Mahi.Uploads.StateHandoffSupervisor,
       Mahi.Uploads.ChunkUploadRegistry,
