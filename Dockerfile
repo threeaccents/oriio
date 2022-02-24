@@ -23,8 +23,7 @@ RUN mix local.hex --force \
 WORKDIR /app
 COPY . /app
 
-ARG MIX_ENV
-ENV MIX_ENV="${MIX_ENV}"
+ENV MIX_ENV="prod"
 
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
