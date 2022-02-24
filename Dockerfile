@@ -3,13 +3,6 @@ FROM hexpm/elixir:1.13.3-erlang-24.0.2-ubuntu-bionic-20210325 as build
 # args
 ARG MIX_ENV="prod"
 
-# set the locale
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
-
-
 # install local Elixir hex and rebar
 RUN mix local.hex --force \
  && mix local.rebar --force
