@@ -1,4 +1,3 @@
-
 defimpl Mahi.Storages.FileStorage, for: Mahi.Storages.MockFileStorage do
   alias Mahi.Storages.FileStorage
   alias Mahi.Storages.MockFileStorage

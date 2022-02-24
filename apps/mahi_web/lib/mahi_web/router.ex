@@ -17,6 +17,12 @@ defmodule MahiWeb.Router do
     post "/uploads", UploadController, :upload
   end
 
+  scope "/", MahiWeb do
+    pipe_through :file_delivery
+
+    get "/:timestamp/:file_name", FileDeliveryController, :serve_file
+  end
+
   # Enables LiveDashboard only for development
   #
   # If you want to use the LiveDashboard in production, you should put

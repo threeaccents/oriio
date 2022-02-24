@@ -99,13 +99,11 @@ defmodule MahiWeb.PageControllerTest do
 
       payload = %{chunk: upload, upload_id: upload_id, chunk_number: chunk_number}
 
-     conn = post(conn, Routes.upload_path(conn, :append_chunk), payload)
+      conn = post(conn, Routes.upload_path(conn, :append_chunk), payload)
 
-     json_response(conn, 200)["data"]
+      json_response(conn, 200)["data"]
     end
 
     :ok
   end
-
-
 end

@@ -23,6 +23,10 @@ defmodule MahiWeb.Pipeline do
     plug :accepts, ["multipart"]
   end
 
+  pipeline :file_delivery do
+    plug :accepts, ["*"]
+  end
+
   pipeline :admins_only do
     plug :basic_auth, username: "admin", password: "mahiAdmin13!"
   end

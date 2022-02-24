@@ -8,7 +8,6 @@ defmodule MahiWeb.UploadController do
   action_fallback MahiWeb.FallbackController
 
   def upload(conn, params) do
-    IO.inspect(params)
     validate_params = %{
       file: %{
         path: [type: :string, required: true],
@@ -18,11 +17,11 @@ defmodule MahiWeb.UploadController do
 
     with {:ok, %{file: file}} <- Tarams.cast(params, validate_params),
          {:ok, file_url} <- Uploads.upload(file.filename, file.path) do
-          data = to_camel_case(%{data: %{url: file_url}})
+      data = to_camel_case(%{data: %{url: file_url}})
 
-          conn
-          |> put_status(:created)
-          |> json(data)
+      conn
+      |> put_status(:created)
+      |> json(data)
     end
   end
 
@@ -77,5 +76,4 @@ defmodule MahiWeb.UploadController do
       |> json(data)
     end
   end
-
 end

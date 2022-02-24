@@ -15,7 +15,7 @@ defmodule Mahi.Uploads do
 
     File.copy(file_path, upload_file_path)
 
-    with {:ok, remote_file_location}  <- upload_file_to_storage(upload_file_path) do
+    with {:ok, remote_file_location} <- upload_file_to_storage(upload_file_path) do
       {:ok, generate_url(remote_file_location)}
     end
   end
@@ -69,7 +69,8 @@ defmodule Mahi.Uploads do
   end
 
   defp storage_engine do
-    storage_engine = Application.get_env(:mahi, :file_storage)[:storage_engine] || %S3FileStorage{}
+    storage_engine =
+      Application.get_env(:mahi, :file_storage)[:storage_engine] || %S3FileStorage{}
 
     case storage_engine do
       S3FileStorage ->
@@ -79,7 +80,9 @@ defmodule Mahi.Uploads do
           region: Application.get_env(:mahi, :file_storage)[:region],
           bucket: Application.get_env(:mahi, :file_storage)[:bucket]
         }
-      MockFileStorage -> %MockFileStorage{}
+
+      MockFileStorage ->
+        %MockFileStorage{}
     end
   end
 

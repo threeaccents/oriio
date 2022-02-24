@@ -6,7 +6,6 @@ import Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 
-
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :mahi_web, MahiWeb.Endpoint,
@@ -23,5 +22,4 @@ config :mahi, Mahi.Mailer, adapter: Swoosh.Adapters.Test
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :mahi, :file_storage,
-  storage_engine: Mahi.Storages.MockFileStorage
+config :mahi, :file_storage, storage_engine: Mahi.Storages.MockFileStorage

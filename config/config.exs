@@ -9,8 +9,6 @@
 # move said applications out of the umbrella.
 import Config
 
-
-
 config :mahi, :file_base_url, "http://localhost:4000"
 
 # Configure Mix tasks and generators
