@@ -37,6 +37,8 @@ ARG MIX_ENV
 
 # install runtime dependencies
 RUN apt-get update -q \
+    make \
+    build-essential \
     libvips-dev
 
 ENV USER="elixir"
