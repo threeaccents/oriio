@@ -7,6 +7,7 @@ ARG MIX_ENV="prod"
 RUN apt-get update -y 
     
 RUN apt-get install -y build-essential \
+    locales \
     gcc \
     erlang-dev \
     libvips \
