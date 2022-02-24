@@ -19,6 +19,14 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
+  # File storage engine
+  config :mahi, :file_storage,
+    storage_engine: System.get_env("MAHI_FILE_STORAGE_ENGINE"),
+    access_key: System.get_env("MAHI_FILE_STORAGE_ACCESS_KEY"),
+    secret_key: System.get_env("MAHI_FILE_STORAGE_SECRET_KEY"),
+    region: System.get_env("MAHI_FILE_STORAGE_REGION"),
+    bucket: System.get_env("MAHI_FILE_STORAGE_BUCKET")
+
   config :mahi_web, MahiWeb.Endpoint,
     http: [
       # Enable IPv6 and bind on all interfaces.
@@ -33,7 +41,7 @@ if config_env() == :prod do
   # If you are doing OTP releases, you need to instruct Phoenix
   # to start each relevant endpoint:
   #
-  #     config :mahi_web, MahiWeb.Endpoint, server: true
+  config :mahi_web, MahiWeb.Endpoint, server: true
   #
   # Then you can assemble a release by calling `mix release`.
   # See `mix help release` for more information.

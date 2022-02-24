@@ -8,7 +8,15 @@ defmodule Mahi.Umbrella.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases(),
-      dialyzer: dialyzer()
+      dialyzer: dialyzer(),
+      releases: [
+        mahi: [
+          applications: [
+            mahi: :permanent,
+            mahi_web: :permanent
+          ]
+        ]
+      ]
     ]
   end
 

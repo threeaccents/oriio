@@ -66,7 +66,7 @@ config :phoenix, :stacktrace_depth, 20
 
 # File storage engine
 config :mahi, :file_storage,
-  storage_engine: Mahi.Storages.S3FileStorage,
+  storage_engine: "s3-compatible",
   access_key: "AKIA53ZJZHZMFRYWSOTO",
   secret_key: "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",
   region: "us-east-2",

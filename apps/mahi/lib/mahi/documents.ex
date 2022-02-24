@@ -121,7 +121,7 @@ defmodule Mahi.Documents do
       Application.get_env(:mahi, :file_storage)[:storage_engine] || %S3FileStorage{}
 
     case storage_engine do
-      S3FileStorage ->
+      "s3-compatible" ->
         %S3FileStorage{
           access_key: Application.get_env(:mahi, :file_storage)[:access_key],
           secret_key: Application.get_env(:mahi, :file_storage)[:secret_key],
@@ -129,7 +129,7 @@ defmodule Mahi.Documents do
           bucket: Application.get_env(:mahi, :file_storage)[:bucket]
         }
 
-      MockFileStorage ->
+      "mock-engine" ->
         %MockFileStorage{}
     end
   end

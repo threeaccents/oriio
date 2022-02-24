@@ -97,6 +97,7 @@ RUN apt-get update -q \
     libvips-dev
 
 ENV USER="elixir"
+ENV PORT=80
 
 WORKDIR "/home/${USER}/app"
 
