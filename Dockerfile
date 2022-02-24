@@ -51,6 +51,8 @@ ARG MIX_ENV
 
 # install runtime dependencies
 RUN apt-get update -y 
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
     
 RUN apt-get install -y build-essential \
     libvips-dev
