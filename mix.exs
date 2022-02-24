@@ -11,8 +11,8 @@ defmodule Mahi.Umbrella.MixProject do
       dialyzer: dialyzer(),
       releases: [
         mahi: [
+          cookie: "pV7R3JYRfUR_xz8SXmLKm1vnVzoYK5cJl86lcVrHV1Nw4oPsp1tQqQ==",
           applications: [
-            mahi: :permanent,
             mahi_web: :permanent
           ]
         ]
