@@ -56,11 +56,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
 RUN apt-get install -y build-essential \
     libvips-dev
 
-ENV PORT=80
+WORKDIR /app
 
 # copy release executables
-COPY --from=build  /app/_build/prod/rel/mahi .
+COPY --from=build  /app/_build/prod/rel/mahi /app
 
-ENTRYPOINT ["bin/mahi"]
+ENTRYPOINT ["/app/bin/mahi"]
 
 CMD ["start"]
