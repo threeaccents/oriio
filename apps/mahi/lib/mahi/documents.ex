@@ -1,4 +1,9 @@
 defmodule Mahi.Documents do
+  @moduledoc """
+  Context for dealing with documents.
+  This context manages the upload, download, and transformation of documents.
+  """
+
   alias Mahi.Uploads.ChunkUploadWorker
   alias Mahi.Uploads.ChunkUploadSupervisor
   alias Mahi.Uploads.ChunkUploadRegistry
@@ -13,44 +18,44 @@ defmodule Mahi.Documents do
 
   @type upload_id() :: binary()
   @type file_name() :: binary()
-  @type file_path() :: binary()
+  @type document_path() :: binary()
   @type url() :: binary()
   @type total_chunks() :: non_neg_integer()
   @type chunk_number() :: non_neg_integer()
-  @type remote_file_path() :: binary()
+  @type remote_document_path() :: binary()
   @type transformations() :: Transformer.transformations()
 
   @type transform_opts() :: [location: :remote | :local]
 
-  @spec transform(remote_file_path() | file_path(), transformations(), transform_opts()) ::
-          {:ok, file_path()} | {:error, term()}
+  @spec transform(remote_document_path() | document_path(), transformations(), transform_opts()) ::
+          {:ok, document_path()} | {:error, term()}
   def transform(path, transformations, opts \\ [location: :remote])
 
   def transform(path, transformations, location: :remote) do
-    with {:ok, file_path} <- download(path) do
-      transform(file_path, transformations, location: :local)
+    with {:ok, document_path} <- download(path) do
+      transform(document_path, transformations, location: :local)
     end
   end
 
-  def transform(file_path, transformations, location: :local) do
-    Transformer.transform_file(file_path, transformations)
+  def transform(document_path, transformations, location: :local) do
+    Transformer.transform_file(document_path, transformations)
   end
 
-  @spec download(remote_file_path()) :: {:ok, file_path()} | {:error, term()}
-  def download(remote_file_path) do
-    FileStorage.download_file(storage_engine(), remote_file_path)
+  @spec download(remote_document_path()) :: {:ok, document_path()} | {:error, term()}
+  def download(remote_document_path) do
+    FileStorage.download_file(storage_engine(), remote_document_path)
   end
 
-  @spec(upload(file_name(), file_path()) :: {:ok, url()}, {:error, term()})
-  def upload(file_name, file_path) do
+  @spec(upload(file_name(), document_path()) :: {:ok, url()}, {:error, term()})
+  def upload(file_name, document_path) do
     file_dir = Briefly.create!(directory: true)
 
-    upload_file_path = Path.join(file_dir, file_name)
+    upload_document_path = Path.join(file_dir, file_name)
 
-    File.copy!(file_path, upload_file_path)
+    File.copy!(document_path, upload_document_path)
 
-    with {:ok, remote_file_path} <- upload_file_to_storage(upload_file_path) do
-      {:ok, generate_url(remote_file_path)}
+    with {:ok, remote_document_path} <- upload_file_to_storage(upload_document_path) do
+      {:ok, generate_url(remote_document_path)}
     end
   end
 
@@ -74,38 +79,38 @@ defmodule Mahi.Documents do
     end
   end
 
-  @spec append_chunk(upload_id(), {chunk_number(), file_path()}) :: :ok
-  def append_chunk(upload_id, {chunk_number, chunk_file_path}) do
+  @spec append_chunk(upload_id(), {chunk_number(), document_path()}) :: :ok
+  def append_chunk(upload_id, {chunk_number, chunk_document_path}) do
     pid = get_chunk_upload_pid!(upload_id)
 
-    ChunkUploadWorker.append_chunk(pid, {chunk_number, chunk_file_path})
+    ChunkUploadWorker.append_chunk(pid, {chunk_number, chunk_document_path})
   end
 
   @spec complete_chunk_upload(upload_id()) :: {:ok, url()} | {:error, term()}
   def complete_chunk_upload(upload_id) do
     pid = get_chunk_upload_pid!(upload_id)
 
-    with {:ok, file_path} <- ChunkUploadWorker.complete_upload(pid),
-         {:ok, remote_file_path} <- upload_file_to_storage(file_path) do
+    with {:ok, document_path} <- ChunkUploadWorker.complete_upload(pid),
+         {:ok, remote_document_path} <- upload_file_to_storage(document_path) do
       Process.exit(pid, :normal)
-      {:ok, generate_url(remote_file_path)}
+      {:ok, generate_url(remote_document_path)}
     end
   end
 
-  defp upload_file_to_storage(file_path) do
-    {mime, mimetype} = Mime.check_magic_bytes(file_path)
+  defp upload_file_to_storage(document_path) do
+    {mime, mimetype} = Mime.check_magic_bytes(document_path)
 
-    remote_file_path = generate_remote_file_path(file_path, mimetype)
+    remote_document_path = generate_remote_document_path(document_path, mimetype)
 
     file_blob = %{
-      remote_file_path: remote_file_path,
+      remote_document_path: remote_document_path,
       mime: Atom.to_string(mime),
       mimetype: Atom.to_string(mimetype),
-      file_path: file_path
+      document_path: document_path
     }
 
     case FileStorage.upload_file(storage_engine(), file_blob) do
-      :ok -> {:ok, remote_file_path}
+      :ok -> {:ok, remote_document_path}
       {:error, reason} -> {:error, reason}
     end
   end
@@ -128,9 +133,9 @@ defmodule Mahi.Documents do
     end
   end
 
-  defp generate_remote_file_path(file_path, mimetype) do
+  defp generate_remote_document_path(document_path, mimetype) do
     file_name =
-      file_path
+      document_path
       |> String.split("/")
       |> List.last()
 
@@ -159,8 +164,8 @@ defmodule Mahi.Documents do
     end
   end
 
-  defp generate_url(remote_file_path) do
-    base_file_url() <> "/" <> remote_file_path
+  defp generate_url(remote_document_path) do
+    base_file_url() <> "/" <> remote_document_path
   end
 
   defp upload_id, do: Ecto.UUID.generate()

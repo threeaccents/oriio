@@ -1,4 +1,8 @@
 defmodule Mahi.Uploads.StateHandoffSupervisor do
+  @moduledoc """
+  Manages the supervisor lifescycle for StateHandoff.
+  """
+
   use Supervisor
 
   @crdt_name Mahi.Uploads.StateHandoff.Crdt

@@ -1,4 +1,9 @@
 defmodule Mahi.Uploads.ChunkUploadWorker do
+  @moduledoc """
+  GenServer for handling chunk uploads.
+  It keeps track of all chunks uploaded and then it merges the chunks once the upload is complete.
+  """
+
   use GenServer, restart: :transient
 
   alias Mahi.Uploads.ChunkUploadRegistry
@@ -8,12 +13,12 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
           id: binary(),
           file_name: binary(),
           total_chunks: non_neg_integer(),
-          chunk_file_paths: Keyword.t(),
+          chunk_document_paths: Keyword.t(),
           merged_chunks?: boolean()
         }
 
   @type chunk_number() :: non_neg_integer()
-  @type file_path() :: binary()
+  @type document_path() :: binary()
 
   def start_link(new_chunk_upload) do
     GenServer.start_link(__MODULE__, new_chunk_upload, name: via_tuple(new_chunk_upload.id))
@@ -22,22 +27,22 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
   def init(%{total_chunks: total_chunks} = new_chunk_upload) do
     Process.flag(:trap_exit, true)
 
-    chunk_file_paths =
+    chunk_document_paths =
       for chunk_number <- 1..total_chunks,
           into: Keyword.new(),
           do: {int_to_atom(chunk_number), nil}
 
     state =
       new_chunk_upload
-      |> Map.put(:chunk_file_paths, chunk_file_paths)
+      |> Map.put(:chunk_document_paths, chunk_document_paths)
       |> Map.put(:merged_chunks?, false)
 
     {:ok, state, {:continue, :load_state}}
   end
 
-  @spec append_chunk(pid(), {chunk_number(), file_path()}) :: :ok
-  def append_chunk(server, {chunk_number, chunk_file_path}) do
-    GenServer.call(server, {:append_chunk, {chunk_number, chunk_file_path}})
+  @spec append_chunk(pid(), {chunk_number(), document_path()}) :: :ok
+  def append_chunk(server, {chunk_number, chunk_document_path}) do
+    GenServer.call(server, {:append_chunk, {chunk_number, chunk_document_path}})
   end
 
   def complete_upload(server) do
@@ -45,29 +50,29 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
   end
 
   def handle_call(
-        {:append_chunk, {chunk_number, chunk_file_path}},
+        {:append_chunk, {chunk_number, chunk_document_path}},
         _from,
-        %{chunk_file_paths: chunk_file_paths} = state
+        %{chunk_document_paths: chunk_document_paths} = state
       ) do
     chunk_key = int_to_atom(chunk_number)
 
     # since most files passed in are temps file they get removed when the calling proccess is killed.
     # so we need to copy the file to this current process
-    file_path = Briefly.create!()
+    document_path = Briefly.create!()
 
-    File.copy!(chunk_file_path, file_path)
+    File.copy!(chunk_document_path, document_path)
 
-    chunk_file_paths = Keyword.put(chunk_file_paths, chunk_key, file_path)
+    chunk_document_paths = Keyword.put(chunk_document_paths, chunk_key, document_path)
 
-    {:reply, :ok, %{state | chunk_file_paths: chunk_file_paths}}
+    {:reply, :ok, %{state | chunk_document_paths: chunk_document_paths}}
   end
 
   def handle_call(:complete_upload, _from, state) do
     case missing_chunks(state) do
       [] ->
         # no missing chunks lets build the file
-        file_path = merge_file_chunks(state)
-        {:reply, {:ok, file_path}, Map.put(state, :merged_chunks?, true)}
+        document_path = merge_file_chunks(state)
+        {:reply, {:ok, document_path}, Map.put(state, :merged_chunks?, true)}
 
       missing_chunks ->
         {:reply, {:error, "missing chunks #{inspect(missing_chunks)}"}, state}
@@ -96,28 +101,28 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
     :timer.sleep(1000)
   end
 
-  defp missing_chunks(%{chunk_file_paths: chunk_file_paths}) do
-    chunk_file_paths
+  defp missing_chunks(%{chunk_document_paths: chunk_document_paths}) do
+    chunk_document_paths
     |> Enum.filter(fn {_key, value} -> is_nil(value) end)
     |> Keyword.keys()
     |> Enum.map(&atom_to_int/1)
   end
 
-  defp merge_file_chunks(%{chunk_file_paths: chunk_file_paths, file_name: file_name}) do
+  defp merge_file_chunks(%{chunk_document_paths: chunk_document_paths, file_name: file_name}) do
     file_dir = Briefly.create!(directory: true)
 
-    merged_file_path = Path.join(file_dir, file_name)
+    merged_document_path = Path.join(file_dir, file_name)
 
     file_streams =
-      chunk_file_paths
+      chunk_document_paths
       |> Enum.sort(&sort_chunk_numbers/2)
       |> Enum.map(&File.stream!(elem(&1, 1), [], 200_000))
 
     Stream.concat(file_streams)
-    |> Stream.into(File.stream!(merged_file_path))
+    |> Stream.into(File.stream!(merged_document_path))
     |> Stream.run()
 
-    merged_file_path
+    merged_document_path
   end
 
   defp sort_chunk_numbers(a, b) do

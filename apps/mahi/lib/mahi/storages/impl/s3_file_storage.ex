@@ -6,18 +6,22 @@ defimpl Mahi.Storages.FileStorage, for: Mahi.Storages.S3FileStorage do
   require Logger
 
   @type file_blob() :: FileStorage.file_blob()
-  @type file_path() :: FileStorage.file_path()
-  @type remote_file_path() :: FileStorage.remote_file_path()
+  @type document_path() :: FileStorage.document_path()
+  @type remote_document_path() :: FileStorage.remote_document_path()
 
   @spec upload_file(S3FileStorage.t(), file_blob()) ::
           :ok | {:error, :failed_to_upload_file}
   def upload_file(s3, file_blob) do
-    %{file_path: file_path, remote_file_path: remote_location, mime: mime, mimetype: mimetype} =
-      file_blob
+    %{
+      document_path: document_path,
+      remote_document_path: remote_location,
+      mime: mime,
+      mimetype: mimetype
+    } = file_blob
 
     object_opts = [content_type: mime <> "/" <> mimetype]
 
-    file_path
+    document_path
     |> S3.Upload.stream_file()
     |> S3.upload(s3.bucket, remote_location, object_opts)
     |> ExAws.request(
@@ -35,14 +39,14 @@ defimpl Mahi.Storages.FileStorage, for: Mahi.Storages.S3FileStorage do
     end
   end
 
-  @spec download_file(S3FileStorage.t(), remote_file_path()) ::
-          {:ok, file_path()} | {:error, term()}
+  @spec download_file(S3FileStorage.t(), remote_document_path()) ::
+          {:ok, document_path()} | {:error, term()}
   def download_file(s3, remote_location) do
     dir = Briefly.create!(directory: true)
-    file_path = Path.join(dir, file_name(remote_location))
+    document_path = Path.join(dir, file_name(remote_location))
 
     s3.bucket
-    |> S3.download_file(remote_location, file_path)
+    |> S3.download_file(remote_location, document_path)
     |> ExAws.request(
       access_key_id: s3.access_key,
       secret_access_key: s3.secret_key,
@@ -50,15 +54,15 @@ defimpl Mahi.Storages.FileStorage, for: Mahi.Storages.S3FileStorage do
     )
     |> case do
       {:ok, _} ->
-        {:ok, file_path}
+        {:ok, document_path}
 
       {:error, reason} ->
         {:error, reason}
     end
   end
 
-  def file_name(file_path) do
-    file_path
+  def file_name(document_path) do
+    document_path
     |> String.split("/")
     |> List.last()
   end

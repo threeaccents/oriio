@@ -1,4 +1,8 @@
 defmodule Mahi.Uploads.ChunkUploadRegistry do
+  @moduledoc """
+  Distributed registry for chunk upload worker.
+  """
+
   use Horde.Registry
 
   def start_link(_) do

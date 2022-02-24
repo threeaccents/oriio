@@ -1,4 +1,8 @@
 defmodule Mahi.Uploads.StateHandoff do
+  @moduledoc """
+  Handles state handoff between processes. It uses DeltaCRDT to manage the distributed state syncronization.
+  """
+
   use GenServer
 
   @crdt Mahi.Uploads.StateHandoff.Crdt
@@ -47,7 +51,7 @@ defmodule Mahi.Uploads.StateHandoff do
   end
 
   @impl true
-  def handle_call(:members, _from, state = %{members: members}) do
+  def handle_call(:members, _from, %{members: members} = state) do
     {:reply, members, state}
   end
 end

@@ -90,12 +90,12 @@ defmodule MahiWeb.PageControllerTest do
   end
 
   defp upload_all_chunks(upload_id, conn) do
-    file_paths =
+    document_paths =
       Path.wildcard("#{@upload_files_dir}/segment**")
       |> Enum.sort()
 
-    for {file_path, chunk_number} <- Enum.with_index(file_paths, 1) do
-      upload = %Plug.Upload{path: file_path, filename: "nalu.png"}
+    for {document_path, chunk_number} <- Enum.with_index(document_paths, 1) do
+      upload = %Plug.Upload{path: document_path, filename: "nalu.png"}
 
       payload = %{chunk: upload, upload_id: upload_id, chunk_number: chunk_number}
 

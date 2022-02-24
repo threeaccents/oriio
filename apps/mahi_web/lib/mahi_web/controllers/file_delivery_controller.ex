@@ -15,15 +15,11 @@ defmodule MahiWeb.FileDeliveryController do
     }
 
     with {:ok, valid_params} <- Tarams.cast(params, validate_params),
-         {:ok, remote_file_path} <- extract_remote_file_path(valid_params),
+         {:ok, remote_document_path} <- extract_remote_document_path(valid_params),
          transformations <-
            extract_transformations(valid_params),
-         {:ok, file_path} <- Documents.transform(remote_file_path, transformations) do
-      send_file(conn, 200, file_path)
-    else
-      error ->
-        IO.inspect(error)
-        error
+         {:ok, document_path} <- Documents.transform(remote_document_path, transformations) do
+      send_file(conn, 200, document_path)
     end
   end
 
@@ -35,11 +31,11 @@ defmodule MahiWeb.FileDeliveryController do
     |> remove_missing_transformations()
   end
 
-  defp extract_remote_file_path(%{timestamp: ts, file_name: file_name}) do
+  defp extract_remote_document_path(%{timestamp: ts, file_name: file_name}) do
     {:ok, ts <> "/" <> file_name}
   end
 
-  defp extract_remote_file_path(_), do: {:error, :invalid_params}
+  defp extract_remote_document_path(_), do: {:error, :invalid_params}
 
   defp remove_missing_transformations(transformations) do
     for {k, v} <- transformations, v != nil, into: %{}, do: {k, v}

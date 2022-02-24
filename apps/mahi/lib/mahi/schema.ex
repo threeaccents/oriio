@@ -1,4 +1,8 @@
 defmodule Mahi.Schema do
+  @moduledoc """
+  Schema macto to help set the primary keys properly.
+  """
+
   defmacro __using__(_) do
     quote do
       use Ecto.Schema

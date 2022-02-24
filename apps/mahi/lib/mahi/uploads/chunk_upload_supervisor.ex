@@ -1,4 +1,9 @@
 defmodule Mahi.Uploads.ChunkUploadSupervisor do
+  @moduledoc """
+  Dyanamic supervisor for managing the chunk upload worker.
+  It is a distributed supervisor starting up processes in any server in the cluster.
+  """
+
   use Horde.DynamicSupervisor
 
   def start_link(_opts) do

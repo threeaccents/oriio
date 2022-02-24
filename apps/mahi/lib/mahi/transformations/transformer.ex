@@ -1,4 +1,8 @@
 defmodule Mahi.Transformations.Transformer do
+  @moduledoc """
+  Uses LibVips to handle file transformations.
+  """
+
   alias Vix.Vips
 
   @type transformations() :: %{
@@ -10,23 +14,21 @@ defmodule Mahi.Transformations.Transformer do
           extension: binary()
         }
 
-  @type file_path() :: binary()
+  @type document_path() :: binary()
 
-  @spec transform_file(file_path, transformations()) ::
-          {:ok, file_path} | {:error, term()}
-  def transform_file(file_path, transformations) do
-    case Vips.Image.new_from_file(file_path) do
+  @spec transform_file(document_path, transformations()) ::
+          {:ok, document_path} | {:error, term()}
+  def transform_file(document_path, transformations) do
+    case Vips.Image.new_from_file(document_path) do
       {:ok, vips_image} ->
         image = transform(vips_image, transformations, &apply_transform/4)
 
         dir = Briefly.create!(directory: true)
-        file_path = Path.join(dir, file_name(file_path) |> IO.inspect(label: "file_name"))
+        document_path = Path.join(dir, file_name(document_path))
 
-        IO.inspect(file_path, label: "path")
+        :ok = Vips.Image.write_to_file(image, document_path)
 
-        :ok = Vips.Image.write_to_file(image, file_path)
-
-        {:ok, file_path}
+        {:ok, document_path}
 
       {:error, reason} ->
         {:error, reason}
@@ -68,8 +70,8 @@ defmodule Mahi.Transformations.Transformer do
 
   defp apply_transform(image, _, _), do: image
 
-  defp file_name(file_path) do
-    file_path
+  defp file_name(document_path) do
+    document_path
     |> String.split("/")
     |> List.last()
   end

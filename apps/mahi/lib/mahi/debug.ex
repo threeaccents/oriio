@@ -18,12 +18,12 @@ defmodule Mahi.Debug do
   end
 
   def upload_chunks(id) do
-    file_paths =
+    document_paths =
       Path.wildcard("#{@upload_files_path}/segment**")
       |> Enum.sort()
 
-    for {file_path, chunk_number} <- Enum.with_index(file_paths, 1) do
-      Documents.append_chunk(id, {chunk_number, file_path})
+    for {document_path, chunk_number} <- Enum.with_index(document_paths, 1) do
+      Documents.append_chunk(id, {chunk_number, document_path})
     end
   end
 
