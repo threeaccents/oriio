@@ -1,4 +1,4 @@
-FROM hexpm/elixir:1.13.3-erlang-24.0.2-ubuntu-bionic-20210325 as build
+FROM elixir:1.13.2  as build
 
 # args
 ARG MIX_ENV="prod"
