@@ -5,7 +5,7 @@ defimpl Mahi.Storages.FileStorage, for: Mahi.Storages.MockFileStorage do
   @spec upload_file(MockFileStorage.t(), term()) :: :ok
   def upload_file(_mock, _bucket_name), do: :ok
 
-  @spec download_file(MockFileStorage.t(), String.t()) ::
+  @spec download_file(MockFileStorage.t(), binary()) ::
           {:ok, FileStorage.file_blob()} | {:error, :no}
   def download_file(mock, remote_location) do
     if mock do

@@ -38,7 +38,8 @@ defimpl Mahi.Storages.FileStorage, for: Mahi.Storages.S3FileStorage do
   @spec download_file(S3FileStorage.t(), remote_location()) ::
           {:ok, file_path()} | {:error, term()}
   def download_file(s3, remote_location) do
-    file_path = Briefly.create!()
+    dir = Briefly.create!(directory: true)
+    file_path = Path.join(dir, file_name(remote_location))
 
     s3.bucket
     |> S3.download_file(remote_location, file_path)
@@ -54,5 +55,11 @@ defimpl Mahi.Storages.FileStorage, for: Mahi.Storages.S3FileStorage do
       {:error, reason} ->
         {:error, reason}
     end
+  end
+
+  def file_name(file_path) do
+    file_path
+    |> String.split("/")
+    |> List.last()
   end
 end

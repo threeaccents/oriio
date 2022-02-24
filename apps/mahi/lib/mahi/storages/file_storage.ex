@@ -1,13 +1,13 @@
 defprotocol Mahi.Storages.FileStorage do
   @type file_blob() :: %{
-          remote_location: String.t(),
-          mime: String.t() | atom(),
-          mimetype: String.t() | atom(),
-          file_path: String.t()
+          remote_location: binary(),
+          mime: binary() | atom(),
+          mimetype: binary() | atom(),
+          file_path: binary()
         }
 
-  @type file_path :: String.t()
-  @type remote_location :: String.t()
+  @type file_path :: binary()
+  @type remote_location :: binary()
 
   @spec upload_file(t(), file_blob()) :: :ok | {:error, term()}
   def upload_file(storage_engine, file_blob)

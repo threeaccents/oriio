@@ -5,12 +5,15 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
   alias Mahi.Uploads.StateHandoff
 
   @type state() :: %{
-          id: String.t(),
-          file_name: String.t(),
+          id: binary(),
+          file_name: binary(),
           total_chunks: non_neg_integer(),
           chunk_file_paths: Keyword.t(),
           merged_chunks?: boolean()
         }
+
+  @type chunk_number() :: non_neg_integer()
+  @type file_path() :: binary()
 
   def start_link(new_chunk_upload) do
     GenServer.start_link(__MODULE__, new_chunk_upload, name: via_tuple(new_chunk_upload.id))
@@ -32,6 +35,7 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
     {:ok, state, {:continue, :load_state}}
   end
 
+  @spec append_chunk(pid(), {chunk_number(), file_path()}) :: :ok
   def append_chunk(server, {chunk_number, chunk_file_path}) do
     GenServer.call(server, {:append_chunk, {chunk_number, chunk_file_path}})
   end

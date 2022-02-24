@@ -1,7 +1,7 @@
 defmodule MahiWeb.UploadController do
   use MahiWeb, :controller
 
-  alias Mahi.Uploads
+  alias Mahi.Documents
 
   plug Plug.Parsers, parsers: [{:multipart, length: 10_000_000}]
 
@@ -16,7 +16,7 @@ defmodule MahiWeb.UploadController do
     }
 
     with {:ok, %{file: file}} <- Tarams.cast(params, validate_params),
-         {:ok, file_url} <- Uploads.upload(file.filename, file.path) do
+         {:ok, file_url} <- Documents.upload(file.filename, file.path) do
       data = to_camel_case(%{data: %{url: file_url}})
 
       conn
@@ -33,7 +33,7 @@ defmodule MahiWeb.UploadController do
 
     with {:ok, %{file_name: file_name, total_chunks: total_chunks}} <-
            Tarams.cast(params, validate_params),
-         upload_id <- Uploads.new_chunk_upload(file_name, total_chunks) do
+         upload_id <- Documents.new_chunk_upload(file_name, total_chunks) do
       data = to_camel_case(%{data: %{upload_id: upload_id}})
 
       conn
@@ -53,7 +53,7 @@ defmodule MahiWeb.UploadController do
 
     with {:ok, %{upload_id: upload_id, chunk_number: chunk_number, chunk: chunk}} <-
            Tarams.cast(params, validate_params),
-         :ok <- Uploads.append_chunk(upload_id, {chunk_number, chunk.path}) do
+         :ok <- Documents.append_chunk(upload_id, {chunk_number, chunk.path}) do
       data = to_camel_case(%{data: %{message: "chunk was appended"}})
 
       conn
@@ -68,7 +68,7 @@ defmodule MahiWeb.UploadController do
     }
 
     with {:ok, %{upload_id: upload_id}} <- Tarams.cast(params, validate_params),
-         {:ok, file_url} <- Uploads.complete_chunk_upload(upload_id) do
+         {:ok, file_url} <- Documents.complete_chunk_upload(upload_id) do
       data = to_camel_case(%{data: %{url: file_url}})
 
       conn
