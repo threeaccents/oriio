@@ -9,7 +9,9 @@ RUN apt-get update -y
 RUN apt-get install -y build-essential \
     gcc \
     erlang-dev \
-    libvips-dev
+    libvips \
+    libvips-dev \ 
+    libvips-tools
 
 # install local Elixir hex and rebar
 RUN mix local.hex --force \
