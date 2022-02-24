@@ -24,6 +24,7 @@ WORKDIR /app
 COPY . /app
 
 ENV MIX_ENV="prod"
+ENV PORT=8080
 
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -60,6 +61,8 @@ WORKDIR /app
 
 # copy release executables
 COPY --from=build  /app/_build/prod/rel/mahi /app
+
+EXPOSE 8080
 
 ENTRYPOINT ["/app/bin/mahi"]
 
