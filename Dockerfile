@@ -10,34 +10,22 @@ RUN mix local.hex --force \
 #####################################################################################
 # sets work dir
 WORKDIR /app
+COPY . /app
 
 ARG MIX_ENV
 ENV MIX_ENV="${MIX_ENV}"
 
 # install mix dependencies
-COPY mix.exs mix.lock ./
+
 RUN mix deps.get --only $MIX_ENV
-
-# copy compile configuration files
-RUN mkdir config
-COPY config/config.exs config/$MIX_ENV.exs config/
-
 # compile dependencies
 RUN mix deps.compile
-
-# copy assets
-COPY priv priv
-COPY assets assets
 
 # Compile assets
 RUN mix assets.deploy
 
 # compile project
-COPY apps apps
 RUN mix compile
-
-# copy runtime configuration file
-COPY config/runtime.exs config/
 
 # assemble release
 RUN mix release
