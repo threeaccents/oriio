@@ -59,7 +59,7 @@ RUN apt-get install -y build-essential \
 ENV PORT=80
 
 # copy release executables
-COPY --from=build  /app/_build/prod/rel/mahi ./  
+COPY --from=build  /app/_build/prod/rel/mahi .
 
 ENTRYPOINT ["bin/mahi"]
 
