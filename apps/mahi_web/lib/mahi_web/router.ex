@@ -3,6 +3,8 @@ defmodule MahiWeb.Router do
 
   import MahiWeb.Pipeline
 
+  @dialyzer {:no_return, call: 2}
+
   scope "/", MahiWeb do
     pipe_through :api
 

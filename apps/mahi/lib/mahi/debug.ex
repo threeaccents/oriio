@@ -5,10 +5,12 @@ defmodule Mahi.Debug do
 
   alias Mahi.Uploads.ChunkUploadRegistry
 
+  alias Mahi.Documents
+
   @upload_files_path "#{__DIR__}/../../test/fixtures/uploads"
 
   def new_chunk_with_chunks do
-    id = Mahi.Uploads.new_chunk_upload("nalu.png", 8)
+    id = Documents.new_chunk_upload("nalu.png", 8)
 
     upload_chunks(id)
 
@@ -21,7 +23,7 @@ defmodule Mahi.Debug do
       |> Enum.sort()
 
     for {file_path, chunk_number} <- Enum.with_index(file_paths, 1) do
-      Mahi.Uploads.append_chunk(id, {chunk_number, file_path})
+      Documents.append_chunk(id, {chunk_number, file_path})
     end
   end
 

@@ -6,13 +6,13 @@ defimpl Mahi.Storages.FileStorage, for: Mahi.Storages.S3FileStorage do
   require Logger
 
   @type file_blob() :: FileStorage.file_blob()
-  @type file_path() :: StorFileStorageageEngine.file_path()
-  @type remote_location() :: FileStorage.remote_location()
+  @type file_path() :: FileStorage.file_path()
+  @type remote_file_path() :: FileStorage.remote_file_path()
 
   @spec upload_file(S3FileStorage.t(), file_blob()) ::
           :ok | {:error, :failed_to_upload_file}
   def upload_file(s3, file_blob) do
-    %{file_path: file_path, remote_location: remote_location, mime: mime, mimetype: mimetype} =
+    %{file_path: file_path, remote_file_path: remote_location, mime: mime, mimetype: mimetype} =
       file_blob
 
     object_opts = [content_type: mime <> "/" <> mimetype]
@@ -35,7 +35,7 @@ defimpl Mahi.Storages.FileStorage, for: Mahi.Storages.S3FileStorage do
     end
   end
 
-  @spec download_file(S3FileStorage.t(), remote_location()) ::
+  @spec download_file(S3FileStorage.t(), remote_file_path()) ::
           {:ok, file_path()} | {:error, term()}
   def download_file(s3, remote_location) do
     dir = Briefly.create!(directory: true)

@@ -41,7 +41,7 @@ defmodule Mahi.Documents do
     FileStorage.download_file(storage_engine(), remote_file_path)
   end
 
-  @spec upload(file_name(), file_path()) :: {:ok, url(), {:error, term()}}
+  @spec(upload(file_name(), file_path()) :: {:ok, url()}, {:error, term()})
   def upload(file_name, file_path) do
     file_dir = Briefly.create!(directory: true)
 
@@ -98,7 +98,7 @@ defmodule Mahi.Documents do
     remote_file_path = generate_remote_file_path(file_path, mimetype)
 
     file_blob = %{
-      remote_location: remote_file_path,
+      remote_file_path: remote_file_path,
       mime: Atom.to_string(mime),
       mimetype: Atom.to_string(mimetype),
       file_path: file_path

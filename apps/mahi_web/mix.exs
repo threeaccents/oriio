@@ -14,7 +14,8 @@ defmodule MahiWeb.MixProject do
       compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      dialyzer: dialyzer()
     ]
   end
 
@@ -65,6 +66,14 @@ defmodule MahiWeb.MixProject do
       setup: ["deps.get"],
       test: ["test"],
       "assets.deploy": ["esbuild default --minify", "phx.digest"]
+    ]
+  end
+
+  defp dialyzer do
+    [
+      ignore_warnings: "../../.dialyzer_ignore.exs",
+      plt_add_apps: [:mix, :ex_unit],
+      plt_file: {:no_warn, "../../ops/plts/dialyzer.plt"}
     ]
   end
 end

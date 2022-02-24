@@ -13,7 +13,8 @@ defmodule Mahi.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      dialyzer: dialyzer()
     ]
   end
 
@@ -48,7 +49,6 @@ defmodule Mahi.MixProject do
       {:timex, "~> 3.0"},
       {:statix, "~>1.4"},
       {:statsd_logger, "~> 1.1", only: [:dev, :test]},
-      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:vix, "~> 0.7.0"},
       {:kino, "~> 0.3.0"},
       {:telemetry_metrics_statsd, "~> 0.3.0"},
@@ -65,6 +65,14 @@ defmodule Mahi.MixProject do
     [
       setup: ["deps.get"],
       test: ["test"]
+    ]
+  end
+
+  defp dialyzer do
+    [
+      ignore_warnings: "../../.dialyzer_ignore.exs",
+      plt_add_apps: [:mix, :ex_unit],
+      plt_file: {:no_warn, "../../ops/plts/dialyzer.plt"}
     ]
   end
 end
