@@ -54,6 +54,9 @@ if config_env() == :prod do
       ]
     ]
 
+  config :briefly,
+    directory: ["/data"]
+
   # ## Using releases
   #
   # If you are doing OTP releases, you need to instruct Phoenix
