@@ -25,7 +25,6 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
 
   @type chunk_number() :: non_neg_integer()
   @type document_path() :: binary()
-  @type io_device() :: File.io_device()
 
   @spec start_link(new_chunk_upload()) :: GenServer.on_start()
   def start_link(new_chunk_upload) do
@@ -49,7 +48,7 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
     {:ok, state, {:continue, :load_state}}
   end
 
-  @spec append_chunk(pid(), {chunk_number(), io_device()}) :: :ok
+  @spec append_chunk(pid(), {chunk_number(), document_path()}) :: :ok
   def append_chunk(server, {chunk_number, chunk_document_path}) do
     GenServer.call(server, {:append_chunk, {chunk_number, chunk_document_path}})
   end

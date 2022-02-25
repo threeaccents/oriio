@@ -22,6 +22,13 @@ defmodule Mahi.Mime do
   def check_magic_bytes(<<82, 73, 70, 70, _, _, _, _, 87, 69, 66, 80, _::binary>>),
     do: {:image, :webp}
 
+  def check_magic_bytes(file) when is_pid(file) do
+    case :file.read(file, 216) do
+      {:ok, file_header_bytes} -> check_magic_bytes(file_header_bytes)
+      {:error, _reason} -> {:application, :binary}
+    end
+  end
+
   def check_magic_bytes(path) when is_binary(path) do
     with {:ok, file} <- :file.open(path, [:binary, :read]),
          {:ok, file_header_bytes} <- :file.read(file, 216) do

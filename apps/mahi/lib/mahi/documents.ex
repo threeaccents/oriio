@@ -82,11 +82,13 @@ defmodule Mahi.Documents do
 
   @spec append_chunk(upload_id(), {chunk_number(), document_path()}) :: :ok
   def append_chunk(upload_id, {chunk_number, chunk_document_path}) do
-    file = File.open!(chunk_document_path)
+    document_path = Briefly.create!()
+
+    File.copy!(chunk_document_path, document_path)
 
     pid = get_chunk_upload_pid!(upload_id)
 
-    ChunkUploadWorker.append_chunk(pid, {chunk_number, file})
+    ChunkUploadWorker.append_chunk(pid, {chunk_number, document_path})
   end
 
   @spec complete_chunk_upload(upload_id()) :: {:ok, url()} | {:error, term()}
