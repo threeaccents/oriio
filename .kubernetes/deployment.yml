@@ -1,3 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mahi
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: mahi
+---    
 apiVersion: apps/v1
 kind: Deployment
 metadata:
