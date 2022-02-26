@@ -17,7 +17,8 @@ spec:
       containers:
         - name: mahi
           image: registry.digitalocean.com/mahi-test/ce91bf331589
-          imagePullSecrets:
-          - name: do-registry
           ports:
           - containerPort: 80
+      imagePullSecrets:
+      - name: do-registry
+      
