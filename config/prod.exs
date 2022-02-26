@@ -10,7 +10,7 @@ import Config
 # which you should run after static files are built and
 # before starting your production server.
 config :mahi_web, MahiWeb.Endpoint,
-  url: [host: "mahi.fly.dev", port: 8080],
+  url: [host: "mahi.oriio.io", port: 8080],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # ## SSL Support
