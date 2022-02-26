@@ -30,7 +30,7 @@ spec:
         - name: mahi
           image: registry.digitalocean.com/mahi-test/ce91bf331589
           ports:
-          - containerPort: 80
+          - containerPort: 8080
           env:
             - name: SECRET_KEY_BASE
               value: FGwH/tyjHh4SSv/hcqRnvcPF3ffqxMPaiwB52hdW/A6TDxY82nKa1MWrtuC7wpmq
