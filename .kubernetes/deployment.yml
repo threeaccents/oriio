@@ -19,6 +19,15 @@ spec:
           image: registry.digitalocean.com/mahi-test/ce91bf331589
           ports:
           - containerPort: 80
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
       imagePullSecrets:
       - name: mahi-test
       
