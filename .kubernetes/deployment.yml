@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: mahi
-          image: <IMAGE>
+          image: registry.digitalocean.com/mahi-repo/mahi:613ba5d
           ports:
           - containerPort: 8080
           env:
