@@ -30,7 +30,7 @@ if config_env() == :prod do
     bucket: System.get_env("MAHI_FILE_STORAGE_BUCKET")
 
   config :mahi_web, MahiWeb.Endpoint,
-    url: [host: "#{app_name}.fly.dev", port: 8080],
+    url: [host: "143.244.215.108", port: 8080],
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
