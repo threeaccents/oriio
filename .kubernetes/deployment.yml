@@ -1,16 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mahi
-  spec:
-  replicas: 3
+  name: mahi-deployment
+  labels:
+    app: mahi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mahi
   template:
     metadata:
       labels:
         app: mahi
-        spec:
-        containers:
+    spec:
+      containers:
         - name: mahi
         image: registry.digitalocean.com/mahi-test/ce91bf331589
         imagePullSecrets:
         - name: do-registry
+        ports:
+        - containerPort: 80
