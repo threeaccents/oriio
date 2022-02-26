@@ -57,20 +57,21 @@ spec:
       imagePullSecrets:
       - name: mahi-repo
 ---
-apiVersion: v1
-kind: Service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: nginx
+  name: mahi
   annotations:
-    kubernetes.digitalocean.com/load-balancer-id: "921a50d6-7e57-42cb-adb9-3bb7dafa00ba"
-    service.beta.kubernetes.io/do-loadbalancer-size-unit: "1"
-    service.beta.kubernetes.io/do-loadbalancer-disable-lets-encrypt-dns-records: "false"
+    kubernetes.io/ingress.class: nginx
 spec:
-  type: LoadBalancer
-  selector:
-    app: nginx-example
-  ports:
-    - name: http
-      protocol: TCP
-      port: 80
-      targetPort: 8080
+  rules:
+  - host: "143.244.215.108"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: mahi
+            port:
+              number: 8080
