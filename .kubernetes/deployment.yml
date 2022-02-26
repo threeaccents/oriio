@@ -20,6 +20,18 @@ spec:
           ports:
           - containerPort: 80
           env:
+            - name: SECRET_KEY_BASE
+              value: FGwH/tyjHh4SSv/hcqRnvcPF3ffqxMPaiwB52hdW/A6TDxY82nKa1MWrtuC7wpmq
+            - name: MAHI_FILE_STORAGE_ENGINE
+              value: s3-compatible
+            - name: MAHI_FILE_STORAGE_ACCESS_KEY
+              value: AKIA53ZJZHZMFRYWSOTO
+            - name: MAHI_FILE_STORAGE_SECRET_KEY
+              value: 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
+            - name: MAHI_FILE_STORAGE_REGION
+              value: us-east-2 
+            - name: MAHI_FILE_STORAGE_BUCKET
+              value: mahi-my-4-app-2672      
             - name: NAMESPACE
               valueFrom:
                 fieldRef:
