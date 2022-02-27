@@ -56,6 +56,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: nfs-data
       imagePullSecrets:
       - name: mahi-repo
 ---
@@ -99,4 +103,16 @@ spec:
     solvers:
     - http01:
         ingress:
-          class: nginx              
+          class: nginx   
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-data
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: nfs           
