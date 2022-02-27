@@ -21,10 +21,12 @@ spec:
   selector:
     matchLabels:
       app: mahi
+      tier: web
   template:
     metadata:
       labels:
         app: mahi
+        tier: web
     spec:
       containers:
         - name: mahi
