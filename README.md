@@ -17,7 +17,7 @@ spec:
           service:
             name: mahi
             port:
-              number: 8080
+              number: 80
 
 Mahi is an all-in-one HTTP service for file uploading, processing, serving, and storage. Mahi supports chunked, resumable, and concurrent uploads. Mahi uses Libvips behind the scenes making it extremely fast and memory efficient.
 
