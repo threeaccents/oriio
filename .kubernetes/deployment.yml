@@ -54,12 +54,12 @@ spec:
   selector:
     matchLabels:
       app: mahi
-      tier: backend
+      tier: web
   template:
     metadata:
       labels:
         app: mahi
-        tier: backend
+        tier: web
     spec:
       serviceAccountName: serviceaccount-name
       containers:
