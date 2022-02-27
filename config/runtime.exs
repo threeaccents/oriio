@@ -40,14 +40,14 @@ if config_env() == :prod do
     secret_key_base: secret_key_base
 
   config :libcluster,
-    debug: true,
     topologies: [
-      fly6pn: [
-        strategy: Cluster.Strategy.DNSPoll,
+      k8s_example: [
+        strategy: Elixir.Cluster.Strategy.Kubernetes.DNSSRV,
         config: [
-          polling_interval: 5_000,
-          query: "#{app_name}.internal",
-          node_basename: app_name
+          service: "mahi",
+          application_name: "mahi",
+          namespace: "default",
+          polling_interval: 10_000
         ]
       ]
     ]
