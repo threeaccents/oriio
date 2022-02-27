@@ -56,22 +56,3 @@ spec:
                   fieldPath: status.podIP
       imagePullSecrets:
       - name: mahi-repo
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: mahi
-  annotations:
-    kubernetes.io/ingress.class: nginx
-spec:
-  rules:
-  - host: "mahi.oriio.io"
-    http:
-      paths:
-      - pathType: Prefix
-        path: "/"
-        backend:
-          service:
-            name: mahi
-            port:
-              number: 8080
