@@ -41,14 +41,13 @@ if config_env() == :prod do
 
   config :libcluster,
     topologies: [
-      k8s_example: [
-        strategy: Elixir.Cluster.Strategy.Kubernetes.DNSSRV,
-        config: [
-          service: "mahi",
-          application_name: "mahi",
-          namespace: "default",
-          polling_interval: 10_000
-        ]
+      strategy: Cluster.Strategy.Kubernetes,
+      config: [
+        mode: :dns,
+        kubernetes_node_basename: "mahi",
+        kubernetes_selector: "app=mahi,tier=web",
+        kubernetes_namespace: "default",
+        polling_interval: 10_000
       ]
     ]
 
