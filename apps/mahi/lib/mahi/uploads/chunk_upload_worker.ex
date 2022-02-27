@@ -109,9 +109,10 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
   def terminate(:normal, _state), do: :ok
 
   def terminate(_reason, %{id: id} = state) do
+    IO.inspect("got closing signal")
     StateHandoff.handoff(id, state)
     # timeout to make sure the CRDT is propegated to other nodes
-    :timer.sleep(1000)
+    :timer.sleep(8000)
   end
 
   defp missing_chunks(%{chunk_document_paths: chunk_document_paths}) do
