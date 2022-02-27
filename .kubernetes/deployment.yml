@@ -47,11 +47,7 @@ spec:
             - name: FLY_APP_NAME
               value: mahi    
             - name: MAHI_FILE_STORAGE_BUCKET
-              value: mahi-my-4-app-2672      
-            - name: NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
+              value: mahi-my-4-app-2672
             - name: POD_IP
               valueFrom:
                 fieldRef:
@@ -105,16 +101,19 @@ spec:
         ingress:
           class: nginx   
 ---
-apiVersion: v1
 kind: Service
+apiVersion: v1
+
 metadata:
-  name: excluster-service-headless
+  name: mahi-nodes
+  namespace: default
 spec:
-  ports:
-    - port: 8000
+  clusterIP: None
   selector:
     app: mahi
-  clusterIP: None
+  ports:
+    - name: epmd
+      port: 4369
 ---  
 apiVersion: v1
 kind: PersistentVolumeClaim

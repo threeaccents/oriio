@@ -18,7 +18,7 @@ config :libcluster,
     k8s_example: [
       strategy: Elixir.Cluster.Strategy.Kubernetes.DNS,
       config: [
-        service: "excluster-service-headless",
+        service: "mahi-nodes",
         application_name: "mahi",
         polling_interval: 3_000
       ]
