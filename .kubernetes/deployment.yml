@@ -31,6 +31,9 @@ spec:
       containers:
         - name: mahi
           image: <IMAGE>
+          volumeMounts:
+          - mountPath: /data
+            name: data
           ports:
           - containerPort: 8080
           env:
