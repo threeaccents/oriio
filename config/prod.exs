@@ -16,11 +16,13 @@ config :mahi_web, MahiWeb.Endpoint,
 config :libcluster,
   topologies: [
     k8s_example: [
-      strategy: Elixir.Cluster.Strategy.Kubernetes.DNS,
+      strategy: Elixir.Cluster.Strategy.Kubernetes,
       config: [
-        service: "mahi-nodes",
-        application_name: "mahi",
-        polling_interval: 3_000
+        mode: :dns,
+        kubernetes_node_basename: "mahi",
+        kubernetes_selector: "app=mahi,tier=web",
+        kubernetes_namespace: "default",
+        polling_interval: 10_000
       ]
     ]
   ]
