@@ -108,8 +108,7 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
   @impl GenServer
   def terminate(:normal, _state), do: :ok
 
-  def terminate(reason, %{id: id} = state) do
-    IO.inspect("got closing signal #{inspect(reason)}")
+  def terminate(_reason, %{id: id} = state) do
     StateHandoff.handoff(id, state)
     # timeout to make sure the CRDT is propegated to other nodes
     :timer.sleep(8000)
