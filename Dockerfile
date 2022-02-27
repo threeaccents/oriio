@@ -57,7 +57,13 @@ RUN apt-get update -y
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
     
 RUN apt-get install -y build-essential \
+    locales \
     libvips-dev
+
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8    
 
 WORKDIR /app
 

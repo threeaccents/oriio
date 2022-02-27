@@ -1,5 +1,24 @@
 # Mahi 
 
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mahi
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - host: "mahi.oriio.io"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: mahi
+            port:
+              number: 8080
+
 Mahi is an all-in-one HTTP service for file uploading, processing, serving, and storage. Mahi supports chunked, resumable, and concurrent uploads. Mahi uses Libvips behind the scenes making it extremely fast and memory efficient.
 
 Mahi currently supports any s3 compatible storage, which includes (AWS s3, DO Spaces, Wasabi, Backblaze B2). The specific storage engine can be set in th config
