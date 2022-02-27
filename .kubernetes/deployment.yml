@@ -34,6 +34,7 @@ metadata:
   name: mahi
   labels:
     app: mahi
+    tier: backend
 spec:
   type: ClusterIP
   ports:
