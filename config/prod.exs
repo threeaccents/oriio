@@ -20,7 +20,7 @@ config :libcluster,
       config: [
         mode: :dns,
         kubernetes_node_basename: "mahi",
-        kubernetes_selector: "app=mahi,tier=web",
+        kubernetes_selector: "app=mahi,tier=backend",
         kubernetes_namespace: "default",
         polling_interval: 10_000
       ]
