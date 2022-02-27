@@ -13,6 +13,18 @@ config :mahi_web, MahiWeb.Endpoint,
   url: [host: "mahi.oriio.io", port: 8080],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
+config :libcluster,
+  topologies: [
+    k8s_example: [
+      strategy: Elixir.Cluster.Strategy.Kubernetes.DNS,
+      config: [
+        service: "excluster-service-headless",
+        application_name: "mahi",
+        polling_interval: 3_000
+      ]
+    ]
+  ]
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

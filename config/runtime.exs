@@ -39,18 +39,6 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
-  config :libcluster,
-    topologies: [
-      strategy: Cluster.Strategy.Kubernetes,
-      config: [
-        mode: :dns,
-        kubernetes_node_basename: "mahi",
-        kubernetes_selector: "app=mahi,tier=web",
-        kubernetes_namespace: "default",
-        polling_interval: 10_000
-      ]
-    ]
-
   config :briefly,
     directory: ["/data"]
 
