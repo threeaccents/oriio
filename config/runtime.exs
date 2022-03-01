@@ -19,8 +19,6 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  app_name = System.get_env("FLY_APP_NAME") || "mahi"
-
   # File storage engine
   config :mahi, :file_storage,
     storage_engine: System.get_env("MAHI_FILE_STORAGE_ENGINE"),
@@ -48,6 +46,8 @@ if config_env() == :prod do
   # to start each relevant endpoint:
   #
   config :mahi_web, MahiWeb.Endpoint, server: true
+
+  config :mahi, :auth_secret_key, System.get_env("MAHI_AUTH_SECRET")
   #
   # Then you can assemble a release by calling `mix release`.
   # See `mix help release` for more information.

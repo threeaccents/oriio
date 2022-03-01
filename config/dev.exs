@@ -71,3 +71,5 @@ config :mahi, :file_storage,
   secret_key: "c6ahcehnlOpwG8T/XB7nwRWAQEX8Wvwc+xqtVu3f",
   region: "us-east-2",
   bucket: "mahi-my-4-app-2672"
+
+config :mahi, :auth_secret_key, "KN58vmkzeiUFMIo8nmv4OHagbIDXAzciZmyZ2lp3gXZHs4wlcJ1IElyQkuqGk9L9"

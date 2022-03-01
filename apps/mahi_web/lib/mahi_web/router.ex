@@ -23,6 +23,7 @@ defmodule MahiWeb.Router do
     pipe_through :file_delivery
 
     get "/:timestamp/:file_name", FileDeliveryController, :serve_file
+    post "/signed_urls", SignedUrlController, :create
   end
 
   # Enables LiveDashboard only for development

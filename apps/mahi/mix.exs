@@ -54,7 +54,8 @@ defmodule Mahi.MixProject do
       {:telemetry_metrics_statsd, "~> 0.3.0"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.0"},
-      {:sweet_xml, "~> 0.7.1"}
+      {:sweet_xml, "~> 0.7.1"},
+      {:plug_crypto, "~> 1.0"}
     ]
   end
 

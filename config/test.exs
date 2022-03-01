@@ -23,3 +23,5 @@ config :mahi, Mahi.Mailer, adapter: Swoosh.Adapters.Test
 config :phoenix, :plug_init_mode, :runtime
 
 config :mahi, :file_storage, storage_engine: "mock-engine"
+
+config :mahi, :auth_secret_key, "KN58vmkzeiUFMIo8nmv4OHagbIDXAzciZmyZ2lp3gXZHs4wlcJ1IElyQkuqGk9L9"
