@@ -22,7 +22,6 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
           id: binary(),
           file_name: binary(),
           total_chunks: non_neg_integer(),
-          updated_at: DateTime.t()
         }
 
   @type chunk_number() :: non_neg_integer()
