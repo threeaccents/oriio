@@ -14,7 +14,8 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
           file_name: binary(),
           total_chunks: non_neg_integer(),
           chunk_document_paths: Keyword.t(),
-          merged_chunks?: boolean()
+          merged_chunks?: boolean(),
+          updated_at: DateTime.t()
         }
 
   @type new_chunk_upload() :: %{
@@ -76,7 +77,8 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
 
     chunk_document_paths = Keyword.put(chunk_document_paths, chunk_key, document_path)
 
-    {:reply, :ok, %{state | chunk_document_paths: chunk_document_paths, updated_at: DateTime.utc_now()}}
+    {:reply, :ok,
+     %{state | chunk_document_paths: chunk_document_paths, updated_at: DateTime.utc_now()}}
   end
 
   def handle_call(:complete_upload, _from, state) do
