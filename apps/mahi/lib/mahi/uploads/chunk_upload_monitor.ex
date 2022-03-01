@@ -37,7 +37,7 @@ defmodule Mahi.Uploads.ChunkUploadMonitor do
 
   defp check_for_stale_uploads do
     uploads = list_chunk_upload_processes()
-    for {_, pid, state} <- uploads, is_upload_stale?(state), do:  Process.exit(pid, :normal)
+    for {_, pid, state} <- uploads, is_upload_stale?(state), do: Process.exit(pid, :normal)
   end
 
   defp list_chunk_upload_processes do
