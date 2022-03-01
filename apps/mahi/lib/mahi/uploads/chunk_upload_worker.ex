@@ -20,7 +20,8 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
   @type new_chunk_upload() :: %{
           id: binary(),
           file_name: binary(),
-          total_chunks: non_neg_integer()
+          total_chunks: non_neg_integer(),
+          updated_at: Date.t()
         }
 
   @type chunk_number() :: non_neg_integer()

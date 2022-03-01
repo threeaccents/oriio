@@ -69,6 +69,7 @@ defmodule Mahi.Documents do
       |> Map.put(:file_name, file_name)
       |> Map.put(:total_chunks, total_chunks)
       |> Map.put(:id, id)
+      |> Map.put(:updated_at, DateTime.utc_now())
 
     case ChunkUploadSupervisor.start_child({ChunkUploadWorker, new_chunk_upload}) do
       {:ok, _pid} ->
