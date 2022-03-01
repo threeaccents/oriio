@@ -37,7 +37,7 @@ defmodule Mahi.Uploads.ChunkUploadMonitor do
 
   defp check_for_stale_uploads do
     uploads = list_chunk_upload_processes()
-    Enum.each(uploads, &maybe_terminate_upload_process/1)
+    for {_, pid, _} = upload <- uploads, is_upload_stale?(upload), do:  Process.exit(pid, :normal)
   end
 
   defp list_chunk_upload_processes do
@@ -46,12 +46,8 @@ defmodule Mahi.Uploads.ChunkUploadMonitor do
     ])
   end
 
-  defp is_upload_stale?(updated_at) do
+  defp is_upload_stale?({_, _, %{update_at: updated_at}}) do
     valid_time = DateTime.utc_now() |> DateTime.add(-@valid_hours * 60 * 60, :second)
     DateTime.diff(valid_time, updated_at) < 0
-  end
-
-  defp maybe_terminate_upload_process({_, pid, %{update_at: updated_at}}) do
-    if is_upload_stale?(updated_at), do: Process.exit(pid, :normal)
   end
 end
