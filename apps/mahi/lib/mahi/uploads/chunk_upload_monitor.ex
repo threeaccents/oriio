@@ -49,6 +49,6 @@ defmodule Mahi.Uploads.ChunkUploadMonitor do
   defp is_upload_stale?(pid) do
     updated_at = ChunkUploadWorker.updated_at(pid)
     expiry_time = DateTime.add(updated_at, @valid_hours * 60, :second)
-    DateTime.diff(expiry_time, DateTime.utc_now()) < 0
+    DateTime.diff(expiry_time, DateTime.utc_now()) <= 0
   end
 end
