@@ -1,7 +1,5 @@
-defmodule Guardian.Plug.VerifyHeader do
-  import Plug.Conn
-
-  @behaviour Plug
+defmodule MahiWeb.ParseHeaderTokenPlug do
+  use MahiWeb, :plug
 
   @impl Plug
   def init(_) do

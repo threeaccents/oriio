@@ -1,7 +1,5 @@
 defmodule MahiWeb.ParseTokenPlug do
-  import Plug.Conn
-
-  @behaviour Plug
+  use MahiWeb, :plug
 
   @impl Plug
   def init(_params) do

@@ -14,7 +14,6 @@ defmodule Mahi.Documents do
   alias Mahi.Mime
   alias Mahi.Transformations.Transformer
   alias Ecto.UUID
-  alias Plug.Crypto
 
   require Logger
 

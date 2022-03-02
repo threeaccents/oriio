@@ -17,6 +17,19 @@ defmodule MahiWeb do
   and import those modules here.
   """
 
+  @spec plug() :: Macro.t()
+  def plug do
+    quote do
+      import Plug.Conn
+      import Phoenix.Controller, only: [put_view: 2, render: 3]
+      import MahiWeb.Gettext
+
+      import ProperCase, only: [to_camel_case: 1]
+
+      @behaviour Plug
+    end
+  end
+
   @spec controller() :: Macro.t()
   def controller do
     quote do
