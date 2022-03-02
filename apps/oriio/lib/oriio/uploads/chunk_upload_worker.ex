@@ -60,6 +60,7 @@ defmodule Oriio.Uploads.ChunkUploadWorker do
     GenServer.call(server, :complete_upload)
   end
 
+  @spec updated_at(atom | pid | {atom, any} | {:via, atom, any}) :: any
   def updated_at(server) do
     GenServer.call(server, :get_updated_at)
   end
