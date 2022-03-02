@@ -1,4 +1,4 @@
-defmodule MahiWeb.ConnCase do
+defmodule OriioWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule MahiWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use MahiWeb.ConnCase, async: true`, although
+  by setting `use OriioWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -22,12 +22,12 @@ defmodule MahiWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import MahiWeb.ConnCase
+      import OriioWeb.ConnCase
 
-      alias MahiWeb.Router.Helpers, as: Routes
+      alias OriioWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint MahiWeb.Endpoint
+      @endpoint OriioWeb.Endpoint
     end
   end
 

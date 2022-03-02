@@ -1,4 +1,4 @@
-defmodule Mahi.Storages.MockFileStorage do
+defmodule Oriio.Storages.MockFileStorage do
   @moduledoc """
   Mock config for FileStorage.
   It used primarily for testing.

@@ -1,4 +1,4 @@
-defmodule Mahi.Umbrella.MixProject do
+defmodule Oriio.Umbrella.MixProject do
   use Mix.Project
 
   def project do
@@ -10,10 +10,10 @@ defmodule Mahi.Umbrella.MixProject do
       aliases: aliases(),
       dialyzer: dialyzer(),
       releases: [
-        mahi: [
+        oriio: [
           cookie: "pV7R3JYRfUR_xz8SXmLKm1vnVzoYK5cJl86lcVrHV1Nw4oPsp1tQqQ==",
           applications: [
-            mahi_web: :permanent
+            oriio_web: :permanent
           ]
         ]
       ]

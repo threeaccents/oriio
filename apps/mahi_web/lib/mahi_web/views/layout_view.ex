@@ -1,5 +1,5 @@
-defmodule MahiWeb.LayoutView do
-  use MahiWeb, :view
+defmodule OriioWeb.LayoutView do
+  use OriioWeb, :view
 
   # Phoenix LiveDashboard is available only in development by default,
   # so we instruct Elixir to not warn if the dashboard route is missing.

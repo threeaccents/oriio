@@ -1,5 +1,5 @@
-defmodule MahiWeb.LayoutViewTest do
-  use MahiWeb.ConnCase, async: true
+defmodule OriioWeb.LayoutViewTest do
+  use OriioWeb.ConnCase, async: true
 
   # When testing helpers, you may want to import Phoenix.HTML and
   # use functions such as safe_to_string() to convert the helper

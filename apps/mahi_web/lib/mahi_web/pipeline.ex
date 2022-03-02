@@ -1,7 +1,7 @@
-defmodule MahiWeb.Pipeline do
+defmodule OriioWeb.Pipeline do
   @moduledoc false
 
-  use MahiWeb, :router
+  use OriioWeb, :router
 
   import Plug.BasicAuth
 
@@ -9,20 +9,24 @@ defmodule MahiWeb.Pipeline do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, {MahiWeb.LayoutView, :root}
+    plug :put_root_layout, {OriioWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
 
   pipeline :api do
+    plug OriioWeb.AuthPlug
     plug :accepts, ["json"]
-    plug MahiWeb.AuthPlug
     plug ProperCase.Plug.SnakeCaseParams
   end
 
   pipeline :multipart do
+    plug OriioWeb.AuthPlug
     plug :accepts, ["multipart"]
-    plug MahiWeb.AuthPlug
+  end
+
+  pipeline :signed_upload do
+    plug :accepts, ["multipart"]
   end
 
   pipeline :file_delivery do
@@ -30,6 +34,6 @@ defmodule MahiWeb.Pipeline do
   end
 
   pipeline :admins_only do
-    plug :basic_auth, username: "admin", password: "mahiAdmin13!"
+    plug :basic_auth, username: "admin", password: "oriioAdmin13!"
   end
 end

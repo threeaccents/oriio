@@ -1,4 +1,4 @@
-defmodule Mahi.DataCase do
+defmodule Oriio.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -10,7 +10,7 @@ defmodule Mahi.DataCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use Mahi.DataCase, async: true`, although
+  by setting `use Oriio.DataCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -20,7 +20,7 @@ defmodule Mahi.DataCase do
     quote do
       import Ecto
       import Ecto.Changeset
-      import Mahi.DataCase
+      import Oriio.DataCase
     end
   end
 

@@ -25,7 +25,7 @@ COPY . /app
 
 ENV MIX_ENV="prod"
 ENV PORT=8080
-ENV FLY_APP_NAME="mahi"
+ENV FLY_APP_NAME="oriio"
 ENV SECRET_KEY_BASE="Xah1LYtvnabQ0vLDT7sbLguiT7R4yX7W7J6fnhoGJUMgUdYGKgpirwmTCsnbkXWo"
 
 RUN locale-gen en_US.UTF-8
@@ -68,10 +68,10 @@ ENV LC_ALL en_US.UTF-8
 WORKDIR /app
 
 # copy release executables
-COPY --from=build  /app/_build/prod/rel/mahi /app
+COPY --from=build  /app/_build/prod/rel/oriio /app
 
 EXPOSE 8080
 
-ENTRYPOINT ["/app/bin/mahi"]
+ENTRYPOINT ["/app/bin/oriio"]
 
 CMD ["start"]

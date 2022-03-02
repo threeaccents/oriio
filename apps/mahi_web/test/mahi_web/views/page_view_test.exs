@@ -1,3 +1,3 @@
-defmodule MahiWeb.PageViewTest do
-  use MahiWeb.ConnCase, async: true
+defmodule OriioWeb.PageViewTest do
+  use OriioWeb.ConnCase, async: true
 end

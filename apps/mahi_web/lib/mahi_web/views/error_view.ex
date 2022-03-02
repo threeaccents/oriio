@@ -1,5 +1,5 @@
-defmodule MahiWeb.ErrorView do
-  use MahiWeb, :view
+defmodule OriioWeb.ErrorView do
+  use OriioWeb, :view
 
   alias Phoenix.Controller
 

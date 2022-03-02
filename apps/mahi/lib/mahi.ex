@@ -1,6 +1,6 @@
-defmodule Mahi do
+defmodule Oriio do
   @moduledoc """
-  Mahi keeps the contexts that define your domain
+  Oriio keeps the contexts that define your domain
   and business logic.
 
   Contexts are also responsible for managing your data, regardless

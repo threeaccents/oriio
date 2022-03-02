@@ -1,4 +1,4 @@
-defmodule Mahi.Mime do
+defmodule Oriio.Mime do
   @moduledoc false
 
   @type mime() :: atom()

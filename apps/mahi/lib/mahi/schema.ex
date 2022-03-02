@@ -1,4 +1,4 @@
-defmodule Mahi.Schema do
+defmodule Oriio.Schema do
   @moduledoc """
   Schema macto to help set the primary keys properly.
   """

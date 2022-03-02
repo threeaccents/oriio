@@ -1,10 +1,10 @@
-defmodule Mahi.Storages.S3FileStorage do
+defmodule Oriio.Storages.S3FileStorage do
   @moduledoc """
   S3 config struct. This struct is passed into the FileStorage protocol and implemented in the
   S3FileStorage IMPL
   """
 
-  use Mahi.Schema
+  use Oriio.Schema
 
   @type t() :: %__MODULE__{}
 

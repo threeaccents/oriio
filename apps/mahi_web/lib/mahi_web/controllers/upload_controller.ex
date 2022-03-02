@@ -1,11 +1,11 @@
-defmodule MahiWeb.UploadController do
-  use MahiWeb, :controller
+defmodule OriioWeb.UploadController do
+  use OriioWeb, :controller
 
-  alias Mahi.Documents
+  alias Oriio.Documents
 
   plug Plug.Parsers, parsers: [{:multipart, length: 10_000_000}]
 
-  action_fallback MahiWeb.FallbackController
+  action_fallback OriioWeb.FallbackController
 
   @type conn() :: Plug.Conn.t()
 

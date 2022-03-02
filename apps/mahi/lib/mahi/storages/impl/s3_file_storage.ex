@@ -1,6 +1,6 @@
-defimpl Mahi.Storages.FileStorage, for: Mahi.Storages.S3FileStorage do
-  alias Mahi.Storages.S3FileStorage
-  alias Mahi.Storages.FileStorage
+defimpl Oriio.Storages.FileStorage, for: Oriio.Storages.S3FileStorage do
+  alias Oriio.Storages.S3FileStorage
+  alias Oriio.Storages.FileStorage
   alias ExAws.S3
 
   require Logger

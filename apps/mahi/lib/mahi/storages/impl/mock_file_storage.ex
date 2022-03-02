@@ -1,6 +1,6 @@
-defimpl Mahi.Storages.FileStorage, for: Mahi.Storages.MockFileStorage do
-  alias Mahi.Storages.FileStorage
-  alias Mahi.Storages.MockFileStorage
+defimpl Oriio.Storages.FileStorage, for: Oriio.Storages.MockFileStorage do
+  alias Oriio.Storages.FileStorage
+  alias Oriio.Storages.MockFileStorage
 
   @type file_blob() :: FileStorage.file_blob()
   @type document_path() :: FileStorage.document_path()

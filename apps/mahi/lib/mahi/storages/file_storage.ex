@@ -1,4 +1,4 @@
-defprotocol Mahi.Storages.FileStorage do
+defprotocol Oriio.Storages.FileStorage do
   @type file_blob() :: %{
           remote_document_path: binary(),
           mime: binary() | atom(),

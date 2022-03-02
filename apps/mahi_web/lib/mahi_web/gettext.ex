@@ -1,11 +1,11 @@
-defmodule MahiWeb.Gettext do
+defmodule OriioWeb.Gettext do
   @moduledoc """
   A module providing Internationalization with a gettext-based API.
 
   By using [Gettext](https://hexdocs.pm/gettext),
   your module gains a set of macros for translations, for example:
 
-      import MahiWeb.Gettext
+      import OriioWeb.Gettext
 
       # Simple translation
       gettext("Here is the string to translate")
@@ -20,5 +20,5 @@ defmodule MahiWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :mahi_web
+  use Gettext, otp_app: :oriio_web
 end

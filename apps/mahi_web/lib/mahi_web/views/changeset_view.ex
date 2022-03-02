@@ -1,12 +1,12 @@
-defmodule MahiWeb.ChangesetView do
-  use MahiWeb, :view
+defmodule OriioWeb.ChangesetView do
+  use OriioWeb, :view
 
   alias Ecto.Changeset
 
   @doc """
   Traverses and translates changeset errors.
   See `Ecto.Changeset.traverse_errors/2` and
-  `MahiWeb.ErrorHelpers.translate_error/1` for more details.
+  `OriioWeb.ErrorHelpers.translate_error/1` for more details.
   """
   @spec translate_errors(Changeset.t()) :: map()
   def translate_errors(changeset) do

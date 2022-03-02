@@ -1,7 +1,7 @@
-defmodule Mahi.UploadsTest do
-  use Mahi.DataCase
+defmodule Oriio.UploadsTest do
+  use Oriio.DataCase
 
-  alias Mahi.Uploads
+  alias Oriio.Uploads
 
   @upload_files_path "#{__DIR__}/../fixtures/uploads"
 

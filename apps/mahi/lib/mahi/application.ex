@@ -1,4 +1,4 @@
-defmodule Mahi.Application do
+defmodule Oriio.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -11,23 +11,23 @@ defmodule Mahi.Application do
 
     children = [
       # Start the PubSub system
-      {Phoenix.PubSub, name: Mahi.PubSub},
+      {Phoenix.PubSub, name: Oriio.PubSub},
       # Clustering
-      {Cluster.Supervisor, [topologies, [name: Mahi.ClusterSupervisor]]},
+      {Cluster.Supervisor, [topologies, [name: Oriio.ClusterSupervisor]]},
       # Chunk Uploads
-      Mahi.Uploads.StateHandoffSupervisor,
-      Mahi.Uploads.ChunkUploadRegistry,
-      Mahi.Uploads.ChunkUploadSupervisor
-      # Start a worker by calling: Mahi.Worker.start_link(arg)
-      # {Mahi.Worker, arg}
+      Oriio.Uploads.StateHandoffSupervisor,
+      Oriio.Uploads.ChunkUploadRegistry,
+      Oriio.Uploads.ChunkUploadSupervisor
+      # Start a worker by calling: Oriio.Worker.start_link(arg)
+      # {Oriio.Worker, arg}
     ]
 
-    Supervisor.start_link(children, strategy: :one_for_one, name: Mahi.Supervisor)
+    Supervisor.start_link(children, strategy: :one_for_one, name: Oriio.Supervisor)
   end
 
   defp topologies do
     [
-      mahi: [
+      oriio: [
         strategy: Cluster.Strategy.Gossip
       ]
     ]

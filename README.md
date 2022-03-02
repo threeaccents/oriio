@@ -1,35 +1,35 @@
-# Mahi 
+# Oriio 
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: mahi
+  name: oriio
   annotations:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-  - host: "mahi.oriio.io"
+  - host: "oriio.oriio.io"
     http:
       paths:
       - pathType: Prefix
         path: "/"
         backend:
           service:
-            name: mahi
+            name: oriio
             port:
               number: 80
 
-Mahi is an all-in-one HTTP service for file uploading, processing, serving, and storage. Mahi supports chunked, resumable, and concurrent uploads. Mahi uses Libvips behind the scenes making it extremely fast and memory efficient.
+Oriio is an all-in-one HTTP service for file uploading, processing, serving, and storage. Oriio supports chunked, resumable, and concurrent uploads. Oriio uses Libvips behind the scenes making it extremely fast and memory efficient.
 
-Mahi currently supports any s3 compatible storage, which includes (AWS s3, DO Spaces, Wasabi, Backblaze B2). The specific storage engine can be set in th config
+Oriio currently supports any s3 compatible storage, which includes (AWS s3, DO Spaces, Wasabi, Backblaze B2). The specific storage engine can be set in th config
 
 ## Features
- - [Uploads](https://github.com/threeaccents/mahi#uploads) upload files easily via our Web API.
- - [Chunked, Concurrent, Resumable Uploads](https://github.com/threeaccents/mahi#large-file-uploads) upload large files by chunking them and uploading them to our Web API.
+ - [Uploads](https://github.com/threeaccents/oriio#uploads) upload files easily via our Web API.
+ - [Chunked, Concurrent, Resumable Uploads](https://github.com/threeaccents/oriio#large-file-uploads) upload large files by chunking them and uploading them to our Web API.
  - [Distributed](#) run in cluster
  - [Fault Taulerant](#) distributed process handoff, with process state handoff.
- - [Flexible File Storage](https://github.com/threeaccents/mahi#applications) store your files in S3, Spaces, Wasabi, B2 with more options coming soon.
- - [Image Processing](https://github.com/threeaccents/mahi#file-transformations) resize, convert, and crop with ease.
+ - [Flexible File Storage](https://github.com/threeaccents/oriio#applications) store your files in S3, Spaces, Wasabi, B2 with more options coming soon.
+ - [Image Processing](https://github.com/threeaccents/oriio#file-transformations) resize, convert, and crop with ease.
 
 ## Install
 Libvips must be installed on your machine. 
@@ -43,31 +43,31 @@ brew install vips
 ```
 For other systems check out instructions [here](https://github.com/libvips/libvips/wiki#building-and-installing).
 
-Installing mahid server.
+Installing oriiod server.
 ```bash
-go get -u github.com/threeaccents/mahi/...
+go get -u github.com/threeaccents/oriio/...
 ```
-This will install the `mahid` command in your `$GOPATH/bin` folder.
+This will install the `oriiod` command in your `$GOPATH/bin` folder.
 ## Usage
 ```bash
-mahid -config=/path/to/config.toml
+oriiod -config=/path/to/config.toml
 ```
-If no config is passed Mahi will look for a `mahi.toml` file in the current directory.
+If no config is passed Oriio will look for a `oriio.toml` file in the current directory.
 ## Applications
-Mahi has the concept of applications. Each application houses specific files and the storage engine for those files. This makes Mahi extremely flexible to use for different projects. If on one project you decide to use s3 as your storage engine and another DO Spaces, Mahi easily handles it for you.
+Oriio has the concept of applications. Each application houses specific files and the storage engine for those files. This makes Oriio extremely flexible to use for different projects. If on one project you decide to use s3 as your storage engine and another DO Spaces, Oriio easily handles it for you.
 
-Applications can be created via our [Web API](https://mahi-api-docs.threeaccents.com/#req_10641a46be544cae978fa83b6fe1f00e).
+Applications can be created via our [Web API](https://oriio-api-docs.threeaccents.com/#req_10641a46be544cae978fa83b6fe1f00e).
 ## Uploads
-Files are uploaded to Mahi via `multipart/form-data` requests. Along with passing in the file data, you must also provide the `application_id`.
-Mahi will handle processing and storing the file blob in the application's storage engine along with storing the file meta-data in the database.
-To view an example upload response check out the [Web API](https://mahi-api-docs.threeaccents.com/#req_25f7dce3e796456e9f80ce43deba705b)
+Files are uploaded to Oriio via `multipart/form-data` requests. Along with passing in the file data, you must also provide the `application_id`.
+Oriio will handle processing and storing the file blob in the application's storage engine along with storing the file meta-data in the database.
+To view an example upload response check out the [Web API](https://oriio-api-docs.threeaccents.com/#req_25f7dce3e796456e9f80ce43deba705b)
 ## Large File Uploads
-When dealing with large files, it is best to split the file into small chunks and upload each chunk separately. Mahi easily handles chunked uploads storing each chunk and then re-building the whole file. Once the whole file is re-built Mahi uploads the file to the application's storage engine.
-To view an example upload response check out the [Web API](https://mahi-api-docs.threeaccents.com/#req_649a25397026402b82397975292fbc4f)
+When dealing with large files, it is best to split the file into small chunks and upload each chunk separately. Oriio easily handles chunked uploads storing each chunk and then re-building the whole file. Once the whole file is re-built Oriio uploads the file to the application's storage engine.
+To view an example upload response check out the [Web API](https://oriio-api-docs.threeaccents.com/#req_649a25397026402b82397975292fbc4f)
 
-Other benefits of chunking up files are the ability to resume uploads and uploading multiple chunks concurrently. Mahi handles both scenarios for you with ease.
+Other benefits of chunking up files are the ability to resume uploads and uploading multiple chunks concurrently. Oriio handles both scenarios for you with ease.
 ## File Transformations (More Coming Soon)
-Mahi supports file transformations via URL query params. Currently, the supported operations are:
+Oriio supports file transformations via URL query params. Currently, the supported operations are:
  - Resize (width, height) `?width=100&height=100`
  - Smart Crop `?crop=true`
  - Flip `?flip=true`
@@ -82,19 +82,19 @@ All queries can be used together. For example, to resize the width, make the ima
 https://yourdomain.com/myimage.webp?width=100&bw=true
 ```
 ## Stats
-Mahi currently tracks these stats for both specific applications and the service as a hole:
+Oriio currently tracks these stats for both specific applications and the service as a hole:
  - Transformations: Total transformations
  - Unique Transformations: Unique transformations per file. 
  - Bandwidth: Bytes served.
  - Storage: Bytes stored.
  - File Count: Total files.
 
-These stats can be retrieved via our [Web API](https://mahi-api-docs.threeaccents.com/#req_4971b4c6a7854cad87e45d2150c7db64).
+These stats can be retrieved via our [Web API](https://oriio-api-docs.threeaccents.com/#req_4971b4c6a7854cad87e45d2150c7db64).
 ## Config
-Mahi's is configured via a toml file. Here are toml [config examples](https://github.com/threeaccents/mahi/tree/master/examples/config). Configuration options include:
- - ***db_engine:string***(default: bolt) The main database for mahi. Valid options are `postgres` and `bolt`. This is not to be confused with the storage engine. Storage engine is set per application via the [Web API](https://mahi-api-docs.threeaccents.com/#req_10641a46be544cae978fa83b6fe1f00e).
+Oriio's is configured via a toml file. Here are toml [config examples](https://github.com/threeaccents/oriio/tree/master/examples/config). Configuration options include:
+ - ***db_engine:string***(default: bolt) The main database for oriio. Valid options are `postgres` and `bolt`. This is not to be confused with the storage engine. Storage engine is set per application via the [Web API](https://oriio-api-docs.threeaccents.com/#req_10641a46be544cae978fa83b6fe1f00e).
  - **http**
-    - ***port:int***(default: 4200) the port to run mahi on.
+    - ***port:int***(default: 4200) the port to run oriio on.
     - ***https:boolean***(default: false) configures server to accept https requests.
     - ***ssl_cert_path:string*** path to ssl certificate. Only required if `https` is set to true.
     - ***ssl_key_path:string*** path to ssl key. Only required if `https` is set to true.
@@ -108,14 +108,14 @@ Mahi's is configured via a toml file. Here are toml [config examples](https://gi
     - ***max_file_size_upload:int64***(default: 50MB) max size of a file for a regular upload in bytes.
     - ***max_transform_file_size:int64***(default: 50MB) max size of a file that can be transformed in bytes.
  - **bolt(only used if `db_engine` is set to bolt**
-    - ***dir:string***(default: ./data/mahi/mahi.db) directory for bolt db file.
+    - ***dir:string***(default: ./data/oriio/oriio.db) directory for bolt db file.
  - **postgresql(only used if `db_engine` is set to postgres)**
-    - ***database:string***(default: mahi) name of database.
+    - ***database:string***(default: oriio) name of database.
     - ***host:string***(default: localhost) host of database.
     - ***port:int***(default: 5432)  port of database.
-    - ***user:string***(default: mahi) username of database.
+    - ***user:string***(default: oriio) username of database.
     - ***password:string***(default: ) password of database.   
     - ***max_conns:int***(default: 10 connections per CPU) maximum connections for database pool.   
 ## Postgres
-To use Postgres the necessary data tables must be created. SQL files are located in the [migrations](https://github.com/threeaccents/mahi/tree/master/cmd/migrations) folder. In the future, Mahi will come with a migrate command that will automatically handle creating the necessary tables for you. For now, you have 2 options. Install [tern](https://github.com/jackc/tern), `cd` into the migrations folder, and run `tern migrate`. The second option is just to copy and paste the SQL provided directly in a GUI or command line instance of Postgres.
+To use Postgres the necessary data tables must be created. SQL files are located in the [migrations](https://github.com/threeaccents/oriio/tree/master/cmd/migrations) folder. In the future, Oriio will come with a migrate command that will automatically handle creating the necessary tables for you. For now, you have 2 options. Install [tern](https://github.com/jackc/tern), `cd` into the migrations folder, and run `tern migrate`. The second option is just to copy and paste the SQL provided directly in a GUI or command line instance of Postgres.
      
