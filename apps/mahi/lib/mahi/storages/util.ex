@@ -1,4 +1,4 @@
-defmodule Mahi.Utils do
+defmodule Oriio.Utils do
   def is_valid_url?(url) when is_binary(url) and byte_size(url) > 0 do
     url
     |> validate_protocol

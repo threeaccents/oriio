@@ -1,9 +1,9 @@
-defmodule MahiWeb.FileDeliveryController do
-  use MahiWeb, :controller
+defmodule OriioWeb.FileDeliveryController do
+  use OriioWeb, :controller
 
-  action_fallback MahiWeb.FallbackController
+  action_fallback OriioWeb.FallbackController
 
-  alias Mahi.Documents
+  alias Oriio.Documents
 
   @type conn() :: Plug.Conn.t()
 

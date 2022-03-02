@@ -1,18 +1,18 @@
-defmodule Mahi.Documents do
+defmodule Oriio.Documents do
   @moduledoc """
   Context for dealing with documents.
   This context manages the upload, download, and transformation of documents.
   """
 
-  alias Mahi.Uploads.ChunkUploadWorker
-  alias Mahi.Uploads.ChunkUploadSupervisor
-  alias Mahi.Uploads.ChunkUploadRegistry
-  alias Mahi.ChunkUploadNotFound
-  alias Mahi.Storages.S3FileStorage
-  alias Mahi.Storages.MockFileStorage
-  alias Mahi.Storages.FileStorage
-  alias Mahi.Mime
-  alias Mahi.Transformations.Transformer
+  alias Oriio.Uploads.ChunkUploadWorker
+  alias Oriio.Uploads.ChunkUploadSupervisor
+  alias Oriio.Uploads.ChunkUploadRegistry
+  alias Oriio.ChunkUploadNotFound
+  alias Oriio.Storages.S3FileStorage
+  alias Oriio.Storages.MockFileStorage
+  alias Oriio.Storages.FileStorage
+  alias Oriio.Mime
+  alias Oriio.Transformations.Transformer
   alias Ecto.UUID
 
   require Logger
@@ -25,7 +25,6 @@ defmodule Mahi.Documents do
   @type chunk_number() :: non_neg_integer()
   @type remote_document_path() :: binary()
   @type transformations() :: Transformer.transformations()
-
   @type transform_opts() :: [location: :remote | :local]
 
   @spec transform(remote_document_path() | document_path(), transformations(), transform_opts()) ::
@@ -122,15 +121,15 @@ defmodule Mahi.Documents do
 
   defp storage_engine do
     storage_engine =
-      Application.get_env(:mahi, :file_storage)[:storage_engine] || %S3FileStorage{}
+      Application.get_env(:oriio, :file_storage)[:storage_engine] || %S3FileStorage{}
 
     case storage_engine do
       "s3-compatible" ->
         %S3FileStorage{
-          access_key: Application.get_env(:mahi, :file_storage)[:access_key],
-          secret_key: Application.get_env(:mahi, :file_storage)[:secret_key],
-          region: Application.get_env(:mahi, :file_storage)[:region],
-          bucket: Application.get_env(:mahi, :file_storage)[:bucket]
+          access_key: Application.get_env(:oriio, :file_storage)[:access_key],
+          secret_key: Application.get_env(:oriio, :file_storage)[:secret_key],
+          region: Application.get_env(:oriio, :file_storage)[:region],
+          bucket: Application.get_env(:oriio, :file_storage)[:bucket]
         }
 
       "mock-engine" ->
@@ -175,5 +174,5 @@ defmodule Mahi.Documents do
 
   defp upload_id, do: UUID.generate()
 
-  defp base_file_url, do: Application.get_env(:mahi, :base_file_url, "https://localhost:4000")
+  defp base_file_url, do: Application.get_env(:oriio, :base_file_url, "https://localhost:4000")
 end

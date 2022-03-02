@@ -1,9 +1,9 @@
-defmodule Mahi.MixProject do
+defmodule Oriio.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :mahi,
+      app: :oriio,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -23,7 +23,7 @@ defmodule Mahi.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Mahi.Application, []},
+      mod: {Oriio.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end

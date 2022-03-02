@@ -1,6 +1,6 @@
-# fly.toml file generated for mahi on 2022-02-24T11:02:08-06:00
+# fly.toml file generated for oriio on 2022-02-24T11:02:08-06:00
 
-app = "mahi"
+app = "oriio"
 
 kill_signal = "SIGTERM"
 kill_timeout = 10
@@ -17,7 +17,7 @@ processes = []
   auto_rollback = true
 
 [mounts]
-  source="mahi_drive"
+  source="oriio_drive"
   destination="/data"  
 
 [[services]]

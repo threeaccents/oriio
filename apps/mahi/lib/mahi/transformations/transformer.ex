@@ -1,4 +1,4 @@
-defmodule Mahi.Transformations.Transformer do
+defmodule Oriio.Transformations.Transformer do
   @moduledoc """
   Uses LibVips to handle file transformations.
   """

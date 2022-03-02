@@ -1,9 +1,9 @@
-defmodule MahiWeb.SignedUrlController do
-  use MahiWeb, :controller
+defmodule OriioWeb.SignedUrlController do
+  use OriioWeb, :controller
 
-  action_fallback MahiWeb.FallbackController
+  action_fallback OriioWeb.FallbackController
 
-  plug MahiWeb.AuthPlug
+  plug OriioWeb.AuthPlug
 
   def create(conn, _params) do
     json(conn, %{hello: "world"})

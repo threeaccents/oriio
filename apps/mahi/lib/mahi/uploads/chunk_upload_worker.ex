@@ -1,4 +1,4 @@
-defmodule Mahi.Uploads.ChunkUploadWorker do
+defmodule Oriio.Uploads.ChunkUploadWorker do
   @moduledoc """
   GenServer for handling chunk uploads.
   It keeps track of all chunks uploaded and then it merges the chunks once the upload is complete.
@@ -6,8 +6,8 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
 
   use GenServer, restart: :transient
 
-  alias Mahi.Uploads.ChunkUploadRegistry
-  alias Mahi.Uploads.StateHandoff
+  alias Oriio.Uploads.ChunkUploadRegistry
+  alias Oriio.Uploads.StateHandoff
 
   @type state() :: %{
           id: binary(),

@@ -1,11 +1,11 @@
-defmodule Mahi.Uploads.StateHandoffSupervisor do
+defmodule Oriio.Uploads.StateHandoffSupervisor do
   @moduledoc """
   Manages the supervisor lifescycle for StateHandoff.
   """
 
   use Supervisor
 
-  @crdt_name Mahi.Uploads.StateHandoff.Crdt
+  @crdt_name Oriio.Uploads.StateHandoff.Crdt
 
   @spec start_link(keyword()) :: Supervisor.on_start()
   def start_link(opts) do
@@ -18,8 +18,8 @@ defmodule Mahi.Uploads.StateHandoffSupervisor do
 
     children = [
       {DeltaCrdt, crdt_opts},
-      {Horde.NodeListener, Mahi.Uploads.StateHandoff},
-      Mahi.Uploads.StateHandoff
+      {Horde.NodeListener, Oriio.Uploads.StateHandoff},
+      Oriio.Uploads.StateHandoff
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

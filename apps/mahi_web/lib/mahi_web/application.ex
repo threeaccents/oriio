@@ -1,26 +1,26 @@
-defmodule MahiWeb.Application do
+defmodule OriioWeb.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
 
   use Application
 
-  alias MahiWeb.Endpoint
+  alias OriioWeb.Endpoint
 
   @impl true
   def start(_type, _args) do
     children = [
       # Start the Telemetry supervisor
-      MahiWeb.Telemetry,
+      OriioWeb.Telemetry,
       # Start the Endpoint (http/https)
-      MahiWeb.Endpoint
-      # Start a worker by calling: MahiWeb.Worker.start_link(arg)
-      # {MahiWeb.Worker, arg}
+      OriioWeb.Endpoint
+      # Start a worker by calling: OriioWeb.Worker.start_link(arg)
+      # {OriioWeb.Worker, arg}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: MahiWeb.Supervisor]
+    opts = [strategy: :one_for_one, name: OriioWeb.Supervisor]
     Supervisor.start_link(children, opts)
   end
 

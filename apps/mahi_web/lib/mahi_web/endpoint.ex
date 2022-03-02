@@ -1,12 +1,12 @@
-defmodule MahiWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :mahi_web
+defmodule OriioWeb.Endpoint do
+  use Phoenix.Endpoint, otp_app: :oriio_web
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
-    key: "_mahi_web_key",
+    key: "_oriio_web_key",
     signing_salt: "kxw1fzDA"
   ]
 
@@ -18,7 +18,7 @@ defmodule MahiWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :mahi_web,
+    from: :oriio_web,
     gzip: false,
     only: ~w(assets fonts images favicon.ico robots.txt)
 
@@ -28,7 +28,7 @@ defmodule MahiWeb.Endpoint do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
-    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :mahi_web
+    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :oriio_web
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,
@@ -47,5 +47,5 @@ defmodule MahiWeb.Endpoint do
   plug Plug.Head
   plug CORSPlug
   plug Plug.Session, @session_options
-  plug MahiWeb.Router
+  plug OriioWeb.Router
 end

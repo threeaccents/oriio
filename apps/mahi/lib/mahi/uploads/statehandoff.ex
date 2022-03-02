@@ -1,4 +1,4 @@
-defmodule Mahi.Uploads.StateHandoff do
+defmodule Oriio.Uploads.StateHandoff do
   @moduledoc """
   Handles state handoff between processes. It uses DeltaCRDT to manage the distributed state syncronization.
   """
@@ -6,7 +6,7 @@ defmodule Mahi.Uploads.StateHandoff do
   use GenServer
 
   alias Horde.NodeListener
-  alias Mahi.Uploads.ChunkUploadWorker
+  alias Oriio.Uploads.ChunkUploadWorker
 
   @type opts() :: Keyword.t()
   @type upload_id() :: binary()
@@ -17,7 +17,7 @@ defmodule Mahi.Uploads.StateHandoff do
 
   @type upload_state() :: ChunkUploadWorker.state()
 
-  @crdt Mahi.Uploads.StateHandoff.Crdt
+  @crdt Oriio.Uploads.StateHandoff.Crdt
 
   @spec start_link(opts()) :: GenServer.on_start()
   def start_link(opts) do

@@ -1,4 +1,4 @@
-defmodule Mahi.ChunkUploadNotFound do
+defmodule Oriio.ChunkUploadNotFound do
   @moduledoc """
   Error raised when an upload is not found.
   """

@@ -1,9 +1,9 @@
-defmodule MahiWeb.MixProject do
+defmodule OriioWeb.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :mahi_web,
+      app: :oriio_web,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -24,7 +24,7 @@ defmodule MahiWeb.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {MahiWeb.Application, []},
+      mod: {OriioWeb.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -49,7 +49,7 @@ defmodule MahiWeb.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.18"},
-      {:mahi, in_umbrella: true},
+      {:oriio, in_umbrella: true},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:proper_case, "~> 1.0.2"},

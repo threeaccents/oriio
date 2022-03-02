@@ -1,4 +1,4 @@
-defmodule MahiWeb.ErrorHelpers do
+defmodule OriioWeb.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """
@@ -41,9 +41,9 @@ defmodule MahiWeb.ErrorHelpers do
     # should be written to the errors.po file. The :count option is
     # set by Ecto and indicates we should also apply plural rules.
     if count = opts[:count] do
-      Gettext.dngettext(MahiWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(OriioWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(MahiWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(OriioWeb.Gettext, "errors", msg, opts)
     end
   end
 end

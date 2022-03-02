@@ -1,3 +1,3 @@
-defmodule MahiWeb.PageView do
-  use MahiWeb, :view
+defmodule OriioWeb.PageView do
+  use OriioWeb, :view
 end

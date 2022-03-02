@@ -1,5 +1,5 @@
-defmodule MahiWeb.ErrorView do
-  use MahiWeb, :view
+defmodule OriioWeb.ErrorView do
+  use OriioWeb, :view
 
   alias Phoenix.Controller
 
@@ -39,6 +39,14 @@ defmodule MahiWeb.ErrorView do
   end
 
   def render("error.json", %{error: {:error, :unauthorized}}) do
+    new_error_payload()
+    |> set_status_code(@unauthorized_status_code)
+    |> add_req_id()
+    |> set_message("unauthorized")
+    |> to_camel_case()
+  end
+
+  def render("error.json", {:error, :unauthorized}) do
     new_error_payload()
     |> set_status_code(@unauthorized_status_code)
     |> add_req_id()

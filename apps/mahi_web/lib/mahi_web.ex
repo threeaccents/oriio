@@ -1,12 +1,12 @@
-defmodule MahiWeb do
+defmodule OriioWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
   as controllers, views, channels and so on.
 
   This can be used in your application as:
 
-      use MahiWeb, :controller
-      use MahiWeb, :view
+      use OriioWeb, :controller
+      use OriioWeb, :view
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -22,7 +22,7 @@ defmodule MahiWeb do
     quote do
       import Plug.Conn
       import Phoenix.Controller, only: [put_view: 2, render: 3]
-      import MahiWeb.Gettext
+      import OriioWeb.Gettext
 
       import ProperCase, only: [to_camel_case: 1]
 
@@ -33,11 +33,11 @@ defmodule MahiWeb do
   @spec controller() :: Macro.t()
   def controller do
     quote do
-      use Phoenix.Controller, namespace: MahiWeb
+      use Phoenix.Controller, namespace: OriioWeb
 
       import Plug.Conn
-      import MahiWeb.Gettext
-      alias MahiWeb.Router.Helpers, as: Routes
+      import OriioWeb.Gettext
+      alias OriioWeb.Router.Helpers, as: Routes
 
       import ProperCase, only: [to_camel_case: 1]
     end
@@ -47,8 +47,8 @@ defmodule MahiWeb do
   def view do
     quote do
       use Phoenix.View,
-        root: "lib/mahi_web/templates",
-        namespace: MahiWeb
+        root: "lib/oriio_web/templates",
+        namespace: OriioWeb
 
       # Import convenience functions from controllers
       import Phoenix.Controller,
@@ -63,7 +63,7 @@ defmodule MahiWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {MahiWeb.LayoutView, "live.html"}
+        layout: {OriioWeb.LayoutView, "live.html"}
 
       unquote(view_helpers())
     end
@@ -102,7 +102,7 @@ defmodule MahiWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import MahiWeb.Gettext
+      import OriioWeb.Gettext
     end
   end
 
@@ -117,9 +117,9 @@ defmodule MahiWeb do
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View
 
-      import MahiWeb.ErrorHelpers
-      import MahiWeb.Gettext
-      alias MahiWeb.Router.Helpers, as: Routes
+      import OriioWeb.ErrorHelpers
+      import OriioWeb.Gettext
+      alias OriioWeb.Router.Helpers, as: Routes
 
       import ProperCase, only: [to_camel_case: 1]
     end

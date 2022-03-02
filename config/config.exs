@@ -9,7 +9,7 @@
 # move said applications out of the umbrella.
 import Config
 
-config :mahi, :file_base_url, "http://localhost:4000"
+config :oriio, :file_base_url, "http://localhost:4000"
 
 # Configure Mix tasks and generators
 
@@ -20,19 +20,19 @@ config :mahi, :file_base_url, "http://localhost:4000"
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :mahi, Mahi.Mailer, adapter: Swoosh.Adapters.Local
+config :oriio, Oriio.Mailer, adapter: Swoosh.Adapters.Local
 
 # Swoosh API client is needed for adapters other than SMTP.
 config :swoosh, :api_client, false
 
-config :mahi_web,
-  generators: [context_app: :mahi, binary_id: true]
+config :oriio_web,
+  generators: [context_app: :oriio, binary_id: true]
 
 # Configures the endpoint
-config :mahi_web, MahiWeb.Endpoint,
+config :oriio_web, OriioWeb.Endpoint,
   url: [host: "localhost"],
-  render_errors: [view: MahiWeb.ErrorView, accepts: ~w(html json), layout: false],
-  pubsub_server: Mahi.PubSub,
+  render_errors: [view: OriioWeb.ErrorView, accepts: ~w(html json), layout: false],
+  pubsub_server: Oriio.PubSub,
   live_view: [signing_salt: "877ivc5H"]
 
 # Configure esbuild (the version is required)
@@ -41,7 +41,7 @@ config :esbuild,
   default: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
-    cd: Path.expand("../apps/mahi_web/assets", __DIR__),
+    cd: Path.expand("../apps/oriio_web/assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 

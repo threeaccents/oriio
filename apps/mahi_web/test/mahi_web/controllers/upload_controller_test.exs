@@ -1,8 +1,8 @@
-defmodule MahiWeb.PageControllerTest do
-  use MahiWeb.ConnCase
+defmodule OriioWeb.PageControllerTest do
+  use OriioWeb.ConnCase
 
   # move fixtures to the root to share between both.
-  # @upload_files_dir "#{__DIR__}/../../../../mahi/test/fixtures/uploads"
+  # @upload_files_dir "#{__DIR__}/../../../../oriio/test/fixtures/uploads"
 
   test "yolo" do
     assert true == true
@@ -45,7 +45,7 @@ defmodule MahiWeb.PageControllerTest do
 
   # describe "MultiPart /append_chunk" do
   #   test "chunk is appended", %{conn: conn} do
-  #     id = Mahi.Uploads.new_chunk_upload("nalu.png", 8)
+  #     id = Oriio.Uploads.new_chunk_upload("nalu.png", 8)
 
   #     upload = %Plug.Upload{path: "#{@upload_files_dir}/segmentaa", filename: "nalu.png"}
 
@@ -57,7 +57,7 @@ defmodule MahiWeb.PageControllerTest do
   #   end
 
   #   test "validation", %{conn: conn} do
-  #     id = Mahi.Uploads.new_chunk_upload("nalu.png", 8)
+  #     id = Oriio.Uploads.new_chunk_upload("nalu.png", 8)
 
   #     upload = %Plug.Upload{path: "#{@upload_files_dir}/segmentaa", filename: "nalu.png"}
 
@@ -71,7 +71,7 @@ defmodule MahiWeb.PageControllerTest do
 
   # describe "POST /chunk_uploads/:upload_id" do
   #   test "file url is returned", %{conn: conn} do
-  #     id = Mahi.Uploads.new_chunk_upload("nalu.png", 8)
+  #     id = Oriio.Uploads.new_chunk_upload("nalu.png", 8)
 
   #     :ok = upload_all_chunks(id, conn)
 
@@ -81,7 +81,7 @@ defmodule MahiWeb.PageControllerTest do
   #   end
 
   #   test "validation", %{conn: conn} do
-  #     # id = Mahi.Uploads.new_chunk_upload("nalu.png", 8)
+  #     # id = Oriio.Uploads.new_chunk_upload("nalu.png", 8)
 
   #     # upload = %Plug.Upload{path: "#{@upload_files_dir}/segmentaa", filename: "nalu.png"}
 

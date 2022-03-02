@@ -1,5 +1,5 @@
-defmodule MahiWeb.ParseHeaderTokenPlug do
-  use MahiWeb, :plug
+defmodule OriioWeb.ParseHeaderTokenPlug do
+  use OriioWeb, :plug
 
   @impl Plug
   def init(_) do
@@ -7,20 +7,15 @@ defmodule MahiWeb.ParseHeaderTokenPlug do
 
   @impl Plug
   def call(conn, _opts) do
-    case fetch_token_from_header(conn) do
-      {:ok, token} ->
-        assign(conn, :token, token)
-
-      _ ->
-        conn
-    end
+    assign(conn, :token, fetch_token_from_header(conn))
   end
 
   defp fetch_token_from_header(conn) do
     [header | _] = get_resp_header(conn, "authorization")
 
+    # error handleing later
     [_, token] = String.split(header, "Bearer ")
 
-    {:ok, token}
+    token
   end
 end

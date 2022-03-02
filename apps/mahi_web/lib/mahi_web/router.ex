@@ -1,25 +1,25 @@
-defmodule MahiWeb.Router do
-  use MahiWeb, :router
+defmodule OriioWeb.Router do
+  use OriioWeb, :router
 
-  import MahiWeb.Pipeline
+  import OriioWeb.Pipeline
 
   @dialyzer {:no_return, call: 2}
 
-  scope "/", MahiWeb do
+  scope "/", OriioWeb do
     pipe_through :api
 
     post "/chunk_uploads", UploadController, :new_chunk_upload
     post "/chunk_uploads/:upload_id", UploadController, :complete_chunk_upload
   end
 
-  scope "/", MahiWeb do
+  scope "/", OriioWeb do
     pipe_through :multipart
 
     post "/append_chunk", UploadController, :append_chunk
     post "/uploads", UploadController, :upload
   end
 
-  scope "/", MahiWeb do
+  scope "/", OriioWeb do
     pipe_through :file_delivery
 
     get "/:timestamp/:file_name", FileDeliveryController, :serve_file
@@ -39,7 +39,7 @@ defmodule MahiWeb.Router do
     scope "/" do
       pipe_through :admins_only
 
-      live_dashboard "/dashboard", metrics: MahiWeb.Telemetry
+      live_dashboard "/dashboard", metrics: OriioWeb.Telemetry
     end
   end
 

@@ -1,9 +1,9 @@
-defmodule Mahi.SignedUrlTest do
+defmodule Oriio.SignedUrlTest do
   use ExUnit.Case, async: true
 
-  alias Mahi.SignedUrl
+  alias Oriio.SignedUrl
 
-  alias Mahi.Utils
+  alias Oriio.Utils
 
   test "generates a signed url" do
     url = SignedUrl.genrate("hello world")

@@ -20,15 +20,15 @@ if config_env() == :prod do
       """
 
   # File storage engine
-  config :mahi, :file_storage,
+  config :oriio, :file_storage,
     storage_engine: System.get_env("MAHI_FILE_STORAGE_ENGINE"),
     access_key: System.get_env("MAHI_FILE_STORAGE_ACCESS_KEY"),
     secret_key: System.get_env("MAHI_FILE_STORAGE_SECRET_KEY"),
     region: System.get_env("MAHI_FILE_STORAGE_REGION"),
     bucket: System.get_env("MAHI_FILE_STORAGE_BUCKET")
 
-  config :mahi_web, MahiWeb.Endpoint,
-    url: [host: "mahi.oriio.io", port: 8080],
+  config :oriio_web, OriioWeb.Endpoint,
+    url: [host: "oriio.oriio.io", port: 8080],
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
@@ -45,9 +45,9 @@ if config_env() == :prod do
   # If you are doing OTP releases, you need to instruct Phoenix
   # to start each relevant endpoint:
   #
-  config :mahi_web, MahiWeb.Endpoint, server: true
+  config :oriio_web, OriioWeb.Endpoint, server: true
 
-  config :mahi, :auth_secret_key, System.get_env("MAHI_AUTH_SECRET")
+  config :oriio_web, :auth_secret_key, System.get_env("MAHI_AUTH_SECRET")
   #
   # Then you can assemble a release by calling `mix release`.
   # See `mix help release` for more information.
@@ -58,7 +58,7 @@ if config_env() == :prod do
   # Also, you may need to configure the Swoosh API client of your choice if you
   # are not using SMTP. Here is an example of the configuration:
   #
-  #     config :mahi, Mahi.Mailer,
+  #     config :oriio, Oriio.Mailer,
   #       adapter: Swoosh.Adapters.Mailgun,
   #       api_key: System.get_env("MAILGUN_API_KEY"),
   #       domain: System.get_env("MAILGUN_DOMAIN")

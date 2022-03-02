@@ -1,12 +1,12 @@
 # credo:disable-for-this-file
-defmodule Mahi.Debug do
+defmodule Oriio.Debug do
   @moduledoc """
   Helper module for debugging purposes
   """
 
-  alias Mahi.Uploads.ChunkUploadRegistry
+  alias Oriio.Uploads.ChunkUploadRegistry
 
-  alias Mahi.Documents
+  alias Oriio.Documents
 
   @upload_files_path "#{__DIR__}/../../test/fixtures/uploads"
 
