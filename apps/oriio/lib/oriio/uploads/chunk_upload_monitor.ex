@@ -11,6 +11,7 @@ defmodule Oriio.Uploads.ChunkUploadMonitor do
   @thirty_minutes 30 * 60 * 1000
   @valid_hours 5
 
+  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(_) do
     GenServer.start_link(__MODULE__, %{})
   end
