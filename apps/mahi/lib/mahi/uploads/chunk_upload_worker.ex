@@ -21,7 +21,7 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
   @type new_chunk_upload() :: %{
           id: binary(),
           file_name: binary(),
-          total_chunks: non_neg_integer(),
+          total_chunks: non_neg_integer()
         }
 
   @type chunk_number() :: non_neg_integer()
@@ -92,6 +92,9 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
     end
   end
 
+  def handle_call(:get_updated_at, _from, %{updated_at: updated_at} = state),
+    do: {:reply, updated_at, state}
+
   @impl GenServer
   def handle_continue(:load_state, %{id: id} = state) do
     new_state =
@@ -115,6 +118,10 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
     StateHandoff.handoff(id, state)
     # timeout to make sure the CRDT is propegated to other nodes
     :timer.sleep(8000)
+  end
+
+  def updated_at(server) do
+    GenServer.call(server, :get_updated_at)
   end
 
   defp missing_chunks(%{chunk_document_paths: chunk_document_paths}) do

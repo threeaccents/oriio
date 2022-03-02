@@ -4,9 +4,9 @@ defmodule Mahi.Uploads.ChunkUploadMonitor do
   It will also check for chunks that have been merged and for some reason the process wasn't killed.
   """
   use GenServer
-  use Horde.Registry
 
   alias Mahi.Uploads.ChunkUploadRegistry
+  alias Mahi.Uploads.ChunkUploadWorker
 
   @thirty_minutes 30 * 60 * 1000
   @valid_hours 5
@@ -36,18 +36,19 @@ defmodule Mahi.Uploads.ChunkUploadMonitor do
   end
 
   defp check_for_stale_uploads do
-    uploads = list_chunk_upload_processes()
-    for {_, pid, state} <- uploads, is_upload_stale?(state), do: Process.exit(pid, :normal)
+    pids = list_chunk_upload_processes()
+    for pid <- pids, is_upload_stale?(pid), do: Process.exit(pid, :normal)
   end
 
   defp list_chunk_upload_processes do
     Horde.Registry.select(ChunkUploadRegistry, [
-      {{:"$1", :"$2", :"$3"}, [], [{{:"$1", :"$2", :"$3"}}]}
+      {{:"$1", :"$2", :"$3"}, [], [:"$2"]}
     ])
   end
 
-  defp is_upload_stale?(%{update_at: updated_at}) do
-    valid_time = DateTime.utc_now() |> DateTime.add(-@valid_hours * 60 * 60, :second)
-    DateTime.diff(valid_time, updated_at) < 0
+  defp is_upload_stale?(pid) do
+    updated_at = ChunkUploadWorker.updated_at(pid)
+    expiry_time = DateTime.add(updated_at, @valid_hours * 60, :second)
+    DateTime.diff(expiry_time, DateTime.utc_now()) < 0
   end
 end

@@ -17,7 +17,8 @@ defmodule Mahi.Application do
       # Chunk Uploads
       Mahi.Uploads.StateHandoffSupervisor,
       Mahi.Uploads.ChunkUploadRegistry,
-      Mahi.Uploads.ChunkUploadSupervisor
+      Mahi.Uploads.ChunkUploadSupervisor,
+      Mahi.Uploads.ChunkUploadMonitor,
       # Start a worker by calling: Mahi.Worker.start_link(arg)
       # {Mahi.Worker, arg}
     ]
