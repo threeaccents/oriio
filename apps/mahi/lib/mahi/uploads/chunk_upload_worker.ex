@@ -60,6 +60,10 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
     GenServer.call(server, :complete_upload)
   end
 
+  def updated_at(server) do
+    GenServer.call(server, :get_updated_at)
+  end
+
   @impl GenServer
   def handle_call(
         {:append_chunk, {chunk_number, chunk_document_path}},
@@ -118,10 +122,6 @@ defmodule Mahi.Uploads.ChunkUploadWorker do
     StateHandoff.handoff(id, state)
     # timeout to make sure the CRDT is propegated to other nodes
     :timer.sleep(8000)
-  end
-
-  def updated_at(server) do
-    GenServer.call(server, :get_updated_at)
   end
 
   defp missing_chunks(%{chunk_document_paths: chunk_document_paths}) do
