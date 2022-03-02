@@ -1,6 +1,8 @@
 defmodule MahiWeb.AuthPlug do
   import Plug.Conn
 
+  import Phoenix.Controller, only: [put_view: 2, render: 3]
+
   alias Mahi.SignedUrl
   require Logger
 
@@ -13,12 +15,31 @@ defmodule MahiWeb.AuthPlug do
          :ok <- SignedUrl.verify_token(token) do
       conn
     else
-      _error ->
-        conn
-        |> put_status(:unauthorized)
-        |> Phoenix.Controller.put_view(MahiWeb.ErrorView)
-        |> Phoenix.Controller.render("error.json", {:error, :unauthorized})
-        |> halt()
+      [] ->
+        send_bad_request_resp(conn, "bearer token missing")
+
+      {:error, reason} ->
+        Logger.warn("failed to verify token: #{inspect(reason)}")
+        send_unauthorized_resp(conn)
+
+      _ ->
+        IO.inspect("didnt catch")
     end
+  end
+
+  defp send_unauthorized_resp(conn) do
+    conn
+    |> put_status(:unauthorized)
+    |> put_view(MahiWeb.ErrorView)
+    |> render("error.json", %{error: {:error, :unauthorized}})
+    |> halt()
+  end
+
+  defp send_bad_request_resp(conn, error) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(MahiWeb.ErrorView)
+    |> render("error.json", %{message: error})
+    |> halt()
   end
 end

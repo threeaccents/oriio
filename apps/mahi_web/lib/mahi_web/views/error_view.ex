@@ -46,6 +46,14 @@ defmodule MahiWeb.ErrorView do
     |> to_camel_case()
   end
 
+  def render("error.json", {:error, :unauthorized}) do
+    new_error_payload()
+    |> set_status_code(@unauthorized_status_code)
+    |> add_req_id()
+    |> set_message("unauthorized")
+    |> to_camel_case()
+  end
+
   def render("error.json", %{error: {:error, :not_found}}) do
     new_error_payload()
     |> set_status_code(@not_found_status_code)

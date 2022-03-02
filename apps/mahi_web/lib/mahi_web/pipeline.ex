@@ -16,11 +16,13 @@ defmodule MahiWeb.Pipeline do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug MahiWeb.AuthPlug
     plug ProperCase.Plug.SnakeCaseParams
   end
 
   pipeline :multipart do
     plug :accepts, ["multipart"]
+    plug MahiWeb.AuthPlug
   end
 
   pipeline :file_delivery do
