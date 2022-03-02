@@ -1,3 +1,0 @@
-# Mahi
-
-**TODO: Add description**

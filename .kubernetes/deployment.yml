@@ -31,9 +31,9 @@ subjects:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mahi
+  name: oriio
   labels:
-    app: mahi
+    app: oriio
     tier: backend
 spec:
   type: ClusterIP
@@ -41,29 +41,29 @@ spec:
   - port: 80
     targetPort: 8080
   selector:
-    app: mahi
+    app: oriio
 ---    
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mahi
+  name: oriio
   labels:
-    app: mahi
+    app: oriio
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: mahi
+      app: oriio
       tier: web
   template:
     metadata:
       labels:
-        app: mahi
+        app: oriio
         tier: web
     spec:
       serviceAccountName: serviceaccount-name
       containers:
-        - name: mahi
+        - name: oriio
           image: <IMAGE>
           volumeMounts:
           - mountPath: /data
@@ -82,9 +82,9 @@ spec:
             - name: MAHI_FILE_STORAGE_REGION
               value: us-east-2 
             - name: FLY_APP_NAME
-              value: mahi    
+              value: oriio    
             - name: MAHI_FILE_STORAGE_BUCKET
-              value: mahi-my-4-app-2672
+              value: oriio-my-4-app-2672
             - name: NAMESPACE
               valueFrom:
                 fieldRef:
@@ -98,29 +98,29 @@ spec:
           persistentVolumeClaim:
             claimName: nfs-data
       imagePullSecrets:
-      - name: mahi-repo
+      - name: oriio-repo
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: mahi-ingress
+  name: oriio-ingress
   annotations:
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   tls:
   - hosts:
-    - mahi.oriio.io
+    - oriio.oriio.io
     secretName: hello-kubernetes-tls
   rules:
-  - host: "mahi.oriio.io"
+  - host: "oriio.oriio.io"
     http:
       paths:
       - pathType: Prefix
         path: "/"
         backend:
           service:
-            name: mahi
+            name: oriio
             port:
               number: 80
 ---

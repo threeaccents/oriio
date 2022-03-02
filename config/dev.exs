@@ -6,7 +6,7 @@ import Config
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with esbuild to bundle .js and .css sources.
-config :mahi_web, MahiWeb.Endpoint,
+config :oriio_web, OriioWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}, port: 4000],
@@ -44,13 +44,13 @@ config :mahi_web, MahiWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :mahi_web, MahiWeb.Endpoint,
+config :oriio_web, OriioWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/mahi_web/(live|views)/.*(ex)$",
-      ~r"lib/mahi_web/templates/.*(eex)$"
+      ~r"lib/oriio_web/(live|views)/.*(ex)$",
+      ~r"lib/oriio_web/templates/.*(eex)$"
     ]
   ]
 
@@ -65,9 +65,13 @@ config :phoenix, :plug_init_mode, :runtime
 config :phoenix, :stacktrace_depth, 20
 
 # File storage engine
-config :mahi, :file_storage,
+config :oriio, :file_storage,
   storage_engine: "s3-compatible",
   access_key: "AKIA53ZJZHZMFRYWSOTO",
   secret_key: "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",
   region: "us-east-2",
-  bucket: "mahi-my-4-app-2672"
+  bucket: "oriio-my-4-app-2672"
+
+config :oriio_web,
+       :auth_secret_key,
+       "KN58vmkzeiUFMIo8nmv4OHagbIDXAzciZmyZ2lp3gXZHs4wlcJ1IElyQkuqGk9L9"
