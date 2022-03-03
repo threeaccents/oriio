@@ -31,7 +31,7 @@ defmodule Oriio.SignedUploads do
       upload_type: :chunked
     }
 
-    Crypto.sign(signed_upload_secret_key(), @signed_upload_salt, payload)
+    {Crypto.sign(signed_upload_secret_key(), @signed_upload_salt, payload), upload_id}
   end
 
   @spec verify_token(upload_token()) :: :ok | {:error, term()}

@@ -17,9 +17,9 @@ defmodule OriioWeb.SignedUploadController do
          {:ok, upload_type} <- parse_upload_type(upload_type) do
       %{file_name: file_name, total_chunks: total_chunks} = valid_params
 
-      token = SignedUploads.new_signed_upload(upload_type, file_name, total_chunks)
+      {token, upload_id} = SignedUploads.new_signed_upload(upload_type, file_name, total_chunks)
 
-      json(conn, %{data: %{token: token}})
+      json(conn, %{data: %{token: token, upload_id: upload_id}})
     end
   end
 
