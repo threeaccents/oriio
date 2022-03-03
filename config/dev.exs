@@ -75,3 +75,7 @@ config :oriio, :file_storage,
 config :oriio_web,
        :auth_secret_key,
        "KN58vmkzeiUFMIo8nmv4OHagbIDXAzciZmyZ2lp3gXZHs4wlcJ1IElyQkuqGk9L9"
+
+config :oriio,
+       :signed_upload_secret_key,
+       "3ggV3CQIWN3hOhjH23iCulxA4xdHG9Egba4xGlyXFNTCKjuxOeUoHxy9qXqdQNEo"

@@ -26,7 +26,8 @@ defmodule OriioWeb.Pipeline do
   end
 
   pipeline :signed_upload do
-    plug :accepts, ["multipart"]
+    plug :accepts, ["multipart", "json"]
+    plug OriioWeb.SignedUploadPlug
   end
 
   pipeline :file_delivery do

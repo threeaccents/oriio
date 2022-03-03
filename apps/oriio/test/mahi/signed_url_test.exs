@@ -1,12 +1,12 @@
-defmodule Oriio.SignedUrlTest do
+defmodule Oriio.SignedUploadTest do
   use ExUnit.Case, async: true
 
-  alias Oriio.SignedUrl
+  alias Oriio.SignedUpload
 
   alias Oriio.Utils
 
   test "generates a signed url" do
-    url = SignedUrl.genrate("hello world")
+    url = SignedUpload.genrate("hello world")
 
     assert {:ok, _url} = Utils.is_valid_url?(url)
 
