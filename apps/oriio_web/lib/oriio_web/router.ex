@@ -24,7 +24,7 @@ defmodule OriioWeb.Router do
     pipe_through :signed_upload_api
 
     post "/chunk_uploads", SignedUploadController, :new_chunk_upload
-    post "/chunk_uploads/:upload_id", UploadController, :complete_chunk_upload
+    post "/chunk_uploads/:upload_id", SignedUploadController, :complete_chunk_upload
   end
 
   scope "/signed_uploads", OriioWeb do

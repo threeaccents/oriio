@@ -63,6 +63,24 @@ defmodule OriioWeb.SignedUploadController do
     end
   end
 
+  @spec complete_chunk_upload(conn(), map()) :: conn()
+  def complete_chunk_upload(conn, params) do
+    signed_upload_id = conn.assigns.signed_upload_id
+
+    validate_params = %{
+      upload_id: [type: :string, required: true]
+    }
+
+    with {:ok, %{upload_id: upload_id}} <- Tarams.cast(params, validate_params),
+         {:ok, file_url} <- SignedUploads.complete_chunk_upload(signed_upload_id, upload_id) do
+      data = to_camel_case(%{data: %{url: file_url}})
+
+      conn
+      |> put_status(:created)
+      |> json(data)
+    end
+  end
+
   defp parse_upload_type("chunked"), do: {:ok, :chunked}
   defp parse_upload_type("default"), do: {:ok, :default}
   defp parse_upload_type(_), do: {:error, :invalid_upload_type}

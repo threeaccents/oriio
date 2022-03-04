@@ -76,6 +76,16 @@ defmodule Oriio.SignedUploads do
     end
   end
 
+  @spec complete_chunk_upload(signed_upload_id(), chunk_upload_id()) ::
+          {:ok, url()} | {:error, term()}
+  def complete_chunk_upload(signed_upload_id, chunk_upload_id) do
+    with {:ok, url} <- Documents.complete_chunk_upload(chunk_upload_id),
+         pid <- get_signed_upload_pid!(signed_upload_id) do
+      complete_signed_upload(pid)
+      {:ok, url}
+    end
+  end
+
   @spec verify_token(signed_upload_token()) :: {:ok, signed_upload_payload()} | {:error, term()}
   def verify_token(token) do
     with {:ok, payload} <- Crypto.verify(signed_upload_secret_key(), @signed_upload_salt, token),
