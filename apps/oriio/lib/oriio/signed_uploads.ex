@@ -20,6 +20,8 @@ defmodule Oriio.SignedUploads do
   @type file_name() :: binary()
   @type total_chunks() :: non_neg_integer()
   @type signed_upload_payload() :: map()
+  @type document_path() :: binary()
+  @type url() :: binary()
 
   @valid_upload_types ~w/default chunked/a
 
@@ -61,6 +63,19 @@ defmodule Oriio.SignedUploads do
     end
   end
 
+  @spec upload(signed_upload_id(), file_name(), document_path()) ::
+          {:ok, url()} | {:error, term()}
+  def upload(signed_upload_id, file_name, document_path) do
+    case Documents.upload(file_name, document_path) do
+      {:ok, url} ->
+        complete_signed_upload(signed_upload_id)
+        {:ok, url}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
   @spec verify_token(signed_upload_token()) :: {:ok, signed_upload_payload()} | {:error, term()}
   def verify_token(token) do
     with {:ok, payload} <- Crypto.verify(signed_upload_secret_key(), @signed_upload_salt, token),
@@ -76,8 +91,7 @@ defmodule Oriio.SignedUploads do
 
     has_upload_started? = SignedUploadWorker.is_started?(pid)
 
-    is_must_begin_by_expired? =
-      DateTime.diff(must_begin_by, DateTime.utc_now()) |> IO.inspect(label: "diff") <= 0
+    is_must_begin_by_expired? = DateTime.diff(must_begin_by, DateTime.utc_now()) <= 0
 
     # could figure out a clearer way to show the intent here but good for now.
     case {has_upload_started?, is_must_begin_by_expired?} do
@@ -88,12 +102,26 @@ defmodule Oriio.SignedUploads do
   end
 
   defp can_continue_upload(payload) do
-    %{must_begin_by: must_begin_by} = payload
+    %{id: id, must_begin_by: must_begin_by} = payload
 
-    is_must_begin_by_expired? =
-      DateTime.diff(must_begin_by, DateTime.utc_now()) |> IO.inspect(label: "diff") <= 0
+    pid = get_signed_upload_pid!(id)
 
-    if is_must_begin_by_expired?, do: {:error, :signed_upload_expired}, else: :ok
+    has_upload_started? = SignedUploadWorker.is_started?(pid)
+
+    is_must_begin_by_expired? = DateTime.diff(must_begin_by, DateTime.utc_now()) <= 0
+
+    # could figure out a clearer way to show the intent here but good for now.
+    case {has_upload_started?, is_must_begin_by_expired?} do
+      {true, _} -> {:error, :signed_upload_already_in_use}
+      {false, false} -> :ok
+      {false, true} -> {:error, :signed_upload_expired}
+    end
+  end
+
+  defp complete_signed_upload(signed_upload_id) do
+    pid = get_signed_upload_pid!(signed_upload_id)
+
+    Process.exit(pid, :normal)
   end
 
   defp get_signed_upload_pid!(upload_id) do

@@ -5,6 +5,8 @@ defmodule OriioWeb.SignedUploadController do
 
   action_fallback OriioWeb.FallbackController
 
+  @type conn() :: Plug.Conn.t()
+
   def create(conn, params) do
     validate_params = %{
       upload_type: [type: :string, required: true, default: "default"]
@@ -17,6 +19,27 @@ defmodule OriioWeb.SignedUploadController do
       |> put_status(:created)
       |> put_view(OriioWeb.AuthView)
       |> render("show.json", token: token)
+    end
+  end
+
+  @spec upload(conn(), map()) :: conn()
+  def upload(conn, params) do
+    signed_upload_id = conn.assigns.signed_upload_id
+
+    validate_params = %{
+      file: %{
+        path: [type: :string, required: true],
+        filename: [type: :string, required: true]
+      }
+    }
+
+    with {:ok, %{file: file}} <- Tarams.cast(params, validate_params),
+         {:ok, file_url} <- SignedUploads.upload(signed_upload_id, file.filename, file.path) do
+      data = to_camel_case(%{data: %{url: file_url}})
+
+      conn
+      |> put_status(:created)
+      |> json(data)
     end
   end
 

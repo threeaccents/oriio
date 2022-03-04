@@ -1,5 +1,5 @@
 defmodule Oriio.Uploads.SignedUploadWorker do
-  use GenServer
+  use GenServer, restart: :transient
 
   alias Oriio.Uploads.SignedUploadRegistry
 
@@ -25,6 +25,8 @@ defmodule Oriio.Uploads.SignedUploadWorker do
 
   @impl GenServer
   def init(new_signed_upload) do
+    Process.flag(:trap_exit, true)
+
     state = Map.put(new_signed_upload, :is_started?, false)
 
     {:ok, state}
@@ -51,6 +53,18 @@ defmodule Oriio.Uploads.SignedUploadWorker do
   @impl GenServer
   def handle_call(:is_started, _from, state) do
     {:reply, Map.get(state, :is_started?), state}
+  end
+
+  @impl GenServer
+  def handle_info({:EXIT, _, :normal}, state) do
+    {:stop, :normal, state}
+  end
+
+  @impl GenServer
+  def terminate(:normal, _state), do: :ok
+
+  def terminate(reason, state) do
+    IO.inspect("terminating #{reason} #{inspect(state)}")
   end
 
   defp via_tuple(name),

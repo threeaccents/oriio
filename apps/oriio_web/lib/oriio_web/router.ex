@@ -31,7 +31,7 @@ defmodule OriioWeb.Router do
     pipe_through :signed_upload_multipart
 
     post "/append_chunk", UploadController, :append_chunk
-    post "/uploads", UploadController, :upload
+    post "/uploads", SignedUploadController, :upload
   end
 
   scope "/", OriioWeb do

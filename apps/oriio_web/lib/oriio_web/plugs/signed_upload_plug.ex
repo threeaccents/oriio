@@ -22,6 +22,9 @@ defmodule OriioWeb.SignedUploadPlug do
       {:error, :signed_upload_expired} ->
         send_bad_request_resp(conn, "signed upload expired")
 
+      {:error, :signed_upload_already_in_use} ->
+        send_bad_request_resp(conn, "signed upload already in use")
+
       {:error, reason} ->
         Logger.warn("failed to verify token: #{inspect(reason)}")
         send_unauthorized_resp(conn)
