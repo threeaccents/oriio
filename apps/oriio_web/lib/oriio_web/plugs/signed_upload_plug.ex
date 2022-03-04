@@ -13,20 +13,19 @@ defmodule OriioWeb.SignedUploadPlug do
 
   def call(conn, _opts) do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
-         :ok <- verify_token(token) do
-      conn
+         {:ok, payload} <- SignedUploads.verify_token(token) do
+      assign(conn, :signed_upload_id, payload.id)
     else
       [] ->
         send_bad_request_resp(conn, "bearer token missing")
+
+      {:error, :signed_upload_expired} ->
+        send_bad_request_resp(conn, "signed upload expired")
 
       {:error, reason} ->
         Logger.warn("failed to verify token: #{inspect(reason)}")
         send_unauthorized_resp(conn)
     end
-  end
-
-  defp verify_token(token) do
-    SignedUploads.verify_token(token)
   end
 
   defp send_unauthorized_resp(conn) do

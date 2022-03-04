@@ -21,14 +21,14 @@ defmodule OriioWeb.Router do
   end
 
   scope "/signed_uploads", OriioWeb do
-    pipe_through :signed_upload
+    pipe_through :signed_upload_api
 
-    post "/chunk_uploads", UploadController, :new_chunk_upload
+    post "/chunk_uploads", SignedUploadController, :new_chunk_upload
     post "/chunk_uploads/:upload_id", UploadController, :complete_chunk_upload
   end
 
   scope "/signed_uploads", OriioWeb do
-    pipe_through :signed_upload
+    pipe_through :signed_upload_multipart
 
     post "/append_chunk", UploadController, :append_chunk
     post "/uploads", UploadController, :upload
