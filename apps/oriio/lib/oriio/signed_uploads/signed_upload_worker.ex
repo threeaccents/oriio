@@ -1,7 +1,13 @@
 defmodule Oriio.Uploads.SignedUploadWorker do
+  @moduledoc """
+  Worker that keeps track of a signed upload.
+  """
+
   use GenServer, restart: :transient
 
   alias Oriio.Uploads.SignedUploadRegistry
+
+  require Logger
 
   @type upload_type() :: :default | :chunked
 
@@ -64,7 +70,7 @@ defmodule Oriio.Uploads.SignedUploadWorker do
   def terminate(:normal, _state), do: :ok
 
   def terminate(reason, state) do
-    IO.inspect("terminating #{reason} #{inspect(state)}")
+    Logger.info("terminating #{reason} #{inspect(state)}")
   end
 
   defp via_tuple(name),

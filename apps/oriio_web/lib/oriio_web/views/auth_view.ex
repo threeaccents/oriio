@@ -2,6 +2,7 @@ defmodule OriioWeb.AuthView do
   use OriioWeb, :view
   alias OriioWeb.AuthView
 
+  @spec render(binary(), map()) :: map()
   def render("index.json", %{tokens: tokens}) do
     data = %{data: render_many(tokens, AuthView, "token.json", as: :token)}
     to_camel_case(data)

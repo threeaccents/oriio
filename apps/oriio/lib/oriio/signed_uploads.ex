@@ -1,4 +1,8 @@
 defmodule Oriio.SignedUploads do
+  @moduledoc """
+  Context to handle signed uploads. This context is very similar in behaviour to the Documents context.
+  It is essentially a wrapper to the Documents context with some singed upload validations.
+  """
   alias Oriio.Uploads.SignedUploadSupervisor
   alias Oriio.Uploads.SignedUploadWorker
   alias Oriio.Uploads.SignedUploadRegistry

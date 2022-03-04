@@ -7,6 +7,7 @@ defmodule OriioWeb.SignedUploadController do
 
   @type conn() :: Plug.Conn.t()
 
+  @spec create(conn(), map()) :: conn()
   def create(conn, params) do
     validate_params = %{
       upload_type: [type: :string, required: true, default: "default"]
@@ -43,6 +44,7 @@ defmodule OriioWeb.SignedUploadController do
     end
   end
 
+  @spec new_chunk_upload(conn(), map()) :: conn()
   def new_chunk_upload(conn, params) do
     signed_upload_id = conn.assigns.signed_upload_id
 

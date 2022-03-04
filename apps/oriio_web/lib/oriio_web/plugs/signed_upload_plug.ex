@@ -1,4 +1,8 @@
 defmodule OriioWeb.SignedUploadPlug do
+  @moduledoc """
+  Plug to check for an signed upload auth token. It extracts the token from the authroizatin header and verifies it is a valid token.
+  """
+
   import Plug.Conn
 
   import Phoenix.Controller, only: [put_view: 2, render: 3]
@@ -7,10 +11,14 @@ defmodule OriioWeb.SignedUploadPlug do
 
   require Logger
 
+  @behaviour Plug
+
+  @impl Plug
   def init(opts) do
     opts
   end
 
+  @impl Plug
   def call(conn, _opts) do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
          {:ok, payload} <- SignedUploads.verify_token(token) do
