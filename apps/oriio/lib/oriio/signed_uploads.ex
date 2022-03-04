@@ -15,8 +15,6 @@ defmodule Oriio.SignedUploads do
   @type signed_upload_type() :: :default | :chunked
   @type signed_upload_opts() :: [must_begin_expiry_time: non_neg_integer()]
 
-  @spec new_signed_upload(term(), term(), signed_upload_opts()) ::
-          {upload_token(), signed_upload_id()}
   def new_signed_chunk_upload(file_name, total_chunks, opts \\ []) do
     {:ok, upload_id} = Documents.new_chunk_upload(file_name, total_chunks)
 
@@ -34,10 +32,21 @@ defmodule Oriio.SignedUploads do
     {Crypto.sign(signed_upload_secret_key(), @signed_upload_salt, payload), upload_id}
   end
 
-  @spec new_signed_upload(signed_upload_type(), term(), term(), signed_upload_opts()) ::
-          upload_token()
-  def new_signed_upload(:default, file_name, opts \\ []) do
-    # todo
+  def new_signed_upload(file_name, opts \\ []) do
+    {:ok, upload_id} = Documents.new_chunk_upload(file_name, total_chunks)
+
+    # default to 5 minutes
+    must_beging_expiry_time = Keyword.get(opts, :must_begin_expiry_time, 300)
+
+    must_begin_by = DateTime.add(DateTime.utc_now(), must_beging_expiry_time)
+
+    payload = %{
+      upload_id: upload_id,
+      must_begin_by: must_begin_by,
+      upload_type: :chunked
+    }
+
+    {Crypto.sign(signed_upload_secret_key(), @signed_upload_salt, payload), upload_id}
   end
 
   @spec verify_token(upload_token()) :: :ok | {:error, term()}
