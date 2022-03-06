@@ -13,7 +13,7 @@ defmodule Oriio.Uploads.ChunkUploadMonitor do
 
   @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(_) do
-    GenServer.start_link(__MODULE__, %{})
+    GenServer.start_link(__MODULE__, %{}, name: {:global, ChunkUploadMonitor})
   end
 
   @impl true
