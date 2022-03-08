@@ -7,7 +7,7 @@ defmodule Oriio.Uploads.ChunkUploadWorker do
   use GenServer, restart: :transient
 
   alias Oriio.Uploads.ChunkUploadRegistry
-  alias Oriio.Uploads.StateHandoff
+  alias Oriio.Uploads.ChunkUploadStateHandoff, as: StateHandoff
 
   @type state() :: %{
           id: binary(),
@@ -135,7 +135,7 @@ defmodule Oriio.Uploads.ChunkUploadWorker do
   def terminate(_reason, %{id: id} = state) do
     StateHandoff.handoff(id, state)
     # timeout to make sure the CRDT is propegated to other nodes
-    :timer.sleep(8000)
+    :timer.sleep(3000)
   end
 
   defp missing_chunks(%{chunk_document_paths: chunk_document_paths}) do

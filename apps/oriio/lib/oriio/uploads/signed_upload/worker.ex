@@ -6,6 +6,7 @@ defmodule Oriio.Uploads.SignedUploadWorker do
   use GenServer, restart: :transient
 
   alias Oriio.Uploads.SignedUploadRegistry
+  alias Oriio.Uploads.SignedUploadStateHandoff, as: StateHandoff
 
   require Logger
 
@@ -35,7 +36,7 @@ defmodule Oriio.Uploads.SignedUploadWorker do
 
     state = Map.put(new_signed_upload, :is_started?, false)
 
-    {:ok, state}
+    {:ok, state, {:continue, :load_state}}
   end
 
   @spec start_upload(pid()) :: :ok
@@ -62,6 +63,17 @@ defmodule Oriio.Uploads.SignedUploadWorker do
   end
 
   @impl GenServer
+  def handle_continue(:load_state, %{id: id} = state) do
+    new_state =
+      case StateHandoff.pickup(id) do
+        nil -> state
+        state -> state
+      end
+
+    {:noreply, new_state}
+  end
+
+  @impl GenServer
   def handle_info({:EXIT, _, :normal}, state) do
     {:stop, :normal, state}
   end
@@ -69,8 +81,10 @@ defmodule Oriio.Uploads.SignedUploadWorker do
   @impl GenServer
   def terminate(:normal, _state), do: :ok
 
-  def terminate(reason, state) do
-    Logger.info("terminating #{reason} #{inspect(state)}")
+  def terminate(_reason, %{id: id} = state) do
+    StateHandoff.handoff(id, state)
+    # timeout to make sure the CRDT is propegated to other nodes
+    :timer.sleep(3000)
   end
 
   defp via_tuple(name),
