@@ -59,11 +59,6 @@ defmodule Oriio.DeltaCrdt do
           Supervisor.init(children, strategy: :one_for_one)
         end
       end
-
-      @impl Supervisor
-      def child_spec(opts) do
-        CrdtSupervisor.child_spec(opts)
-      end
     end
   end
 
