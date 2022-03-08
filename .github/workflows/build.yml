@@ -22,6 +22,15 @@ jobs:
       with:
         elixir-version: '1.13.2' 
         otp-version: '24' 
+    - name: Install vips
+      run: > 
+            apt-get install -y build-essential \
+            locales \
+            gcc \
+            erlang-dev \
+            libvips \
+            libvips-dev \ 
+            libvips-tools        
     - name: Restore dependencies cache
       uses: actions/cache@v2
       with:
