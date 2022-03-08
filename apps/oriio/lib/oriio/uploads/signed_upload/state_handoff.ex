@@ -1,4 +1,8 @@
 defmodule Oriio.Uploads.SignedUploadStateHandoff do
+  @moduledoc """
+  Handles state handoff between processes. It uses DeltaCRDT to manage the distributed state syncronization.
+  """
+
   use Oriio.DeltaCrdt
 
   alias Oriio.Uploads.SignedUploadWorker

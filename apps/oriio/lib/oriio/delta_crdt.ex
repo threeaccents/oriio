@@ -1,4 +1,10 @@
 defmodule Oriio.DeltaCrdt do
+  @moduledoc """
+  Abstract DeltraCrdt implementation.
+  """
+
+  alias Horde.NodeListener
+
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
       cluster = opts[:cluster]
@@ -13,6 +19,11 @@ defmodule Oriio.DeltaCrdt do
       @crdt opts[:crdt_mod]
 
       defmodule CrdtSupervisor do
+        @moduledoc """
+        Supervisor for DeltaCrdt implementation.
+        It gets automatically started when the implementation is added to the supervison tree.
+        """
+
         use Supervisor
 
         @cluster_name opts[:cluster_name]
@@ -49,6 +60,7 @@ defmodule Oriio.DeltaCrdt do
         end
       end
 
+      @impl Supervisor
       def child_spec(opts) do
         CrdtSupervisor.child_spec(opts)
       end
@@ -57,13 +69,14 @@ defmodule Oriio.DeltaCrdt do
 
   use GenServer
 
+  @spec start_link(keyword()) :: GenServer.on_start()
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: opts[:name])
   end
 
   @impl true
   def init(opts) do
-    members = Horde.NodeListener.make_members(opts[:name])
+    members = NodeListener.make_members(opts[:name])
 
     state =
       opts
@@ -74,7 +87,7 @@ defmodule Oriio.DeltaCrdt do
   end
 
   @impl true
-  def handle_call({:set_members, members}, _from, state = %{crdt: crdt, name: name}) do
+  def handle_call({:set_members, members}, _from, %{crdt: crdt, name: name} = state) do
     neighbors =
       members
       |> Stream.filter(fn member -> member != {name, Node.self()} end)
@@ -86,7 +99,7 @@ defmodule Oriio.DeltaCrdt do
   end
 
   @impl true
-  def handle_call(:members, _from, state = %{members: members}) do
+  def handle_call(:members, _from, %{members: members} = state) do
     {:reply, MapSet.to_list(members), state}
   end
 end
