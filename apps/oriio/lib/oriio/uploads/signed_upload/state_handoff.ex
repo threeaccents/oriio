@@ -3,12 +3,12 @@ defmodule Oriio.Uploads.SignedUploadStateHandoff do
 
   alias Oriio.Uploads.SignedUploadWorker
 
-  @type upload_id() :: binary()
+  @type signed_upload_id() :: binary()
   @type signed_upload_state() :: SignedUploadWorker.state()
 
   @spec handoff(signed_upload_id(), signed_upload_state()) :: DeltaCrdt.t()
   def handoff(signed_upload_id, state) do
-    DeltaCrdt.put(@crdt, upload_id, state)
+    DeltaCrdt.put(@crdt, signed_upload_id, state)
   end
 
   @spec pickup(signed_upload_id()) :: signed_upload_state() | nil

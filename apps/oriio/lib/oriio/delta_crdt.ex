@@ -9,7 +9,6 @@ defmodule Oriio.DeltaCrdt do
         |> Keyword.put_new(:cluster_name, cluster || __MODULE__)
         |> Keyword.put_new(:crdt_mod, :"#{__MODULE__}.Crdt")
         |> Keyword.put_new(:crdt_opts, [])
-        |> IO.inspect(opts, label: "macro opts")
 
       @crdt opts[:crdt_mod]
 
@@ -27,14 +26,11 @@ defmodule Oriio.DeltaCrdt do
 
         @impl true
         def init(init_opts) do
-          IO.inspect(init_opts, label: "crdt supervisor init opts")
-
           crdt_opts =
             [crdt: DeltaCrdt.AWLWWMap]
             |> Keyword.merge(@crdt_opts)
             |> Keyword.merge(init_opts)
             |> Keyword.put(:name, @crdt)
-            |> IO.inspect(label: "crdt supervisor crdt opts")
 
           {cluster_mod, cluster_opts} = @cluster_mod
 
@@ -42,22 +38,18 @@ defmodule Oriio.DeltaCrdt do
             [crdt: @crdt, name: @cluster_name]
             |> Keyword.merge(cluster_opts)
             |> Keyword.merge(init_opts)
-            |> IO.inspect(label: "crdt supervisor cluster opts")
 
-          children =
-            [
-              {DeltaCrdt, crdt_opts},
-              {Horde.NodeListener, @cluster_name},
-              {cluster_mod, cluster_opts}
-            ]
-            |> IO.inspect(label: "crdt supervisor children")
+          children = [
+            {DeltaCrdt, crdt_opts},
+            {Horde.NodeListener, @cluster_name},
+            {cluster_mod, cluster_opts}
+          ]
 
           Supervisor.init(children, strategy: :one_for_one)
         end
       end
 
       def child_spec(opts) do
-        IO.inspect(opts, label: "crdt supervisor child spec opts")
         CrdtSupervisor.child_spec(opts)
       end
     end
@@ -71,7 +63,6 @@ defmodule Oriio.DeltaCrdt do
 
   @impl true
   def init(opts) do
-    IO.inspect(opts, label: "genserver init opts")
     members = Horde.NodeListener.make_members(opts[:name])
 
     state =
