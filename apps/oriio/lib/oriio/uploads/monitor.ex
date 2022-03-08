@@ -1,7 +1,7 @@
-defmodule Oriio.Uploads.ChunkUploadMonitor do
+defmodule Oriio.Uploads.UploadMonitor do
   @moduledoc """
-  This module will check for stale uploads that maybe the client got disconnected for 5 hours and sent no more chunks to avoid process leaks.
-  It will also check for chunks that have been merged and for some reason the process wasn't killed.
+  Monitor for chunked and signed uploads.
+  It checks for stale uploads and kills them to avoid process leaks.
   """
   use GenServer
 

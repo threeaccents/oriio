@@ -1,11 +1,13 @@
-defmodule OriioWeb.AuthPlug do
+defmodule OriioWeb.SignedUploadPlug do
   @moduledoc """
-  Plug to check for an auth token. It extracts the token from the authroizatin header and verifies it is a valid token.
+  Plug to check for an signed upload auth token. It extracts the token from the authroizatin header and verifies it is a valid token.
   """
 
   import Plug.Conn
 
   import Phoenix.Controller, only: [put_view: 2, render: 3]
+
+  alias Oriio.SignedUploads
 
   require Logger
 
@@ -19,20 +21,22 @@ defmodule OriioWeb.AuthPlug do
   @impl Plug
   def call(conn, _opts) do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
-         :ok <- verify_token(token) do
-      conn
+         {:ok, payload} <- SignedUploads.verify_token(token) do
+      assign(conn, :signed_upload_id, payload.id)
     else
       [] ->
         send_bad_request_resp(conn, "bearer token missing")
+
+      {:error, :signed_upload_expired} ->
+        send_bad_request_resp(conn, "signed upload expired")
+
+      {:error, :signed_upload_already_in_use} ->
+        send_bad_request_resp(conn, "signed upload already in use")
 
       {:error, reason} ->
         Logger.warn("failed to verify token: #{inspect(reason)}")
         send_unauthorized_resp(conn)
     end
-  end
-
-  defp verify_token(token) do
-    if token == auth_secret_key(), do: :ok, else: {:error, :invalid_auth_token}
   end
 
   defp send_unauthorized_resp(conn) do
@@ -50,6 +54,4 @@ defmodule OriioWeb.AuthPlug do
     |> render("error.json", %{message: error})
     |> halt()
   end
-
-  defp auth_secret_key, do: Application.get_env(:oriio_web, :auth_secret_key)
 end

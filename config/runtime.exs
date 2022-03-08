@@ -21,11 +21,11 @@ if config_env() == :prod do
 
   # File storage engine
   config :oriio, :file_storage,
-    storage_engine: System.get_env("MAHI_FILE_STORAGE_ENGINE"),
-    access_key: System.get_env("MAHI_FILE_STORAGE_ACCESS_KEY"),
-    secret_key: System.get_env("MAHI_FILE_STORAGE_SECRET_KEY"),
-    region: System.get_env("MAHI_FILE_STORAGE_REGION"),
-    bucket: System.get_env("MAHI_FILE_STORAGE_BUCKET")
+    storage_engine: System.get_env("ORIIO_FILE_STORAGE_ENGINE"),
+    access_key: System.get_env("ORIIO_FILE_STORAGE_ACCESS_KEY"),
+    secret_key: System.get_env("ORIIO_FILE_STORAGE_SECRET_KEY"),
+    region: System.get_env("ORIIO_FILE_STORAGE_REGION"),
+    bucket: System.get_env("ORIIO_FILE_STORAGE_BUCKET")
 
   config :oriio_web, OriioWeb.Endpoint,
     url: [host: "oriio.oriio.io", port: 8080],
@@ -47,7 +47,12 @@ if config_env() == :prod do
   #
   config :oriio_web, OriioWeb.Endpoint, server: true
 
-  config :oriio_web, :auth_secret_key, System.get_env("MAHI_AUTH_SECRET")
+  config :oriio_web, :auth_secret_key, System.get_env("ORIIO_AUTH_SECRET")
+
+  config :oriio,
+         :signed_upload_secret_key,
+         System.get_env("ORIIO_SIGNED_UPLOAD_SECRET")
+
   #
   # Then you can assemble a release by calling `mix release`.
   # See `mix help release` for more information.

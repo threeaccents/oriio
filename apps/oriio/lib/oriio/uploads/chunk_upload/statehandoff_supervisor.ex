@@ -5,7 +5,7 @@ defmodule Oriio.Uploads.StateHandoffSupervisor do
 
   use Supervisor
 
-  @crdt_name Oriio.Uploads.StateHandoff.Crdt
+  @crdt_name Oriio.Uploads.ChunkUploadStateHandoff.Crdt
 
   @spec start_link(keyword()) :: Supervisor.on_start()
   def start_link(opts) do
@@ -18,8 +18,8 @@ defmodule Oriio.Uploads.StateHandoffSupervisor do
 
     children = [
       {DeltaCrdt, crdt_opts},
-      {Horde.NodeListener, Oriio.Uploads.StateHandoff},
-      Oriio.Uploads.StateHandoff
+      {Horde.NodeListener, Oriio.Uploads.ChunkUploadStateHandoff},
+      Oriio.Uploads.ChunkUploadStateHandoff
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
