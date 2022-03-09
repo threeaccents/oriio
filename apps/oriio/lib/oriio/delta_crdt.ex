@@ -60,6 +60,7 @@ defmodule Oriio.DeltaCrdt do
         end
       end
 
+      @spec child_spec(keyword()) :: Supervisor.child_spec()
       def child_spec(opts) do
         CrdtSupervisor.child_spec(opts)
       end
