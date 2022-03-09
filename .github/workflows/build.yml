@@ -28,21 +28,14 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: 
-        sudo apt-get update -qq -o Acquire::Retries=3
-    - name: Install libvips
+        sudo apt-get update -qq -o Acquire::Retries=3   
+    - name: Install Vips
       env:
         DEBIAN_FRONTEND: noninteractive
       run:
         # we only need the library
         sudo apt-get install --fix-missing -qq -o Acquire::Retries=3
-          libvips    
-    - name: Install other deps
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run:
-        # we only need the library
-        sudo apt-get install --fix-missing -qq -o Acquire::Retries=3
-          build-essentials          
+          build-essentials locales gcc erlang-dev libvips libvips-dev libvips-tools         
     - name: Restore dependencies cache
       uses: actions/cache@v2
       with:
