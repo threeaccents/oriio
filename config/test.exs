@@ -26,4 +26,4 @@ config :oriio, :file_storage, storage_engine: "mock-engine"
 
 config :oriio_web,
        :auth_secret_key,
-       "KN58vmkzeiUFMIo8nmv4OHagbIDXAzciZmyZ2lp3gXZHs4wlcJ1IElyQkuqGk9L9"
+       "secret"
