@@ -13,7 +13,7 @@ jobs:
   build:
 
     name: Build and test
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -28,14 +28,14 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: 
-        sudo apt-get update -qq -o Acquire::Retries=3
-    - name: Install libvips
+        sudo apt-get update -qq -o Acquire::Retries=3   
+    - name: Install Vips
       env:
         DEBIAN_FRONTEND: noninteractive
       run:
         # we only need the library
         sudo apt-get install --fix-missing -qq -o Acquire::Retries=3
-          libvips        
+          libvips libvips-dev libvips-tools build-essential locales gcc erlang-dev            
     - name: Restore dependencies cache
       uses: actions/cache@v2
       with:
@@ -49,6 +49,6 @@ jobs:
     - name: Run Credo
       run: mix credo --strict
     - name: Run Dialyzer
-      run: mix dialzyer    
+      run: mix dialyzer    
     - name: Run tests
       run: mix test
