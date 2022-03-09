@@ -15,7 +15,7 @@ defmodule Oriio.Application do
       # Clustering
       {Cluster.Supervisor, [topologies, [name: Oriio.ClusterSupervisor]]},
       # Chunk Uploads
-      Oriio.Uploads.StateHandoffSupervisor,
+      Oriio.Uploads.ChunkUploadStateHandoff,
       Oriio.Uploads.ChunkUploadRegistry,
       Oriio.Uploads.ChunkUploadSupervisor,
       Oriio.Uploads.UploadMonitor,
