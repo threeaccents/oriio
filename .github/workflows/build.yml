@@ -13,7 +13,7 @@ jobs:
   build:
 
     name: Build and test
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -35,13 +35,14 @@ jobs:
       run:
         # we only need the library
         sudo apt-get install --fix-missing -qq -o Acquire::Retries=3
-          build-essential \
-          locales \
-          gcc \
-          erlang-dev \
-          libvips \
-          libvips-dev \ 
-          libvips-tools         
+          libvips    
+    - name: Install other deps
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run:
+        # we only need the library
+        sudo apt-get install --fix-missing -qq -o Acquire::Retries=3
+          build-essentials          
     - name: Restore dependencies cache
       uses: actions/cache@v2
       with:
