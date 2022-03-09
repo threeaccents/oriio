@@ -35,7 +35,7 @@ jobs:
       run:
         # we only need the library
         sudo apt-get install --fix-missing -qq -o Acquire::Retries=3
-          libvips libvips-dev libvips-tools build-essentials locales gcc erlang-dev            
+          libvips libvips-dev libvips-tools build-essential locales gcc erlang-dev            
     - name: Restore dependencies cache
       uses: actions/cache@v2
       with:
