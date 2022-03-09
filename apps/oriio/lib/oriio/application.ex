@@ -18,7 +18,8 @@ defmodule Oriio.Application do
       Oriio.Uploads.StateHandoffSupervisor,
       Oriio.Uploads.ChunkUploadRegistry,
       Oriio.Uploads.ChunkUploadSupervisor,
-      Oriio.Uploads.ChunkUploadMonitor,
+      Oriio.Uploads.ChunkUploadMonitorRegistry,
+      Oriio.Uploads.ChunkUploadMonitorSupervisor,
       # Start a worker by calling: Oriio.Worker.start_link(arg)
       # {Oriio.Worker, arg}
     ]

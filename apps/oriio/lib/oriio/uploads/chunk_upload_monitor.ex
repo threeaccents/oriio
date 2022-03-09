@@ -5,19 +5,25 @@ defmodule Oriio.Uploads.ChunkUploadMonitor do
   """
   use GenServer
 
-  alias Oriio.Uploads.ChunkUploadRegistry
-  alias Oriio.Uploads.ChunkUploadWorker
+  alias Oriio.Uploads.{
+    ChunkUploadMonitorRegistry,
+    ChunkUploadRegistry,
+    ChunkUploadWorker,
+    ChunkUploadMonitorSupervisor
+  }
 
   @thirty_minutes 30 * 60 * 1000
   @valid_hours 5
 
   @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(_) do
-    GenServer.start_link(__MODULE__, %{}, name: {:global, ChunkUploadMonitor})
+    GenServer.start_link(__MODULE__, %{})
   end
 
   @impl true
   def init(state) do
+    :net_kernel.monitor_nodes(true, node_type: :visible)
+
     schedule_work()
 
     {:ok, state}
@@ -30,6 +36,28 @@ defmodule Oriio.Uploads.ChunkUploadMonitor do
     schedule_work()
 
     {:noreply, state}
+  end
+
+  @impl true
+  def handle_info({:nodeup, _node, _node_type}, state) do
+    set_members(ChunkUploadMonitorRegistry)
+    set_members(ChunkUploadMonitorSupervisor)
+
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info({:nodedown, _node, _node_type}, state) do
+    set_members(ChunkUploadMonitorRegistry)
+    set_members(ChunkUploadMonitorSupervisor)
+
+    {:noreply, state}
+  end
+
+  defp set_members(name) do
+    members = Enum.map([Node.self() | Node.list()], &{name, &1})
+
+    :ok = Horde.Cluster.set_members(name, members)
   end
 
   defp schedule_work do
