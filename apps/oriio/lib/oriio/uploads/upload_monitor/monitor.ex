@@ -10,13 +10,13 @@ defmodule Oriio.Uploads.UploadMonitor do
   alias Oriio.Uploads.{
     UploadMonitorRegistry,
     ChunkUploadRegistry,
-    ChunkUploadWorker,
+    ChunkUploadWorker
   }
 
   @thirty_minutes 30 * 60 * 1000
   @valid_hours 5
 
-  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
+  @spec start_link(term()) :: :ignore | {:ok, pid()}
   def start_link(_) do
     case GenServer.start_link(__MODULE__, [], name: via_tuple(__MODULE__)) do
       {:ok, pid} ->

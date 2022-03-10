@@ -1,6 +1,6 @@
 defmodule Oriio.Uploads.UploadMonitorSupervisor do
   @moduledoc """
-  Manages the supervisor lifecycle for ChunkUploadMonitor
+  Manages the supervisor lifecycle for UploadMonitor
   """
 
   use Horde.DynamicSupervisor

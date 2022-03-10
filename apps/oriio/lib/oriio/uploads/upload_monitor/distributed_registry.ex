@@ -1,6 +1,6 @@
 defmodule Oriio.Uploads.UploadMonitorRegistry do
   @moduledoc """
-  Distributed registry for ChunkUploadMonitor
+  Distributed registry for UploadMonitor
   """
 
   use Horde.Registry
