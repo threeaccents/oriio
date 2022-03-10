@@ -3,31 +3,32 @@ defmodule Oriio.Uploads.ChunkUploadMonitorSupervisor do
   Manages the supervisor lifecycle for ChunkUploadMonitor
   """
 
-  use Supervisor
+  use Horde.DynamicSupervisor
 
-  alias Oriio.Uploads.ChunkUploadMonitorRegistry
+  alias Horde.DynamicSupervisor
 
-  @spec start_link(keyword()) :: Supervisor.on_start()
-  def start_link(opts) do
-    Supervisor.start_link(__MODULE__, opts, name: via_tuple(ChunkUploadMonitor))
+  @spec start_link(Supervisor.option()) :: Supervisor.on_start()
+  def start_link(_opts) do
+    DynamicSupervisor.start_link(
+      __MODULE__,
+      [strategy: :one_for_one, members: :auto, shutdown: 10_000],
+      name: __MODULE__
+    )
   end
 
   @impl true
-  def init(_opts) do
-    children = [
-      Oriio.Uploads.ChunkUploadMonitor,
-    ]
-
-    Supervisor.init(children, strategy: :one_for_one)
+  def init(init_arg) do
+    [members: members()]
+    |> Keyword.merge(init_arg)
+    |> DynamicSupervisor.init()
   end
 
-  def whereis(name \\ ChunkUploadMonitor) do
-    name
-    |> via_tuple()
-    |> GenServer.whereis()
+  @spec start_child(term()) :: Supervisor.on_start_child()
+  def start_child(child_spec) do
+    DynamicSupervisor.start_child(__MODULE__, child_spec)
   end
 
-  defp via_tuple(name) do
-    {:via, Horde.Registry, {ChunkUploadMonitorRegistry, name}}
+  defp members do
+    Enum.map([Node.self() | Node.list()], &{__MODULE__, &1})
   end
 end

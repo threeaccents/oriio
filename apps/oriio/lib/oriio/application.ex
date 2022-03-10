@@ -5,6 +5,12 @@ defmodule Oriio.Application do
 
   use Application
 
+  alias Oriio.Uploads.{
+    ChunkUploadMonitorSupervisor,
+    ChunkUploadMonitorRegistry,
+    ChunkUploadMonitor
+  }
+
   @impl true
   def start(_type, _args) do
     topologies = Application.get_env(:libcluster, :topologies) || topologies()
@@ -18,8 +24,19 @@ defmodule Oriio.Application do
       Oriio.Uploads.StateHandoffSupervisor,
       Oriio.Uploads.ChunkUploadRegistry,
       Oriio.Uploads.ChunkUploadSupervisor,
-      Oriio.Uploads.ChunkUploadMonitorRegistry,
-      Oriio.Uploads.ChunkUploadMonitorSupervisor,
+      ChunkUploadMonitorRegistry,
+      ChunkUploadMonitorSupervisor,
+      %{
+        id: Oriio.ClusterConnector,
+        restart: :transient,
+        start:
+          {Task, :start_link,
+           [
+             fn ->
+               Horde.DynamicSupervisor.start_child(ChunkUploadMonitorSupervisor, ChunkUploadMonitor)
+             end
+           ]}
+      }
       # Start a worker by calling: Oriio.Worker.start_link(arg)
       # {Oriio.Worker, arg}
     ]
