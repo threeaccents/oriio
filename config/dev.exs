@@ -66,12 +66,16 @@ config :phoenix, :stacktrace_depth, 20
 
 # File storage engine
 config :oriio, :file_storage,
-  storage_engine: "s3-compatible",
-  access_key: "AKIA53ZJZHZMFRYWSOTO",
-  secret_key: "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",
-  region: "us-east-2",
-  bucket: "oriio-my-4-app-2672"
+  storage_engine: System.get_env("ORIIO_FILE_STORAGE_ENGINE"),
+  access_key: System.get_env("ORIIO_FILE_STORAGE_ACCESS_KEY"),
+  secret_key: System.get_env("ORIIO_FILE_STORAGE_SECRET_KEY"),
+  region: System.get_env("ORIIO_FILE_STORAGE_REGION"),
+  bucket: System.get_env("ORIIO_FILE_STORAGE_BUCKET")
 
 config :oriio_web,
        :auth_secret_key,
        "KN58vmkzeiUFMIo8nmv4OHagbIDXAzciZmyZ2lp3gXZHs4wlcJ1IElyQkuqGk9L9"
+
+config :oriio,
+       :signed_upload_secret_key,
+       "3ggV3CQIWN3hOhjH23iCulxA4xdHG9Egba4xGlyXFNTCKjuxOeUoHxy9qXqdQNEo"

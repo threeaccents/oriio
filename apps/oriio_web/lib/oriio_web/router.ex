@@ -10,6 +10,7 @@ defmodule OriioWeb.Router do
 
     post "/chunk_uploads", UploadController, :new_chunk_upload
     post "/chunk_uploads/:upload_id", UploadController, :complete_chunk_upload
+    post "/signed_uploads", SignedUploadController, :create
   end
 
   scope "/", OriioWeb do
@@ -19,11 +20,24 @@ defmodule OriioWeb.Router do
     post "/uploads", UploadController, :upload
   end
 
+  scope "/signed_uploads", OriioWeb do
+    pipe_through :signed_upload_api
+
+    post "/chunk_uploads", SignedUploadController, :new_chunk_upload
+    post "/chunk_uploads/:upload_id", SignedUploadController, :complete_chunk_upload
+  end
+
+  scope "/signed_uploads", OriioWeb do
+    pipe_through :signed_upload_multipart
+
+    post "/append_chunk", UploadController, :append_chunk
+    post "/uploads", SignedUploadController, :upload
+  end
+
   scope "/", OriioWeb do
     pipe_through :file_delivery
 
     get "/:timestamp/:file_name", FileDeliveryController, :serve_file
-    post "/signed_urls", SignedUrlController, :create
   end
 
   # Enables LiveDashboard only for development

@@ -5,8 +5,10 @@ defmodule Oriio.Debug do
   """
 
   alias Oriio.Uploads.ChunkUploadRegistry
+  alias Oriio.Uploads.SignedUploadRegistry
 
   alias Oriio.Documents
+  alias Oriio.SignedUploads
 
   @upload_files_path "#{__DIR__}/../../test/fixtures/uploads"
 
@@ -16,6 +18,14 @@ defmodule Oriio.Debug do
     upload_chunks(id)
 
     id
+  end
+
+  def new_signed_upload(type) do
+    {:ok, token} = SignedUploads.new_signed_upload(type)
+
+    {:ok, payload} = SignedUploads.verify_token(token)
+
+    {token, payload}
   end
 
   def upload_chunks(id) do
@@ -30,5 +40,9 @@ defmodule Oriio.Debug do
 
   def get_chunk_upload_pid(upload_id) do
     GenServer.whereis({:via, Horde.Registry, {ChunkUploadRegistry, upload_id}})
+  end
+
+  def get_signed_upload_pid(upload_id) do
+    GenServer.whereis({:via, Horde.Registry, {SignedUploadRegistry, upload_id}})
   end
 end

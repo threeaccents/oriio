@@ -21,7 +21,7 @@ defmodule Oriio.Application do
       # Clustering
       {Cluster.Supervisor, [topologies, [name: Oriio.ClusterSupervisor]]},
       # Chunk Uploads
-      Oriio.Uploads.StateHandoffSupervisor,
+      Oriio.Uploads.ChunkUploadStateHandoff,
       Oriio.Uploads.ChunkUploadRegistry,
       Oriio.Uploads.ChunkUploadSupervisor,
       ChunkUploadMonitorRegistry,
@@ -36,7 +36,11 @@ defmodule Oriio.Application do
                Horde.DynamicSupervisor.start_child(ChunkUploadMonitorSupervisor, ChunkUploadMonitor)
              end
            ]}
-      }
+      },
+      # Signed Uploads
+      Oriio.Uploads.SignedUploadStateHandoff,
+      Oriio.Uploads.SignedUploadRegistry,
+      Oriio.Uploads.SignedUploadSupervisor
       # Start a worker by calling: Oriio.Worker.start_link(arg)
       # {Oriio.Worker, arg}
     ]
