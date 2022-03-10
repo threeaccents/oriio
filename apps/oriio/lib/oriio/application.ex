@@ -8,7 +8,13 @@ defmodule Oriio.Application do
   alias Oriio.Uploads.{
     ChunkUploadMonitorSupervisor,
     ChunkUploadMonitorRegistry,
-    ChunkUploadMonitor
+    ChunkUploadMonitor,
+    ChunkUploadStateHandoff,
+    ChunkUploadRegistry,
+    ChunkUploadSupervisor,
+    SignedUploadStateHandoff,
+    SignedUploadRegistry,
+    SignedUploadSupervisor
   }
 
   @impl true
@@ -21,9 +27,9 @@ defmodule Oriio.Application do
       # Clustering
       {Cluster.Supervisor, [topologies, [name: Oriio.ClusterSupervisor]]},
       # Chunk Uploads
-      Oriio.Uploads.ChunkUploadStateHandoff,
-      Oriio.Uploads.ChunkUploadRegistry,
-      Oriio.Uploads.ChunkUploadSupervisor,
+      ChunkUploadStateHandoff,
+      ChunkUploadRegistry,
+      ChunkUploadSupervisor,
       ChunkUploadMonitorRegistry,
       ChunkUploadMonitorSupervisor,
       %{
@@ -38,9 +44,9 @@ defmodule Oriio.Application do
            ]}
       },
       # Signed Uploads
-      Oriio.Uploads.SignedUploadStateHandoff,
-      Oriio.Uploads.SignedUploadRegistry,
-      Oriio.Uploads.SignedUploadSupervisor
+      SignedUploadStateHandoff,
+      SignedUploadRegistry,
+      SignedUploadSupervisor
       # Start a worker by calling: Oriio.Worker.start_link(arg)
       # {Oriio.Worker, arg}
     ]
