@@ -17,6 +17,8 @@ defmodule Oriio.Application do
     SignedUploadSupervisor
   }
 
+  alias Horde.DynamicSupervisor
+
   @impl true
   def start(_type, _args) do
     topologies = Application.get_env(:libcluster, :topologies) || topologies()
@@ -49,7 +51,7 @@ defmodule Oriio.Application do
   end
 
   defp start_upload_monitor do
-    Horde.DynamicSupervisor.start_child(UploadMonitorSupervisor, UploadMonitor)
+    DynamicSupervisor.start_child(UploadMonitorSupervisor, UploadMonitor)
   end
 
   defp topologies do
