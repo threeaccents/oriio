@@ -65,12 +65,6 @@ defmodule Oriio.Uploads.UploadMonitor do
     DateTime.diff(expiry_time, DateTime.utc_now()) <= 0
   end
 
-  def whereis(name \\ __MODULE__) do
-    name
-    |> via_tuple()
-    |> GenServer.whereis()
-  end
-
   defp via_tuple(name) do
     {:via, Horde.Registry, {UploadMonitorRegistry, name}}
   end
