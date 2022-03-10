@@ -1,4 +1,4 @@
-defmodule Oriio.Uploads.ChunkUploadMonitorRegistry do
+defmodule Oriio.Uploads.UploadMonitorRegistry do
   @moduledoc """
   Distributed registry for ChunkUploadMonitor
   """

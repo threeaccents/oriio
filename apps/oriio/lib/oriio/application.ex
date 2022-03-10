@@ -6,9 +6,9 @@ defmodule Oriio.Application do
   use Application
 
   alias Oriio.Uploads.{
-    ChunkUploadMonitorSupervisor,
-    ChunkUploadMonitorRegistry,
-    ChunkUploadMonitor,
+    UploadMonitorSupervisor,
+    UploadMonitorRegistry,
+    UploadMonitor,
     ChunkUploadStateHandoff,
     ChunkUploadRegistry,
     ChunkUploadSupervisor,
@@ -30,8 +30,8 @@ defmodule Oriio.Application do
       ChunkUploadStateHandoff,
       ChunkUploadRegistry,
       ChunkUploadSupervisor,
-      ChunkUploadMonitorRegistry,
-      ChunkUploadMonitorSupervisor,
+      UploadMonitorRegistry,
+      UploadMonitorSupervisor,
       %{
         id: Oriio.ClusterConnector,
         restart: :transient,
@@ -39,7 +39,7 @@ defmodule Oriio.Application do
           {Task, :start_link,
            [
              fn ->
-               Horde.DynamicSupervisor.start_child(ChunkUploadMonitorSupervisor, ChunkUploadMonitor)
+               Horde.DynamicSupervisor.start_child(UploadMonitorSupervisor, UploadMonitor)
              end
            ]}
       },

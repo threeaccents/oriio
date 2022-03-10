@@ -8,7 +8,7 @@ defmodule Oriio.Uploads.UploadMonitor do
   require Logger
 
   alias Oriio.Uploads.{
-    ChunkUploadMonitorRegistry,
+    UploadMonitorRegistry,
     ChunkUploadRegistry,
     ChunkUploadWorker,
   }
@@ -18,7 +18,7 @@ defmodule Oriio.Uploads.UploadMonitor do
 
   @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(_) do
-    case GenServer.start_link(__MODULE__, [], name: via_tuple(ChunkUploadMonitor)) do
+    case GenServer.start_link(__MODULE__, [], name: via_tuple(__MODULE__)) do
       {:ok, pid} ->
         {:ok, pid}
 
@@ -65,13 +65,13 @@ defmodule Oriio.Uploads.UploadMonitor do
     DateTime.diff(expiry_time, DateTime.utc_now()) <= 0
   end
 
-  def whereis(name \\ ChunkUploadMonitor) do
+  def whereis(name \\ __MODULE__) do
     name
     |> via_tuple()
     |> GenServer.whereis()
   end
 
   defp via_tuple(name) do
-    {:via, Horde.Registry, {ChunkUploadMonitorRegistry, name}}
+    {:via, Horde.Registry, {UploadMonitorRegistry, name}}
   end
 end

@@ -1,4 +1,4 @@
-defmodule Oriio.Uploads.ChunkUploadMonitorSupervisor do
+defmodule Oriio.Uploads.UploadMonitorSupervisor do
   @moduledoc """
   Manages the supervisor lifecycle for ChunkUploadMonitor
   """
