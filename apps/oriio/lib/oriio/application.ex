@@ -17,7 +17,7 @@ defmodule Oriio.Application do
     SignedUploadSupervisor
   }
 
-  alias Horde.DynamicSupervisor
+  alias Horde.DynamicSupervisor, as: DistributedSupervisor
 
   @impl true
   def start(_type, _args) do
@@ -51,7 +51,7 @@ defmodule Oriio.Application do
   end
 
   defp start_upload_monitor do
-    DynamicSupervisor.start_child(UploadMonitorSupervisor, UploadMonitor)
+    DistributedSupervisor.start_child(UploadMonitorSupervisor, UploadMonitor)
   end
 
   defp topologies do

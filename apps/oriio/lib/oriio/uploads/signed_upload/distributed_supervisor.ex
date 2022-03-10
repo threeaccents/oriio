@@ -6,11 +6,11 @@ defmodule Oriio.Uploads.SignedUploadSupervisor do
 
   use Horde.DynamicSupervisor
 
-  alias Horde.DynamicSupervisor
+  alias Horde.DynamicSupervisor, as: DistributedSupervisor
 
   @spec start_link(Supervisor.option()) :: Supervisor.on_start()
   def start_link(_opts) do
-    DynamicSupervisor.start_link(
+    DistributedSupervisor.start_link(
       __MODULE__,
       [strategy: :one_for_one, members: :auto, shutdown: 10_000],
       name: __MODULE__
@@ -21,12 +21,12 @@ defmodule Oriio.Uploads.SignedUploadSupervisor do
   def init(init_arg) do
     [members: members()]
     |> Keyword.merge(init_arg)
-    |> DynamicSupervisor.init()
+    |> DistributedSupervisor.init()
   end
 
   @spec start_child(term()) :: Supervisor.on_start_child()
   def start_child(child_spec) do
-    DynamicSupervisor.start_child(__MODULE__, child_spec)
+    DistributedSupervisor.start_child(__MODULE__, child_spec)
   end
 
   defp members do
