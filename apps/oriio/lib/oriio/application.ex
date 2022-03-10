@@ -34,7 +34,6 @@ defmodule Oriio.Application do
       UploadMonitorSupervisor,
       %{
         id: Oriio.ClusterConnector,
-        restart: :transient,
         start:
           {Task, :start_link,
            [
