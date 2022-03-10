@@ -16,6 +16,7 @@ defmodule Oriio.Application do
     SignedUploadRegistry,
     SignedUploadSupervisor
   }
+  alias Horde.DynamicSupervisor
 
   @impl true
   def start(_type, _args) do
@@ -33,12 +34,12 @@ defmodule Oriio.Application do
       UploadMonitorRegistry,
       UploadMonitorSupervisor,
       %{
-        id: Oriio.UploadMonitorClusterConnector,
+        id: :upload_monitor_cluster_connector,
         start:
           {Task, :start_link,
            [
              fn ->
-               Horde.DynamicSupervisor.start_child(UploadMonitorSupervisor, UploadMonitor)
+               DynamicSupervisor.start_child(UploadMonitorSupervisor, UploadMonitor)
              end
            ]}
       },
