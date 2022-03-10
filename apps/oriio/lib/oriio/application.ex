@@ -33,7 +33,7 @@ defmodule Oriio.Application do
       UploadMonitorRegistry,
       UploadMonitorSupervisor,
       %{
-        id: Oriio.ClusterConnector,
+        id: Oriio.UploadMonitorClusterConnector,
         start:
           {Task, :start_link,
            [
