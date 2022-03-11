@@ -5,20 +5,6 @@ defmodule Oriio.Application do
 
   use Application
 
-  alias Oriio.Uploads.{
-    UploadMonitorSupervisor,
-    UploadMonitorRegistry,
-    UploadMonitor,
-    ChunkUploadStateHandoff,
-    ChunkUploadRegistry,
-    ChunkUploadSupervisor,
-    SignedUploadStateHandoff,
-    SignedUploadRegistry,
-    SignedUploadSupervisor
-  }
-
-  alias Horde.DynamicSupervisor, as: DistributedSupervisor
-
   @impl true
   def start(_type, _args) do
     topologies = Application.get_env(:libcluster, :topologies) || topologies()
@@ -29,29 +15,19 @@ defmodule Oriio.Application do
       # Clustering
       {Cluster.Supervisor, [topologies, [name: Oriio.ClusterSupervisor]]},
       # Chunk Uploads
-      ChunkUploadStateHandoff,
-      ChunkUploadRegistry,
-      ChunkUploadSupervisor,
-      UploadMonitorRegistry,
-      UploadMonitorSupervisor,
-      %{
-        id: :upload_monitor_cluster_connector,
-        restart: :transient,
-        start: {Task, :start_link, [&start_upload_monitor/0]}
-      },
+      Oriio.Uploads.ChunkUploadStateHandoff,
+      Oriio.Uploads.ChunkUploadRegistry,
+      Oriio.Uploads.ChunkUploadSupervisor,
+      Oriio.Uploads.UploadMonitor,
       # Signed Uploads
-      SignedUploadStateHandoff,
-      SignedUploadRegistry,
-      SignedUploadSupervisor
+      Oriio.Uploads.SignedUploadStateHandoff,
+      Oriio.Uploads.SignedUploadRegistry,
+      Oriio.Uploads.SignedUploadSupervisor
       # Start a worker by calling: Oriio.Worker.start_link(arg)
       # {Oriio.Worker, arg}
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Oriio.Supervisor)
-  end
-
-  defp start_upload_monitor do
-    DistributedSupervisor.start_child(UploadMonitorSupervisor, UploadMonitor)
   end
 
   defp topologies do

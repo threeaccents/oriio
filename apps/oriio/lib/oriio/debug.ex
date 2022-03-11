@@ -4,7 +4,8 @@ defmodule Oriio.Debug do
   Helper module for debugging purposes
   """
 
-  alias Oriio.Uploads.{ChunkUploadRegistry, SignedUploadRegistry, UploadMonitorRegistry}
+  alias Oriio.Uploads.ChunkUploadRegistry
+  alias Oriio.Uploads.SignedUploadRegistry
 
   alias Oriio.Documents
   alias Oriio.SignedUploads
@@ -43,9 +44,5 @@ defmodule Oriio.Debug do
 
   def get_signed_upload_pid(upload_id) do
     GenServer.whereis({:via, Horde.Registry, {SignedUploadRegistry, upload_id}})
-  end
-
-  def get_upload_monitor_pid do
-    GenServer.whereis({:via, Horde.Registry, {UploadMonitorRegistry, Oriio.Uploads.UploadMonitor}})
   end
 end

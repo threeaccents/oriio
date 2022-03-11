@@ -5,27 +5,15 @@ defmodule Oriio.Uploads.UploadMonitor do
   """
   use GenServer
 
-  require Logger
-
-  alias Oriio.Uploads.{
-    UploadMonitorRegistry,
-    ChunkUploadRegistry,
-    ChunkUploadWorker
-  }
+  alias Oriio.Uploads.ChunkUploadRegistry
+  alias Oriio.Uploads.ChunkUploadWorker
 
   @thirty_minutes 30 * 60 * 1000
   @valid_hours 5
 
-  @spec start_link(term()) :: :ignore | {:ok, pid()}
+  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(_) do
-    case GenServer.start_link(__MODULE__, [], name: via_tuple(__MODULE__)) do
-      {:ok, pid} ->
-        {:ok, pid}
-
-      {:error, {:already_started, pid}} ->
-        Logger.info("already started at #{inspect(pid)}, returning :ignore")
-        :ignore
-    end
+    GenServer.start_link(__MODULE__, %{})
   end
 
   @impl true
@@ -63,9 +51,5 @@ defmodule Oriio.Uploads.UploadMonitor do
     updated_at = ChunkUploadWorker.updated_at(pid)
     expiry_time = DateTime.add(updated_at, @valid_hours * 60, :second)
     DateTime.diff(expiry_time, DateTime.utc_now()) <= 0
-  end
-
-  defp via_tuple(name) do
-    {:via, Horde.Registry, {UploadMonitorRegistry, name}}
   end
 end
