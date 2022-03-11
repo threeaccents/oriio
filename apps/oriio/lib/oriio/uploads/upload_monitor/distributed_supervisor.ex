@@ -1,7 +1,6 @@
-defmodule Oriio.Uploads.SignedUploadSupervisor do
+defmodule Oriio.Uploads.UploadMonitorSupervisor do
   @moduledoc """
-  Dyanamic supervisor for managing the signed upload worker.
-  It is a distributed supervisor starting up processes in any server in the cluster.
+  Manages the supervisor lifecycle for UploadMonitor
   """
 
   use Horde.DynamicSupervisor
