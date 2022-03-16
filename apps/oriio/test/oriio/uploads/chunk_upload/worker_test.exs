@@ -99,7 +99,7 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
     test "process is restarted on another node" do
       LocalCluster.start_nodes("my-cluster", 3)
 
-      {:ok, upload_id} = Documents.new_chunk_upload("nalu.png", 8)
+      upload_id = new_distributed_chunk_upload()
 
       # let the registry sync up
       :timer.sleep(1000)
@@ -124,27 +124,42 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
 
       :ok = LocalCluster.stop()
     end
+
+    test "state is handed off between processes" do
+      {:ok, upload_id} = Documents.new_chunk_upload("nalu.png", 8)
+
+      og_upload_pid = Debug.get_chunk_upload_pid(upload_id)
+
+      :ok = Documents.append_chunk(upload_id, {1, Briefly.create!()})
+
+      og_upload_state = :sys.get_state(og_upload_pid)
+
+      Process.exit(og_upload_pid, :test_kill)
+
+      # let everything sync up
+      :timer.sleep(5000)
+
+      new_upload_pid = Debug.get_chunk_upload_pid(upload_id)
+      new_upload_state = :sys.get_state(new_upload_pid)
+
+      assert og_upload_pid != new_upload_pid
+      assert og_upload_state == new_upload_state
+    end
   end
 
-  test "state is handed off between processes" do
+  defp new_distributed_chunk_upload() do
     {:ok, upload_id} = Documents.new_chunk_upload("nalu.png", 8)
 
-    og_upload_pid = Debug.get_chunk_upload_pid(upload_id)
+    # let the registry sync up
+    :timer.sleep(500)
 
-    :ok = Documents.append_chunk(upload_id, {1, Briefly.create!()})
+    upload_pid = Oriio.Debug.get_chunk_upload_pid(upload_id)
 
-    og_upload_state = :sys.get_state(og_upload_pid)
-
-    Process.exit(og_upload_pid, :test_kill)
-
-    # let everything sync up
-    :timer.sleep(5000)
-
-    new_upload_pid = Debug.get_chunk_upload_pid(upload_id)
-    new_upload_state = :sys.get_state(new_upload_pid)
-
-    assert og_upload_pid != new_upload_pid
-    assert og_upload_state == new_upload_state
+    if node(upload_pid) == node() do
+      new_distributed_chunk_upload()
+    else
+      upload_id
+    end
   end
 
   defp add_chunks(pid, chunks) when is_list(chunks) do
