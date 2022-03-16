@@ -3,6 +3,7 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
 
   alias Oriio.Uploads.ChunkUploadWorker
   alias Oriio.Documents
+  alias Oriio.Debug
   alias Ecto.UUID
 
   @total_chunks 8
@@ -111,6 +112,7 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
       original_node_with_upload = node(upload_pid)
 
       :rpc.call(original_node_with_upload, :init, :stop, [])
+
       # let everything sync up
       :timer.sleep(5000)
 
@@ -121,6 +123,27 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
       assert new_node_with_upload != original_node_with_upload
 
       :ok = LocalCluster.stop()
+    end
+
+    test "state is handed off between processes" do
+      {:ok, upload_id} = Documents.new_chunk_upload("nalu.png", 8)
+
+      og_upload_pid = Debug.get_chunk_upload_pid(upload_id)
+
+      :ok = Documents.append_chunk(upload_id, {1, Briefly.create!()})
+
+      og_upload_state = :sys.get_state(og_upload_pid)
+
+      Process.exit(og_upload_pid, :test_kill)
+
+      # let everything sync up
+      :timer.sleep(5000)
+
+      new_upload_pid = Debug.get_chunk_upload_pid(upload_id)
+      new_upload_state = :sys.get_state(new_upload_pid)
+
+      assert og_upload_pid != new_upload_pid
+      assert og_upload_state == new_upload_state
     end
   end
 

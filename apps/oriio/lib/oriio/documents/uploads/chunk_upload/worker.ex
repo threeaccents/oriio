@@ -129,6 +129,10 @@ defmodule Oriio.Uploads.ChunkUploadWorker do
     {:stop, :normal, state}
   end
 
+  def handle_info({:EXIT, _, reason}, state) do
+    {:stop, reason, state}
+  end
+
   @impl GenServer
   def terminate(:normal, _state), do: :ok
 
