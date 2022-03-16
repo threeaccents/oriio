@@ -2,6 +2,7 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
   use Oriio.DataCase
 
   alias Oriio.Uploads.ChunkUploadWorker
+  alias Oriio.Documents
   alias Ecto.UUID
 
   @total_chunks 8
@@ -90,6 +91,36 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
       merged_file_hash = file_hash(merged_document_path)
 
       assert merged_file_hash == original_file_hash
+    end
+  end
+
+  describe "distributed supervisor" do
+    test "process is restarted on another node" do
+      LocalCluster.start_nodes("my-cluster", 3)
+
+      {:ok, upload_id} = Documents.new_chunk_upload("nalu.png", 8)
+
+      # let the registry sync up
+      :timer.sleep(1000)
+
+      # upload chunk to update upload state
+      Documents.append_chunk(upload_id, {1, Briefly.create!()})
+
+      upload_pid = Oriio.Debug.get_chunk_upload_pid(upload_id)
+
+      original_node_with_upload = node(upload_pid)
+
+      :rpc.call(original_node_with_upload, :init, :stop, [])
+      # let everything sync up
+      :timer.sleep(5000)
+
+      upload_pid = Oriio.Debug.get_chunk_upload_pid(upload_id)
+
+      new_node_with_upload = node(upload_pid)
+
+      assert new_node_with_upload != original_node_with_upload
+
+      :ok = LocalCluster.stop()
     end
   end
 

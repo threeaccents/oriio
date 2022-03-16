@@ -55,7 +55,8 @@ defmodule Oriio.MixProject do
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.0"},
       {:sweet_xml, "~> 0.7.1"},
-      {:plug_crypto, "~> 1.0"}
+      {:plug_crypto, "~> 1.0"},
+      {:local_cluster, "~> 1.2", only: [:test]}
     ]
   end
 
@@ -65,7 +66,7 @@ defmodule Oriio.MixProject do
   defp aliases do
     [
       setup: ["deps.get"],
-      test: ["test"]
+      test: ["test --no-start"]
     ]
   end
 

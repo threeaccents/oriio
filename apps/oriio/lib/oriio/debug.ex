@@ -12,7 +12,7 @@ defmodule Oriio.Debug do
   @upload_files_path "#{__DIR__}/../../test/fixtures/uploads"
 
   def new_chunk_with_chunks do
-    id = Documents.new_chunk_upload("nalu.png", 8)
+    {:ok, id} = Documents.new_chunk_upload("nalu.png", 8)
 
     upload_chunks(id)
 
