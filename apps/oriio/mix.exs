@@ -66,7 +66,7 @@ defmodule Oriio.MixProject do
   defp aliases do
     [
       setup: ["deps.get"],
-      test: ["test --no-start"]
+      test: ["test"]
     ]
   end
 

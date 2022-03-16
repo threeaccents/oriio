@@ -21,6 +21,7 @@ defmodule Oriio.DataCase do
       import Ecto
       import Ecto.Changeset
       import Oriio.DataCase
+      alias Oriio.TestCluster
     end
   end
 

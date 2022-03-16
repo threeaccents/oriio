@@ -124,27 +124,27 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
 
       :ok = LocalCluster.stop()
     end
-  end
 
-  test "state is handed off between processes" do
-    {:ok, upload_id} = Documents.new_chunk_upload("nalu.png", 8)
+    test "state is handed off between processes" do
+      {:ok, upload_id} = Documents.new_chunk_upload("nalu.png", 8)
 
-    og_upload_pid = Debug.get_chunk_upload_pid(upload_id)
+      og_upload_pid = Debug.get_chunk_upload_pid(upload_id)
 
-    :ok = Documents.append_chunk(upload_id, {1, Briefly.create!()})
+      :ok = Documents.append_chunk(upload_id, {1, Briefly.create!()})
 
-    og_upload_state = :sys.get_state(og_upload_pid)
+      og_upload_state = :sys.get_state(og_upload_pid)
 
-    Process.exit(og_upload_pid, :test_kill)
+      Process.exit(og_upload_pid, :test_kill)
 
-    # let everything sync up
-    :timer.sleep(5000)
+      # let everything sync up
+      :timer.sleep(5000)
 
-    new_upload_pid = Debug.get_chunk_upload_pid(upload_id)
-    new_upload_state = :sys.get_state(new_upload_pid)
+      new_upload_pid = Debug.get_chunk_upload_pid(upload_id)
+      new_upload_state = :sys.get_state(new_upload_pid)
 
-    assert og_upload_pid != new_upload_pid
-    assert og_upload_state == new_upload_state
+      assert og_upload_pid != new_upload_pid
+      assert og_upload_state == new_upload_state
+    end
   end
 
   defp add_chunks(pid, chunks) when is_list(chunks) do
