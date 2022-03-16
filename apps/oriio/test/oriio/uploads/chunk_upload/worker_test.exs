@@ -99,7 +99,7 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
     test "process is restarted on another node" do
       LocalCluster.start_nodes("my-cluster", 3)
 
-      {:ok, upload_id} = Documents.new_chunk_upload("nalu.png", 8)
+      upload_id = new_distributed_chunk_upload()
 
       # let the registry sync up
       :timer.sleep(1000)
@@ -144,6 +144,21 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
 
       assert og_upload_pid != new_upload_pid
       assert og_upload_state == new_upload_state
+    end
+  end
+
+  defp new_distributed_chunk_upload() do
+    {:ok, upload_id} = Documents.new_chunk_upload("nalu.png", 8)
+
+    # let the registry sync up
+    :timer.sleep(500)
+
+    upload_pid = Oriio.Debug.get_chunk_upload_pid(upload_id)
+
+    if node(upload_pid) == node() do
+      new_distributed_chunk_upload()
+    else
+      upload_id
     end
   end
 
