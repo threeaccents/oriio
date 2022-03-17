@@ -6,13 +6,15 @@ defmodule Oriio.Transformations.Transformer do
   alias Vix.Vips.Image
   alias Vix.Vips.Operation
 
+  @type angle() :: 90 | 180 | 270
+
   @type transformations() :: %{
           width: integer(),
           height: integer(),
           black_n_white: boolean(),
           crop: boolean(),
-          format: binary(),
-          extension: binary()
+          flip: boolean(),
+          rotate: angle()
         }
 
   @type document_path() :: binary()
@@ -67,6 +69,26 @@ defmodule Oriio.Transformations.Transformer do
 
   defp apply_transform(image, :black_n_white, true) do
     Operation.colourspace!(image, :VIPS_INTERPRETATION_B_W)
+  end
+
+  defp apply_transform(image, :flip, true) do
+    Operation.flip(image, :VIPS_DIRECTION_HORIZONTAL)
+  end
+
+  defp apply_transform(image, :flop, true) do
+    Operation.flip(image, :VIPS_DIRECTION_VERTICAL)
+  end
+
+  defp apply_transform(image, :rotate, 90) do
+    Operation.rot(image, :VIPS_ANGLE_D90)
+  end
+
+  defp apply_transform(image, :rotate, 180) do
+    Operation.rot(image, :VIPS_ANGLE_D180)
+  end
+
+  defp apply_transform(image, :rotate, 270) do
+    Operation.rot(image, :VIPS_ANGLE_D270)
   end
 
   defp apply_transform(image, _, _), do: image
