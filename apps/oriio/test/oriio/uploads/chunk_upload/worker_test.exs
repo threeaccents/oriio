@@ -128,19 +128,19 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
     test "state is handed off between processes" do
       {:ok, upload_id} = Documents.new_chunk_upload("nalu.png", 8)
 
-      og_upload_pid = Debug.get_chunk_upload_pid(upload_id) |> IO.inspect(label: "old pid")
+      og_upload_pid = Debug.get_chunk_upload_pid(upload_id)
 
       :ok = Documents.append_chunk(upload_id, {1, Briefly.create!()})
 
-      og_upload_state = :sys.get_state(og_upload_pid) |> IO.inspect(label: "old state")
+      og_upload_state = :sys.get_state(og_upload_pid)
 
       Process.exit(og_upload_pid, :testkill)
 
       # let everything sync up
       :timer.sleep(5000)
 
-      new_upload_pid = Debug.get_chunk_upload_pid(upload_id) |> IO.inspect(label: "new pid")
-      new_upload_state = :sys.get_state(new_upload_pid) |> IO.inspect(label: "new state")
+      new_upload_pid = Debug.get_chunk_upload_pid(upload_id)
+      new_upload_state = :sys.get_state(new_upload_pid)
 
       assert og_upload_pid != new_upload_pid
       assert og_upload_state == new_upload_state
