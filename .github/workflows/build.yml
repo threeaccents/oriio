@@ -44,11 +44,11 @@ jobs:
         restore-keys: ${{ runner.os }}-mix-
     - name: Install dependencies
       run: mix deps.get
-    # - name: Check for warnings
-    #   run: mix compile --warnings-as-errors    
-    # - name: Run Credo
-    #   run: mix credo diff `git merge-base main HEAD` --config-name default -a --strict
-    # - name: Run Dialyzer
-    #   run: mix dialyzer    
+    - name: Check for warnings
+      run: mix compile --warnings-as-errors    
+    - name: Run Credo
+      run: mix credo diff `git merge-base main HEAD` --config-name default -a --strict
+    - name: Run Dialyzer
+      run: mix dialyzer    
     - name: Run tests
       run: mix test
