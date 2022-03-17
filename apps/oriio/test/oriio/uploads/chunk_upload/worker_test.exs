@@ -134,7 +134,7 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
 
       og_upload_state = :sys.get_state(og_upload_pid)
 
-      Process.exit(og_upload_pid, :test_kill)
+      Process.exit(og_upload_pid, :testkill)
 
       # let everything sync up
       :timer.sleep(5000)
@@ -155,6 +155,7 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
 
     upload_pid = Oriio.Debug.get_chunk_upload_pid(upload_id)
 
+    # make sure the upload is not running on the current node as we will kill the node in the test.
     if node(upload_pid) == node() do
       new_distributed_chunk_upload()
     else
