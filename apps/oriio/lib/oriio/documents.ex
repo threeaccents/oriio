@@ -56,11 +56,10 @@ defmodule Oriio.Documents do
 
     File.copy!(document_path, upload_document_path)
 
-    [_, extension | _] = String.split(file_name, ".")
-    IO.inspect(extension)
+    ext = get_ext(upload_document_path)
 
     with {:ok, remote_document_path} <- upload_file_to_storage(upload_document_path) do
-      {:ok, generate_url(remote_document_path, extension)}
+      {:ok, generate_url(remote_document_path, ext)}
     end
   end
 
@@ -100,7 +99,7 @@ defmodule Oriio.Documents do
     pid = get_chunk_upload_pid!(upload_id)
 
     with {:ok, document_path} <- ChunkUploadWorker.complete_upload(pid),
-         extension <- extract_document_path_extension(document_path),
+         extension <- get_ext(document_path),
          {:ok, remote_document_path} <-
            upload_file_to_storage(document_path) do
       Process.exit(pid, :normal)
@@ -165,14 +164,6 @@ defmodule Oriio.Documents do
     end
   end
 
-  defp extract_document_path_extension(document_path) do
-    document_path
-    |> String.split("/")
-    |> List.last()
-    |> String.split(".")
-    |> List.last()
-  end
-
   defp generate_url(remote_document_path, extension) do
     base_file_url() <> "/" <> remote_document_path <> "." <> extension
   end
@@ -180,4 +171,11 @@ defmodule Oriio.Documents do
   defp upload_id, do: UUID.generate()
 
   defp base_file_url, do: Application.get_env(:oriio, :base_file_url, "http://localhost:4000")
+
+  defp get_ext(path) do
+    case Path.extname(path) do
+      "." <> ext -> ext
+      ext -> ext
+    end
+  end
 end
