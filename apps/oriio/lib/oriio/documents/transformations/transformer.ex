@@ -8,13 +8,17 @@ defmodule Oriio.Transformations.Transformer do
 
   @type angle() :: 90 | 180 | 270
 
+  # make less generic in the future.
+  @type format() :: String.t()
+
   @type transformations() :: %{
           width: integer(),
           height: integer(),
           black_n_white: boolean(),
           crop: boolean(),
           flip: boolean(),
-          rotate: angle()
+          rotate: angle(),
+          format: format()
         }
 
   @type document_path() :: binary()
@@ -27,7 +31,7 @@ defmodule Oriio.Transformations.Transformer do
         image = transform(vips_image, transformations, &apply_transform/4)
 
         dir = Briefly.create!(directory: true)
-        document_path = Path.join(dir, file_name(document_path))
+        document_path = Path.join(dir, file_name(document_path, transformations.format))
 
         :ok = Image.write_to_file(image, document_path)
 
@@ -93,9 +97,20 @@ defmodule Oriio.Transformations.Transformer do
 
   defp apply_transform(image, _, _), do: image
 
-  defp file_name(document_path) do
+  defp file_name(document_path, nil) do
     document_path
     |> String.split("/")
     |> List.last()
+  end
+
+  defp file_name(document_path, extension) do
+    name =
+      document_path
+      |> String.split("/")
+      |> List.last()
+
+    [name_no_ext | _] = String.split(name, ".")
+
+    "#{name_no_ext}.#{extension}"
   end
 end
