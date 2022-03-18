@@ -22,7 +22,9 @@ defmodule OriioWeb.FileDeliveryController do
          transformations <-
            extract_transformations(valid_params),
          {:ok, document_path} <- Documents.transform(remote_document_path, transformations) do
-      send_file(conn, 200, document_path)
+      conn
+      |> put_resp_content_type(MIME.from_path(document_path))
+      |> send_file(200, document_path)
     end
   end
 
@@ -31,7 +33,14 @@ defmodule OriioWeb.FileDeliveryController do
   defp extract_transformations(params) do
     params
     |> Map.take(@transformation_params)
+    |> Map.put(:format, extract_format_from_file_name(params.file_name))
     |> remove_missing_transformations()
+  end
+
+  defp extract_format_from_file_name(file_name) do
+    [_, ext] = String.split(file_name, ".")
+
+    ext
   end
 
   defp extract_remote_document_path(%{timestamp: ts, file_name: file_name}) do
