@@ -6,13 +6,19 @@ defmodule Oriio.Transformations.Transformer do
   alias Vix.Vips.Image
   alias Vix.Vips.Operation
 
+  @type angle() :: 90 | 180 | 270
+
+  # make less generic in the future.
+  @type format() :: String.t()
+
   @type transformations() :: %{
           width: integer(),
           height: integer(),
           black_n_white: boolean(),
           crop: boolean(),
-          format: binary(),
-          extension: binary()
+          flip: boolean(),
+          rotate: angle(),
+          format: format()
         }
 
   @type document_path() :: binary()
@@ -25,7 +31,7 @@ defmodule Oriio.Transformations.Transformer do
         image = transform(vips_image, transformations, &apply_transform/4)
 
         dir = Briefly.create!(directory: true)
-        document_path = Path.join(dir, file_name(document_path))
+        document_path = Path.join(dir, file_name(document_path, transformations.format))
 
         :ok = Image.write_to_file(image, document_path)
 
@@ -69,11 +75,42 @@ defmodule Oriio.Transformations.Transformer do
     Operation.colourspace!(image, :VIPS_INTERPRETATION_B_W)
   end
 
+  defp apply_transform(image, :flip, true) do
+    Operation.flip(image, :VIPS_DIRECTION_HORIZONTAL)
+  end
+
+  defp apply_transform(image, :flop, true) do
+    Operation.flip(image, :VIPS_DIRECTION_VERTICAL)
+  end
+
+  defp apply_transform(image, :rotate, 90) do
+    Operation.rot(image, :VIPS_ANGLE_D90)
+  end
+
+  defp apply_transform(image, :rotate, 180) do
+    Operation.rot(image, :VIPS_ANGLE_D180)
+  end
+
+  defp apply_transform(image, :rotate, 270) do
+    Operation.rot(image, :VIPS_ANGLE_D270)
+  end
+
   defp apply_transform(image, _, _), do: image
 
-  defp file_name(document_path) do
+  defp file_name(document_path, nil) do
     document_path
     |> String.split("/")
     |> List.last()
+  end
+
+  defp file_name(document_path, extension) do
+    name =
+      document_path
+      |> String.split("/")
+      |> List.last()
+
+    [name_no_ext | _] = String.split(name, ".")
+
+    "#{name_no_ext}.#{extension}"
   end
 end

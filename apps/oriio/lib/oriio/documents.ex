@@ -32,7 +32,9 @@ defmodule Oriio.Documents do
   def transform(path, transformations, opts \\ [location: :remote])
 
   def transform(path, transformations, location: :remote) do
-    with {:ok, document_path} <- download(path) do
+    [path_with_no_ext | _] = String.split(path, ".")
+
+    with {:ok, document_path} <- download(path_with_no_ext) do
       transform(document_path, transformations, location: :local)
     end
   end
@@ -54,8 +56,10 @@ defmodule Oriio.Documents do
 
     File.copy!(document_path, upload_document_path)
 
+    ext = get_ext(upload_document_path)
+
     with {:ok, remote_document_path} <- upload_file_to_storage(upload_document_path) do
-      {:ok, generate_url(remote_document_path)}
+      {:ok, generate_url(remote_document_path, ext)}
     end
   end
 
@@ -95,16 +99,18 @@ defmodule Oriio.Documents do
     pid = get_chunk_upload_pid!(upload_id)
 
     with {:ok, document_path} <- ChunkUploadWorker.complete_upload(pid),
-         {:ok, remote_document_path} <- upload_file_to_storage(document_path) do
+         extension <- get_ext(document_path),
+         {:ok, remote_document_path} <-
+           upload_file_to_storage(document_path) do
       Process.exit(pid, :normal)
-      {:ok, generate_url(remote_document_path)}
+      {:ok, generate_url(remote_document_path, extension)}
     end
   end
 
   defp upload_file_to_storage(document_path) do
     {mime, mimetype} = Mime.check_magic_bytes(document_path)
 
-    remote_document_path = generate_remote_document_path(document_path, mimetype)
+    remote_document_path = generate_remote_document_path(document_path)
 
     file_blob = %{
       remote_document_path: remote_document_path,
@@ -137,25 +143,15 @@ defmodule Oriio.Documents do
     end
   end
 
-  defp generate_remote_document_path(document_path, mimetype) do
-    file_name =
+  defp generate_remote_document_path(document_path) do
+    file_name_with_no_ext =
       document_path
       |> String.split("/")
       |> List.last()
-
-    file_name = ensure_correct_extension(file_name, mimetype)
-
-    "#{:os.system_time(:millisecond)}/#{file_name}"
-  end
-
-  defp ensure_correct_extension(file_name, mimetype) do
-    file_name_with_no_ext =
-      file_name
       |> String.split(".")
       |> List.first()
 
-    # hacky but for now it works. clean up later.
-    file_name_with_no_ext <> ".#{Atom.to_string(mimetype)}"
+    "#{:os.system_time(:millisecond)}/#{file_name_with_no_ext}"
   end
 
   defp get_chunk_upload_pid!(upload_id) do
@@ -168,11 +164,18 @@ defmodule Oriio.Documents do
     end
   end
 
-  defp generate_url(remote_document_path) do
-    base_file_url() <> "/" <> remote_document_path
+  defp generate_url(remote_document_path, extension) do
+    base_file_url() <> "/" <> remote_document_path <> "." <> extension
   end
 
   defp upload_id, do: UUID.generate()
 
-  defp base_file_url, do: Application.get_env(:oriio, :base_file_url, "https://localhost:4000")
+  defp base_file_url, do: Application.get_env(:oriio, :base_file_url, "http://localhost:4000")
+
+  defp get_ext(path) do
+    case Path.extname(path) do
+      "." <> ext -> ext
+      ext -> ext
+    end
+  end
 end
