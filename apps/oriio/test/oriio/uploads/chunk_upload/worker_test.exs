@@ -50,12 +50,12 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
       %{chunk_document_paths: chunk_document_paths} = :sys.get_state(pid)
 
       # verify all other chunk paths remain nil
-      for {chunk_number, path} <- chunk_document_paths, chunk_number != :"2" do
+      for {chunk_number, path} <- chunk_document_paths, chunk_number != "2" do
         assert path == nil
       end
 
       # verify chunk number 2 gets set to a proper path
-      path = Keyword.get(chunk_document_paths, :"2")
+      {_key, path} = Enum.find(chunk_document_paths, fn {key, _path} -> key == "2" end)
 
       assert path != nil
       assert File.exists?(path)

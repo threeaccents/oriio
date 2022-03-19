@@ -149,7 +149,7 @@ defmodule Oriio.Uploads.ChunkUploadWorker do
   defp missing_chunks(%{chunk_document_paths: chunk_document_paths}) do
     chunk_document_paths
     |> Enum.filter(fn {_key, value} -> is_nil(value) end)
-    |> Keyword.keys()
+    |> Enum.map(&elem(&1, 0))
     |> Enum.map(&String.to_integer/1)
   end
 
