@@ -36,10 +36,7 @@ defmodule Oriio.Uploads.ChunkUploadWorker do
   def init(%{total_chunks: total_chunks} = new_chunk_upload) do
     Process.flag(:trap_exit, true)
 
-    chunk_document_paths =
-      for chunk_number <- 1..total_chunks,
-          into: Keyword.new(),
-          do: {int_to_atom(chunk_number), nil}
+    chunk_document_paths = for chunk_number <- 1..total_chunks, do: {to_string(chunk_number), nil}
 
     state =
       new_chunk_upload
@@ -76,7 +73,7 @@ defmodule Oriio.Uploads.ChunkUploadWorker do
         _from,
         %{chunk_document_paths: chunk_document_paths} = state
       ) do
-    chunk_key = int_to_atom(chunk_number)
+    chunk_key = to_string(chunk_number)
 
     # since most files passed in are temps file they get removed when the calling proccess is killed.
     # so we need to copy the file to this current process
@@ -84,7 +81,14 @@ defmodule Oriio.Uploads.ChunkUploadWorker do
 
     File.copy!(chunk_document_path, document_path)
 
-    chunk_document_paths = Keyword.put(chunk_document_paths, chunk_key, document_path)
+    chunk_document_paths =
+      for {chunk_number, path} <- chunk_document_paths do
+        if chunk_key == chunk_number do
+          {chunk_key, chunk_document_path}
+        else
+          {chunk_number, path}
+        end
+      end
 
     {:reply, :ok,
      %{state | chunk_document_paths: chunk_document_paths, updated_at: DateTime.utc_now()}}
@@ -145,8 +149,8 @@ defmodule Oriio.Uploads.ChunkUploadWorker do
   defp missing_chunks(%{chunk_document_paths: chunk_document_paths}) do
     chunk_document_paths
     |> Enum.filter(fn {_key, value} -> is_nil(value) end)
-    |> Keyword.keys()
-    |> Enum.map(&atom_to_int/1)
+    |> Enum.map(&elem(&1, 0))
+    |> Enum.map(&String.to_integer/1)
   end
 
   defp merge_file_chunks(%{chunk_document_paths: chunk_document_paths, file_name: file_name}) do
@@ -168,22 +172,10 @@ defmodule Oriio.Uploads.ChunkUploadWorker do
   end
 
   defp sort_chunk_numbers(a, b) do
-    {aint, _} = Integer.parse(Atom.to_string(a |> elem(0)))
-    {bint, _} = Integer.parse(Atom.to_string(b |> elem(0)))
+    {aint, _} = Integer.parse(a |> elem(0))
+    {bint, _} = Integer.parse(b |> elem(0))
 
     aint < bint
-  end
-
-  defp atom_to_int(atom) do
-    atom
-    |> Atom.to_string()
-    |> String.to_integer()
-  end
-
-  defp int_to_atom(int) do
-    int
-    |> Integer.to_string()
-    |> String.to_atom()
   end
 
   defp via_tuple(name),
