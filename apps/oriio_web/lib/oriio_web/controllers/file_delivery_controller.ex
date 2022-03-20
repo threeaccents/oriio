@@ -4,20 +4,13 @@ defmodule OriioWeb.FileDeliveryController do
   action_fallback OriioWeb.FallbackController
 
   alias Oriio.Documents
+  alias OriioWeb.ServeFileRequest
 
   @type conn() :: Plug.Conn.t()
 
   @spec serve_file(conn(), map()) :: conn()
   def serve_file(conn, params) do
-    validate_params = %{
-      timestamp: [type: :string, required: true],
-      file_name: [type: :string, required: true],
-      width: :integer,
-      height: :integer,
-      crop: :boolean
-    }
-
-    with {:ok, valid_params} <- Tarams.cast(params, validate_params),
+    with {:ok, valid_params} <- ServeFileRequest.from_params(params),
          {:ok, remote_document_path} <- extract_remote_document_path(valid_params),
          transformations <-
            extract_transformations(valid_params),

@@ -19,12 +19,25 @@ defmodule OriioWeb.PageControllerTest do
 
       assert %{"url" => _url} = json_response(conn, 201)["data"]
     end
+
+    test "params are properly validated", %{conn: conn} do
+      upload = %Plug.Upload{}
+
+      payload = %{file: upload}
+
+      conn = post(conn, Routes.upload_path(conn, :upload), payload)
+
+      assert %{"message" => "validation error", "errors" => errors} = json_response(conn, 422)
+
+      assert %{"file" => %{"filename" => ["can't be blank"], "path" => ["can't be blank"]}} =
+               errors
+    end
   end
 
   describe "POST /chunk_uploads" do
     test "upload id is returned", %{conn: conn} do
       payload = %{
-        file_name: "nalu.jpg",
+        fileName: "nalu.jpg",
         total_chunks: 10
       }
 
@@ -33,14 +46,14 @@ defmodule OriioWeb.PageControllerTest do
       assert %{"uploadId" => _upload_id} = json_response(conn, 201)["data"]
     end
 
-    test "file name is required", %{conn: conn} do
-      payload = %{
-        total_chunks: 10
-      }
+    test "params are properly validate", %{conn: conn} do
+      payload = %{}
 
       conn = post(conn, Routes.upload_path(conn, :new_chunk_upload), payload)
 
-      assert %{"fileName" => ["is required"]} = json_response(conn, 422)["message"]
+      assert %{"message" => "validation error", "errors" => errors} = json_response(conn, 422)
+
+      assert %{"fileName" => ["can't be blank"], "totalChunks" => ["can't be blank"]} = errors
     end
   end
 
@@ -57,16 +70,20 @@ defmodule OriioWeb.PageControllerTest do
       assert %{"message" => "chunk was appended"} = json_response(conn, 200)["data"]
     end
 
-    test "validation", %{conn: conn} do
-      {:ok, id} = Oriio.Documents.new_chunk_upload("nalu.png", 8)
+    test "params are properly validated", %{conn: conn} do
+      upload = %Plug.Upload{}
 
-      upload = %Plug.Upload{path: "#{@upload_files_dir}/segmentaa", filename: "nalu.png"}
-
-      payload = %{chunk: upload, upload_id: id}
+      payload = %{file: upload}
 
       conn = post(conn, Routes.upload_path(conn, :append_chunk), payload)
 
-      assert %{"chunkNumber" => ["is required"]} = json_response(conn, 422)["message"]
+      assert %{"message" => "validation error", "errors" => errors} = json_response(conn, 422)
+
+      assert %{
+               "chunk" => ["can't be blank"],
+               "chunkNumber" => ["can't be blank"],
+               "uploadId" => ["can't be blank"]
+             } = errors
     end
   end
 
@@ -79,18 +96,6 @@ defmodule OriioWeb.PageControllerTest do
       conn = post(conn, Routes.upload_path(conn, :complete_chunk_upload, id), %{})
 
       assert %{"url" => _url} = json_response(conn, 201)["data"]
-    end
-
-    test "validation", %{conn: conn} do
-      id = Oriio.Documents.new_chunk_upload("nalu.png", 8)
-
-      upload = %Plug.Upload{path: "#{@upload_files_dir}/segmentaa", filename: "nalu.png"}
-
-      payload = %{chunk: upload, upload_id: id}
-
-      conn = post(conn, "/append_chunk", payload)
-
-      assert %{"chunkNumber" => ["is required"]} = json_response(conn, 422)["message"]
     end
   end
 
