@@ -1,12 +1,27 @@
 defmodule OriioWeb.UploadRequest do
+  @moduledoc """
+  Validation parameters for uploading a file.
+  """
+
   use Ecto.Schema
 
   import Ecto.Changeset
+
+  @type file() :: %{
+          filename: String.t(),
+          path: String.t()
+        }
+
+  @type t() :: %__MODULE__{
+          file: file()
+        }
 
   embedded_schema do
     embeds_one :file, File do
       field(:filename, :string)
       field(:path, :string)
+
+      @spec changeset(map(), map()) :: map()
 
       def changeset(model, %Plug.Upload{} = params) do
         model
@@ -16,6 +31,7 @@ defmodule OriioWeb.UploadRequest do
     end
   end
 
+  @spec from_params(map()) :: {:ok, t()} | {:error, Ecto.Changeset.t()}
   def from_params(params) do
     %__MODULE__{}
     |> cast(params, [])
