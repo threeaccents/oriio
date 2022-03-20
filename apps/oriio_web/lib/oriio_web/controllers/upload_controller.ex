@@ -13,7 +13,7 @@ defmodule OriioWeb.UploadController do
 
   @type conn() :: Plug.Conn.t()
 
-  @spec upload(conn(), map()) :: conn()
+  @spec upload(conn(), map()) :: conn() | {:error, term()}
   def upload(conn, params) do
     with {:ok, %{file: file}} <- UploadRequest.from_params(params),
          {:ok, file_url} <- Documents.upload(file.filename, file.path) do
@@ -25,7 +25,7 @@ defmodule OriioWeb.UploadController do
     end
   end
 
-  @spec new_chunk_upload(conn(), map()) :: conn()
+  @spec new_chunk_upload(conn(), map()) :: conn() | {:error, term()}
   def new_chunk_upload(conn, params) do
     with {:ok, %{file_name: file_name, total_chunks: total_chunks}} <-
            NewChunkUploadRequest.from_params(params),
@@ -38,7 +38,7 @@ defmodule OriioWeb.UploadController do
     end
   end
 
-  @spec append_chunk(conn(), map()) :: conn()
+  @spec append_chunk(conn(), map()) :: conn() | {:error, term()}
   def append_chunk(conn, params) do
     with {:ok, %{upload_id: upload_id, chunk_number: chunk_number, chunk: chunk}} <-
            AppendChunkRequest.from_params(params),
@@ -51,7 +51,7 @@ defmodule OriioWeb.UploadController do
     end
   end
 
-  @spec complete_chunk_upload(conn(), map()) :: conn()
+  @spec complete_chunk_upload(conn(), map()) :: conn() | {:error, term()}
   def complete_chunk_upload(conn, params) do
     with {:ok, %{upload_id: upload_id}} <- CompleteChunkUploadRequest.from_params(params),
          {:ok, file_url} <- Documents.complete_chunk_upload(upload_id) do
