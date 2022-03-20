@@ -53,8 +53,7 @@ defmodule OriioWeb.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:proper_case, "~> 1.0.2"},
-      {:cors_plug, "~> 2.0"},
-      {:tarams, "~> 1.2.1"}
+      {:cors_plug, "~> 2.0"}
     ]
   end
 
