@@ -25,6 +25,7 @@ defmodule OriioWeb.AppendChunkRequest do
       field(:path, :string)
 
       @spec changeset(map(), map()) :: map()
+
       def changeset(model, %Plug.Upload{} = params) do
         model
         |> cast(Map.from_struct(params), ~w/path/a)
@@ -34,6 +35,7 @@ defmodule OriioWeb.AppendChunkRequest do
   end
 
   @spec from_params(map()) :: {:ok, t()} | {:error, Ecto.Changeset.t()}
+
   def from_params(params) do
     %__MODULE__{}
     |> cast(params, ~w/chunk_number upload_id/a)

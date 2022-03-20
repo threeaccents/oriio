@@ -16,6 +16,7 @@ defmodule OriioWeb.CompleteChunkUploadRequest do
   end
 
   @spec from_params(map()) :: {:ok, t()} | {:error, Ecto.Changeset.t()}
+
   def from_params(params) do
     %__MODULE__{}
     |> cast(params, ~w/upload_id/a)
