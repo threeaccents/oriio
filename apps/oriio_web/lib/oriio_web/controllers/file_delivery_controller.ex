@@ -24,6 +24,7 @@ defmodule OriioWeb.FileDeliveryController do
          {:ok, document_path} <- Documents.transform(remote_document_path, transformations) do
       conn
       |> put_resp_content_type(MIME.from_path(document_path))
+      |> put_resp_header("cache-control", "max-age=2592000")
       |> send_file(200, document_path)
     end
   end
