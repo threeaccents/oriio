@@ -21,7 +21,6 @@ defmodule Oriio.Uploads.UploadMonitorTest do
   end
 
   describe "distributed supervisor" do
-    @tag mustexec: true
     test "process is restarted on another node" do
       LocalCluster.start_nodes("my-cluster", 3)
 
