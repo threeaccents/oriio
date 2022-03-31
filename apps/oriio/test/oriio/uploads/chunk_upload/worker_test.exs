@@ -121,8 +121,6 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
       new_node_with_upload = node(upload_pid)
 
       assert new_node_with_upload != original_node_with_upload
-
-      :ok = LocalCluster.stop()
     end
 
     test "state is handed off between processes" do

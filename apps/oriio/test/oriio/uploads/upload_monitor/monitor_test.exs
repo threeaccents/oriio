@@ -39,8 +39,6 @@ defmodule Oriio.Uploads.UploadMonitorTest do
       new_node_with_monitor = node(monitor_pid)
 
       assert new_node_with_monitor != original_node_with_monitor
-
-      :ok = LocalCluster.stop()
     end
   end
 
