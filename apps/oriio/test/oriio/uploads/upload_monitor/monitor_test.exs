@@ -2,12 +2,10 @@ defmodule Oriio.Uploads.UploadMonitorTest do
   use Oriio.DataCase
 
   alias Oriio.Uploads.UploadMonitor
-  alias Oriio.Uploads.UploadMonitorSupervisor
-
-  alias Horde.DynamicSupervisor, as: DistributedSupervisor
 
   describe "start_link/1" do
     test "returns :ignore if process has already been started" do
+      # monitor process starts automatically so the process has already started before making the call here
       assert :ignore = UploadMonitor.start_link([])
     end
   end
@@ -55,8 +53,6 @@ defmodule Oriio.Uploads.UploadMonitorTest do
 
       # let the registry sync up
       :timer.sleep(1000)
-
-      DistributedSupervisor.start_child(UploadMonitorSupervisor, UploadMonitor)
 
       start_upload_monitor()
     else
