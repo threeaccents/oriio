@@ -56,11 +56,3 @@ All queries can be used together. For example, to resize the width, make the ima
 ```
 https://yourdomain.com/myimage.webp?width=100&bw=true
 ```
-
-## Distributed
-TODO
-
-## Fault Taulerant
-TODO
-
-
