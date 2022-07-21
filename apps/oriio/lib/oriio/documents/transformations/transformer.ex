@@ -92,7 +92,7 @@ defmodule Oriio.Transformations.Transformer do
     Operation.rot(image, :VIPS_ANGLE_D270)
   end
 
-  defp apply_transform(image, _, _), do: image
+  defp apply_transform(image, _, _, _), do: image
 
   defp file_name(document_path, nil) do
     document_path
