@@ -52,17 +52,14 @@ defmodule Oriio.Transformations.Transformer do
     image
   end
 
-  defp apply_transform(image, transformation, value, _transformations) do
-    apply_transform(image, transformation, value)
-  end
 
-  defp apply_transform(image, :width, width) do
+  defp apply_transform(image, :width, width, _transformations) do
     current_width = Image.width(image)
     hscale = width / current_width
     Operation.resize!(image, hscale)
   end
 
-  defp apply_transform(image, :height, height) do
+  defp apply_transform(image, :height, height, _transformations) do
     current_height = Image.height(image)
 
     vscale = height / current_height
@@ -71,27 +68,27 @@ defmodule Oriio.Transformations.Transformer do
     Operation.resize!(image, vscale)
   end
 
-  defp apply_transform(image, :black_n_white, true) do
+  defp apply_transform(image, :black_n_white, true, _transformations) do
     Operation.colourspace!(image, :VIPS_INTERPRETATION_B_W)
   end
 
-  defp apply_transform(image, :flip, true) do
+  defp apply_transform(image, :flip, true, _transformations) do
     Operation.flip(image, :VIPS_DIRECTION_HORIZONTAL)
   end
 
-  defp apply_transform(image, :flop, true) do
+  defp apply_transform(image, :flop, true, _transformations) do
     Operation.flip(image, :VIPS_DIRECTION_VERTICAL)
   end
 
-  defp apply_transform(image, :rotate, 90) do
+  defp apply_transform(image, :rotate, 90, _transformations) do
     Operation.rot(image, :VIPS_ANGLE_D90)
   end
 
-  defp apply_transform(image, :rotate, 180) do
+  defp apply_transform(image, :rotate, 180, _transformations) do
     Operation.rot(image, :VIPS_ANGLE_D180)
   end
 
-  defp apply_transform(image, :rotate, 270) do
+  defp apply_transform(image, :rotate, 270, _transformations) do
     Operation.rot(image, :VIPS_ANGLE_D270)
   end
 
