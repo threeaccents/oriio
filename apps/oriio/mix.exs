@@ -49,7 +49,7 @@ defmodule Oriio.MixProject do
       {:timex, "~> 3.0"},
       {:statix, "~>1.4"},
       {:statsd_logger, "~> 1.1", only: [:dev, :test]},
-      {:vix, "~> 0.7.0"},
+      {:vix, "~> 0.11.0"},
       {:kino, "~> 0.3.0"},
       {:telemetry_metrics_statsd, "~> 0.3.0"},
       {:ex_aws, "~> 2.1"},
