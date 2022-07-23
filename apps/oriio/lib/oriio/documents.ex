@@ -10,6 +10,7 @@ defmodule Oriio.Documents do
   alias Oriio.ChunkUploadNotFound
   alias Oriio.Storages.S3FileStorage
   alias Oriio.Storages.MockFileStorage
+  alias Oriio.Storages.LocalFileStorage
   alias Oriio.Storages.FileStorage
   alias Oriio.Mime
   alias Oriio.Transformations.Transformer
@@ -137,6 +138,9 @@ defmodule Oriio.Documents do
           region: Application.get_env(:oriio, :file_storage)[:region],
           bucket: Application.get_env(:oriio, :file_storage)[:bucket]
         }
+
+      "local" ->
+        %LocalFileStorage{}
 
       "mock-engine" ->
         %MockFileStorage{}

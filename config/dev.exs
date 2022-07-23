@@ -66,7 +66,7 @@ config :phoenix, :stacktrace_depth, 20
 
 # File storage engine
 config :oriio, :file_storage,
-  storage_engine: System.get_env("ORIIO_FILE_STORAGE_ENGINE"),
+  storage_engine: "local",
   access_key: System.get_env("ORIIO_FILE_STORAGE_ACCESS_KEY"),
   secret_key: System.get_env("ORIIO_FILE_STORAGE_SECRET_KEY"),
   region: System.get_env("ORIIO_FILE_STORAGE_REGION"),
