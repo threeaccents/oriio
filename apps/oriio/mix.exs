@@ -56,7 +56,8 @@ defmodule Oriio.MixProject do
       {:ex_aws_s3, "~> 2.0"},
       {:sweet_xml, "~> 0.7.1"},
       {:plug_crypto, "~> 1.0"},
-      {:local_cluster, "~> 1.2", only: [:test]}
+      {:local_cluster, "~> 1.2", only: [:test]},
+      {:cubdb, "~> 2.0.0"}
     ]
   end
 

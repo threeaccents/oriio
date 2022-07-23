@@ -112,14 +112,14 @@ defmodule Oriio.Documents do
 
     remote_document_path = generate_remote_document_path(document_path)
 
-    file_blob = %{
+    file_info = %{
       remote_document_path: remote_document_path,
       mime: Atom.to_string(mime),
       mimetype: Atom.to_string(mimetype),
       document_path: document_path
     }
 
-    case FileStorage.upload_file(storage_engine(), file_blob) do
+    case FileStorage.upload_file(storage_engine(), file_info) do
       :ok -> {:ok, remote_document_path}
       {:error, reason} -> {:error, reason}
     end
