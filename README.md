@@ -12,7 +12,7 @@ Oriio is also distributed using Erlang's built in clustering and DeltaCrdt for s
  - [Distributed](#) run in cluster
  - [Fault Taulerant](#) distributed process handoff, with process state handoff.
  - [Signed Uploads](#) Secure uploads from your front end application.
- - [Flexible File Storage](https://github.com/threeaccents/oriio#applications) store your files in S3, Spaces, Wasabi, B2 with more options coming soon.
+ - [Flexible File Storage](#) store your files in S3, Spaces, Wasabi, B2, locally with more options coming soon.
  - [Image Processing](https://github.com/threeaccents/oriio#file-transformations) resize, convert, and crop with ease.
 
 ## Install 
