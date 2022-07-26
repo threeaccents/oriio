@@ -25,13 +25,13 @@ config :oriio, Oriio.Mailer, adapter: Swoosh.Adapters.Local
 # Swoosh API client is needed for adapters other than SMTP.
 config :swoosh, :api_client, false
 
-config :oriio_web,
+config :web_api,
   generators: [context_app: :oriio, binary_id: true]
 
 # Configures the endpoint
-config :oriio_web, OriioWeb.Endpoint,
+config :web_api, WebApi.Endpoint,
   url: [host: "localhost"],
-  render_errors: [view: OriioWeb.ErrorView, accepts: ~w(html json), layout: false],
+  render_errors: [view: WebApi.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Oriio.PubSub,
   live_view: [signing_salt: "877ivc5H"]
 
@@ -41,7 +41,7 @@ config :esbuild,
   default: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
-    cd: Path.expand("../apps/oriio_web/assets", __DIR__),
+    cd: Path.expand("../apps/web_api/assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
