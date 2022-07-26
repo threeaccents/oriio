@@ -1,7 +1,6 @@
 defmodule WebApi.UploadController do
   use WebApi, :controller
 
-  alias Oriio.Documents
   alias WebApi.UploadRequest
   alias WebApi.NewChunkUploadRequest
   alias WebApi.AppendChunkRequest
@@ -54,7 +53,7 @@ defmodule WebApi.UploadController do
   @spec complete_chunk_upload(conn(), map()) :: conn() | {:error, term()}
   def complete_chunk_upload(conn, params) do
     with {:ok, %{upload_id: upload_id}} <- CompleteChunkUploadRequest.from_params(params),
-         {:ok, file_url} <- Documents.complete_chunk_upload(upload_id) do
+         {:ok, file_url} <- Uploader.complete_chunk_upload(upload_id) do
       data = to_camel_case(%{data: %{url: file_url}})
 
       conn

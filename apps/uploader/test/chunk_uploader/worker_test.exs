@@ -1,8 +1,7 @@
-defmodule Oriio.Uploads.ChunkUploadWorkerTest do
+defmodule Uploader.ChunkUploadWorkerTest do
   use Oriio.DataCase
 
-  alias Oriio.Uploads.ChunkUploadWorker
-  alias Oriio.Documents
+  alias Uploader.ChunkUploadWorker
   alias Oriio.Debug
   alias Ecto.UUID
 
@@ -105,7 +104,7 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
       :timer.sleep(1000)
 
       # upload chunk to update upload state
-      Documents.append_chunk(upload_id, {1, Briefly.create!()})
+      Uploader.append_chunk(upload_id, {1, Briefly.create!()})
 
       upload_pid = Oriio.Debug.get_chunk_upload_pid(upload_id)
 
@@ -124,11 +123,11 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
     end
 
     test "state is handed off between processes" do
-      {:ok, upload_id} = Documents.new_chunk_upload("nalu.png", 8)
+      {:ok, upload_id} = Uploader.new_chunk_upload("nalu.png", 8)
 
       og_upload_pid = Debug.get_chunk_upload_pid(upload_id)
 
-      :ok = Documents.append_chunk(upload_id, {1, Briefly.create!()})
+      :ok = Uploader.append_chunk(upload_id, {1, Briefly.create!()})
 
       og_upload_state = :sys.get_state(og_upload_pid)
 
@@ -146,7 +145,7 @@ defmodule Oriio.Uploads.ChunkUploadWorkerTest do
   end
 
   defp new_distributed_chunk_upload() do
-    {:ok, upload_id} = Documents.new_chunk_upload("nalu.png", 8)
+    {:ok, upload_id} = Uploader.new_chunk_upload("nalu.png", 8)
 
     # let the registry sync up
     :timer.sleep(500)

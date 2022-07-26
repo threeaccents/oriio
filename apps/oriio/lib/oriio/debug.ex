@@ -4,7 +4,7 @@ defmodule Oriio.Debug do
   Helper module for debugging purposes
   """
 
-  alias Oriio.Uploads.{ChunkUploadRegistry, SignedUploadRegistry, UploadMonitorRegistry}
+  alias Uploader.{ChunkUploadRegistry, SignedUploadRegistry, UploadMonitorRegistry}
 
   alias Oriio.Documents
   alias Oriio.SignedUploads
@@ -33,7 +33,7 @@ defmodule Oriio.Debug do
       |> Enum.sort()
 
     for {document_path, chunk_number} <- Enum.with_index(document_paths, 1) do
-      Documents.append_chunk(id, {chunk_number, document_path})
+      Uploader.append_chunk(id, {chunk_number, document_path})
     end
   end
 

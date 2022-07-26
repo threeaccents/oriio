@@ -60,7 +60,7 @@ defmodule WebApi.PageControllerTest do
   describe "MultiPart /append_chunk" do
     test "chunk is appended", %{conn: conn} do
       {:ok, id} = Uploader.new_chunk_upload("nalu.png", 8)
-
+      IO.inspect(id, label: "id")
       upload = %Plug.Upload{path: "#{@upload_files_dir}/segmentaa", filename: "nalu.png"}
 
       payload = %{chunk: upload, upload_id: id, chunk_number: 1}

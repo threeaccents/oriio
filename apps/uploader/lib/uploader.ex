@@ -9,6 +9,7 @@ defmodule Uploader do
   alias Oriio.Storages.FileStorage
   alias Uploader.ChunkUploadSupervisor
   alias Uploader.ChunkUploadWorker
+  alias Uploader.ChunkUploadRegistry
   alias Uploader.ChunkUploadNotFound
   alias Ecto.UUID
 
@@ -66,6 +67,19 @@ defmodule Uploader do
     pid = get_chunk_upload_pid!(upload_id)
 
     ChunkUploadWorker.append_chunk(pid, {chunk_number, document_path})
+  end
+
+  @spec complete_chunk_upload(upload_id()) :: {:ok, url()} | {:error, term()}
+  def complete_chunk_upload(upload_id) do
+    pid = get_chunk_upload_pid!(upload_id)
+
+    with {:ok, document_path} <- ChunkUploadWorker.complete_upload(pid),
+         extension <- get_ext(document_path),
+         {:ok, remote_document_path} <-
+           upload_file_to_storage(document_path) do
+      Process.exit(pid, :normal)
+      {:ok, generate_url(remote_document_path, extension)}
+    end
   end
 
   defp upload_file_to_storage(document_path) do
