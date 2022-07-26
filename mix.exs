@@ -13,7 +13,7 @@ defmodule Oriio.Umbrella.MixProject do
         oriio: [
           cookie: "pV7R3JYRfUR_xz8SXmLKm1vnVzoYK5cJl86lcVrHV1Nw4oPsp1tQqQ==",
           applications: [
-            oriio_web: :permanent
+            web_api: :permanent
           ]
         ]
       ]

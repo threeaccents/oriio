@@ -1,18 +1,15 @@
-defmodule Oriio.Documents do
+defmodule Uploader do
   @moduledoc """
-  Context for dealing with documents.
-  This context manages the upload, download, and transformation of documents.
+  Documentation for `Uploader`.
   """
 
-  alias Oriio.Uploads.ChunkUploadWorker
-  alias Oriio.Uploads.ChunkUploadSupervisor
-  alias Oriio.Uploads.ChunkUploadRegistry
-  alias Oriio.ChunkUploadNotFound
   alias Oriio.Storages.S3FileStorage
   alias Oriio.Storages.MockFileStorage
   alias Oriio.Storages.LocalFileStorage
   alias Oriio.Storages.FileStorage
-  alias Oriio.Transformations.Transformer
+  alias Uploader.ChunkUploadSupervisor
+  alias Uploader.ChunkUploadWorker
+  alias Uploader.ChunkUploadNotFound
   alias Ecto.UUID
 
   require Logger
@@ -24,41 +21,51 @@ defmodule Oriio.Documents do
   @type total_chunks() :: non_neg_integer()
   @type chunk_number() :: non_neg_integer()
   @type remote_document_path() :: binary()
-  @type transformations() :: Transformer.transformations()
-  @type transform_opts() :: [location: :remote | :local]
 
-  @spec transform(remote_document_path() | document_path(), transformations(), transform_opts()) ::
-          {:ok, document_path()} | {:error, term()}
-  def transform(path, transformations, opts \\ [location: :remote])
+  @spec upload_document(file_name(), document_path()) :: {:ok, url()} | {:error, term()}
+  def upload_document(file_name, document_path) do
+    file_dir = Briefly.create!(directory: true)
 
-  def transform(path, transformations, location: :remote) do
-    [path_with_no_ext | _] = String.split(path, ".")
+    upload_document_path = Path.join(file_dir, file_name)
 
-    with {:ok, document_path} <- download(path_with_no_ext) do
-      transform(document_path, transformations, location: :local)
+    File.copy!(document_path, upload_document_path)
+
+    ext = get_ext(upload_document_path)
+
+    with {:ok, remote_document_path} <- upload_file_to_storage(upload_document_path) do
+      {:ok, generate_url(remote_document_path, ext)}
     end
   end
 
-  def transform(document_path, transformations, location: :local) do
-    Transformer.transform_file(document_path, transformations)
+  @spec new_chunk_upload(file_name(), total_chunks()) :: {:ok, upload_id()} | {:error, term()}
+  def new_chunk_upload(file_name, total_chunks) do
+    id = upload_id()
+
+    new_chunk_upload =
+      Map.new()
+      |> Map.put(:file_name, file_name)
+      |> Map.put(:total_chunks, total_chunks)
+      |> Map.put(:id, id)
+
+    case ChunkUploadSupervisor.start_child({ChunkUploadWorker, new_chunk_upload}) do
+      {:ok, _pid} ->
+        {:ok, id}
+
+      {:error, reason} ->
+        Logger.error("failed to start ChunkUploadWorker. Reason: #{inspect(reason)}")
+        {:error, :failed_to_start_chunk_upload}
+    end
   end
 
-  @spec download(remote_document_path()) :: {:ok, document_path()} | {:error, term()}
-  def download(remote_document_path) do
-    FileStorage.download_file(storage_engine(), remote_document_path)
-  end
+  @spec append_chunk(upload_id(), {chunk_number(), document_path()}) :: :ok
+  def append_chunk(upload_id, {chunk_number, chunk_document_path}) do
+    document_path = Briefly.create!()
 
-  @spec complete_chunk_upload(upload_id()) :: {:ok, url()} | {:error, term()}
-  def complete_chunk_upload(upload_id) do
+    File.copy!(chunk_document_path, document_path)
+
     pid = get_chunk_upload_pid!(upload_id)
 
-    with {:ok, document_path} <- ChunkUploadWorker.complete_upload(pid),
-         extension <- get_ext(document_path),
-         {:ok, remote_document_path} <-
-           upload_file_to_storage(document_path) do
-      Process.exit(pid, :normal)
-      {:ok, generate_url(remote_document_path, extension)}
-    end
+    ChunkUploadWorker.append_chunk(pid, {chunk_number, document_path})
   end
 
   defp upload_file_to_storage(document_path) do
@@ -111,16 +118,6 @@ defmodule Oriio.Documents do
     "#{:os.system_time(:millisecond)}/#{file_name_with_no_ext}"
   end
 
-  defp get_chunk_upload_pid!(upload_id) do
-    case GenServer.whereis({:via, Horde.Registry, {ChunkUploadRegistry, upload_id}}) do
-      nil ->
-        raise ChunkUploadNotFound
-
-      pid ->
-        pid
-    end
-  end
-
   defp generate_url(remote_document_path, extension) do
     base_file_url() <> "/" <> remote_document_path <> "." <> extension
   end
@@ -133,6 +130,16 @@ defmodule Oriio.Documents do
     case Path.extname(path) do
       "." <> ext -> ext
       ext -> ext
+    end
+  end
+
+  defp get_chunk_upload_pid!(upload_id) do
+    case GenServer.whereis({:via, Horde.Registry, {ChunkUploadRegistry, upload_id}}) do
+      nil ->
+        raise ChunkUploadNotFound
+
+      pid ->
+        pid
     end
   end
 end

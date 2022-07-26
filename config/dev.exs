@@ -6,7 +6,7 @@ import Config
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with esbuild to bundle .js and .css sources.
-config :oriio_web, OriioWeb.Endpoint,
+config :web_api, WebApi.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}, port: 4000],
@@ -44,13 +44,13 @@ config :oriio_web, OriioWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :oriio_web, OriioWeb.Endpoint,
+config :web_api, WebApi.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/oriio_web/(live|views)/.*(ex)$",
-      ~r"lib/oriio_web/templates/.*(eex)$"
+      ~r"lib/web_api/(live|views)/.*(ex)$",
+      ~r"lib/web_api/templates/.*(eex)$"
     ]
   ]
 
@@ -72,7 +72,7 @@ config :oriio, :file_storage,
   region: System.get_env("ORIIO_FILE_STORAGE_REGION"),
   bucket: System.get_env("ORIIO_FILE_STORAGE_BUCKET")
 
-config :oriio_web,
+config :web_api,
        :auth_secret_key,
        "KN58vmkzeiUFMIo8nmv4OHagbIDXAzciZmyZ2lp3gXZHs4wlcJ1IElyQkuqGk9L9"
 

@@ -52,7 +52,6 @@ defmodule Oriio.Transformations.Transformer do
     image
   end
 
-
   defp apply_transform(image, :width, width, _transformations) do
     current_width = Image.width(image)
     hscale = width / current_width

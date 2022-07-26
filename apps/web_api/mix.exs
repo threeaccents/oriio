@@ -1,9 +1,9 @@
-defmodule Oriio.MixProject do
+defmodule WebApi.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :oriio,
+      app: :web_api,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -11,6 +11,7 @@ defmodule Oriio.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
+      compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
@@ -23,7 +24,7 @@ defmodule Oriio.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Oriio.Application, []},
+      mod: {WebApi.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -37,27 +38,23 @@ defmodule Oriio.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:ex_mime, in_umbrella: true},
-      {:phoenix_pubsub, "~> 2.0"},
-      {:ecto, "~> 3.6"},
-      {:postgrex, ">= 0.0.0"},
+      {:uploader, in_umbrella: true},
+      {:phoenix, "~> 1.6.6"},
+      {:phoenix_ecto, "~> 4.4"},
+      {:phoenix_html, "~> 3.0"},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_live_view, "~> 0.17.5"},
+      {:floki, ">= 0.30.0", only: :test},
+      {:phoenix_live_dashboard, "~> 0.6"},
+      {:esbuild, "~> 0.3", runtime: Mix.env() == :dev},
+      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_poller, "~> 1.0"},
+      {:gettext, "~> 0.18"},
+      {:oriio, in_umbrella: true},
       {:jason, "~> 1.2"},
-      {:swoosh, "~> 1.3"},
-      {:horde, "~> 0.8.6"},
-      {:libcluster, "~> 3.3.1"},
-      {:delta_crdt, "~> 0.6.4"},
-      {:briefly, "~> 0.3"},
-      {:timex, "~> 3.0"},
-      {:statix, "~>1.4"},
-      {:statsd_logger, "~> 1.1", only: [:dev, :test]},
-      {:vix, "~> 0.11.0"},
-      {:kino, "~> 0.3.0"},
-      {:telemetry_metrics_statsd, "~> 0.3.0"},
-      {:ex_aws, "~> 2.1"},
-      {:ex_aws_s3, "~> 2.0"},
-      {:sweet_xml, "~> 0.7.1"},
-      {:plug_crypto, "~> 1.0"},
-      {:local_cluster, "~> 1.2", only: [:test]}
+      {:plug_cowboy, "~> 2.5"},
+      {:proper_case, "~> 1.0.2"},
+      {:cors_plug, "~> 2.0"}
     ]
   end
 
@@ -67,7 +64,8 @@ defmodule Oriio.MixProject do
   defp aliases do
     [
       setup: ["deps.get"],
-      test: ["test"]
+      test: ["test"],
+      "assets.deploy": ["esbuild default --minify", "phx.digest"]
     ]
   end
 

@@ -8,7 +8,7 @@ import Config
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
-config :oriio_web, OriioWeb.Endpoint,
+config :web_api, WebApi.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
   secret_key_base: "UpNuqSSvGSAnKUS5lfe+Do73q+UKdeTnl8m9Lrq0PkfVK5F2GZvOehtz+wH1kcbr",
   server: false
@@ -24,6 +24,6 @@ config :phoenix, :plug_init_mode, :runtime
 
 config :oriio, :file_storage, storage_engine: "mock-engine"
 
-config :oriio_web,
+config :web_api,
        :auth_secret_key,
        "secret"
