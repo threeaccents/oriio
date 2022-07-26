@@ -59,7 +59,7 @@ defmodule WebApi.PageControllerTest do
 
   describe "MultiPart /append_chunk" do
     test "chunk is appended", %{conn: conn} do
-      {:ok, id} = Oriio.Documents.new_chunk_upload("nalu.png", 8)
+      {:ok, id} = Uploader.new_chunk_upload("nalu.png", 8)
 
       upload = %Plug.Upload{path: "#{@upload_files_dir}/segmentaa", filename: "nalu.png"}
 
@@ -89,7 +89,7 @@ defmodule WebApi.PageControllerTest do
 
   describe "POST /chunk_uploads/:upload_id" do
     test "file url is returned", %{conn: conn} do
-      {:ok, id} = Oriio.Documents.new_chunk_upload("nalu.png", 8)
+      {:ok, id} = Uploader.new_chunk_upload("nalu.png", 8)
 
       :ok = upload_all_chunks(id, conn)
 

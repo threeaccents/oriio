@@ -16,7 +16,7 @@ defmodule WebApi.UploadController do
   @spec upload(conn(), map()) :: conn() | {:error, term()}
   def upload(conn, params) do
     with {:ok, %{file: file}} <- UploadRequest.from_params(params),
-         {:ok, file_url} <- Documents.upload(file.filename, file.path) do
+         {:ok, file_url} <- Uploader.upload_document(file.filename, file.path) do
       data = to_camel_case(%{data: %{url: file_url}})
 
       conn
@@ -29,7 +29,7 @@ defmodule WebApi.UploadController do
   def new_chunk_upload(conn, params) do
     with {:ok, %{file_name: file_name, total_chunks: total_chunks}} <-
            NewChunkUploadRequest.from_params(params),
-         {:ok, upload_id} <- Documents.new_chunk_upload(file_name, total_chunks) do
+         {:ok, upload_id} <- Uploader.new_chunk_upload(file_name, total_chunks) do
       data = to_camel_case(%{data: %{upload_id: upload_id}})
 
       conn
@@ -42,7 +42,7 @@ defmodule WebApi.UploadController do
   def append_chunk(conn, params) do
     with {:ok, %{upload_id: upload_id, chunk_number: chunk_number, chunk: chunk}} <-
            AppendChunkRequest.from_params(params),
-         :ok <- Documents.append_chunk(upload_id, {chunk_number, chunk.path}) do
+         :ok <- Uploader.append_chunk(upload_id, {chunk_number, chunk.path}) do
       data = to_camel_case(%{data: %{message: "chunk was appended"}})
 
       conn
