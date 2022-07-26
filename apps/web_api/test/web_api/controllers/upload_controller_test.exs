@@ -1,8 +1,7 @@
 defmodule WebApi.PageControllerTest do
   use WebApi.ConnCase
 
-  # move fixtures to the root to share between both.
-  @upload_files_dir "#{__DIR__}/../../../../oriio/test/fixtures/uploads"
+  @upload_files_dir "#{__DIR__}/../../../../../data/fixtures/uploads"
 
   setup %{conn: conn} do
     conn = put_req_header(conn, "authorization", "Bearer secret")
@@ -60,7 +59,7 @@ defmodule WebApi.PageControllerTest do
   describe "MultiPart /append_chunk" do
     test "chunk is appended", %{conn: conn} do
       {:ok, id} = Uploader.new_chunk_upload("nalu.png", 8)
-      IO.inspect(id, label: "id")
+
       upload = %Plug.Upload{path: "#{@upload_files_dir}/segmentaa", filename: "nalu.png"}
 
       payload = %{chunk: upload, upload_id: id, chunk_number: 1}

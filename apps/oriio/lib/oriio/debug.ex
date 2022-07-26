@@ -4,7 +4,8 @@ defmodule Oriio.Debug do
   Helper module for debugging purposes
   """
 
-  alias Uploader.{ChunkUploadRegistry, SignedUploadRegistry, UploadMonitorRegistry}
+  alias Uploader.{ChunkUploadRegistry, SignedUploadRegistry}
+  alias Oriio.Uploads.UploadMonitorRegistry
 
   alias Oriio.Documents
   alias Oriio.SignedUploads

@@ -6,7 +6,7 @@ defmodule Uploader.ChunkUploadWorkerTest do
   alias Ecto.UUID
 
   @total_chunks 8
-  @upload_files_path "#{__DIR__}/../../../fixtures/uploads"
+  @upload_files_dir "#{__DIR__}/../../../../data/fixtures/uploads"
 
   describe "init/1" do
     test "sets the correct state for the GenServer" do
@@ -79,7 +79,7 @@ defmodule Uploader.ChunkUploadWorkerTest do
       original_file_hash = "1DA01AE7787DD239587F7DE7D901552B"
 
       document_paths =
-        Path.wildcard("#{@upload_files_path}/segment**")
+        Path.wildcard("#{@upload_files_dir}/segment**")
         |> Enum.sort()
 
       for {document_path, chunk_number} <- Enum.with_index(document_paths, 1) do
