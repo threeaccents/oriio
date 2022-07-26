@@ -10,6 +10,7 @@ defmodule Oriio.Documents do
   alias Oriio.ChunkUploadNotFound
   alias Oriio.Storages.S3FileStorage
   alias Oriio.Storages.MockFileStorage
+  alias Oriio.Storages.LocalFileStorage
   alias Oriio.Storages.FileStorage
   alias Oriio.Mime
   alias Oriio.Transformations.Transformer
@@ -112,14 +113,14 @@ defmodule Oriio.Documents do
 
     remote_document_path = generate_remote_document_path(document_path)
 
-    file_blob = %{
+    file_info = %{
       remote_document_path: remote_document_path,
       mime: Atom.to_string(mime),
       mimetype: Atom.to_string(mimetype),
       document_path: document_path
     }
 
-    case FileStorage.upload_file(storage_engine(), file_blob) do
+    case FileStorage.upload_file(storage_engine(), file_info) do
       :ok -> {:ok, remote_document_path}
       {:error, reason} -> {:error, reason}
     end
@@ -137,6 +138,9 @@ defmodule Oriio.Documents do
           region: Application.get_env(:oriio, :file_storage)[:region],
           bucket: Application.get_env(:oriio, :file_storage)[:bucket]
         }
+
+      "local" ->
+        %LocalFileStorage{}
 
       "mock-engine" ->
         %MockFileStorage{}

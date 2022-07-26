@@ -5,19 +5,19 @@ defimpl Oriio.Storages.FileStorage, for: Oriio.Storages.S3FileStorage do
 
   require Logger
 
-  @type file_blob() :: FileStorage.file_blob()
+  @type file_info() :: FileStorage.file_info()
   @type document_path() :: FileStorage.document_path()
   @type remote_document_path() :: FileStorage.remote_document_path()
 
-  @spec upload_file(S3FileStorage.t(), file_blob()) ::
+  @spec upload_file(S3FileStorage.t(), file_info()) ::
           :ok | {:error, :failed_to_upload_file}
-  def upload_file(s3, file_blob) do
+  def upload_file(s3, file_info) do
     %{
       document_path: document_path,
       remote_document_path: remote_location,
       mime: mime,
       mimetype: mimetype
-    } = file_blob
+    } = file_info
 
     object_opts = [content_type: mime <> "/" <> mimetype]
 
