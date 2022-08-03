@@ -59,8 +59,10 @@ defmodule Oriio.Documents do
 
     ext = get_ext(upload_document_path)
 
-    with {:ok, remote_document_path} <- upload_file_to_storage(upload_document_path) do
-      {:ok, generate_url(remote_document_path, ext)}
+    with {:ok, remote_document_path} <-
+           upload_file_to_storage(upload_document_path)
+           |> IO.inspect(label: "upload_file_to_storage") do
+      {:ok, generate_url(remote_document_path, ext)} |> IO.inspect(label: "response")
     end
   end
 

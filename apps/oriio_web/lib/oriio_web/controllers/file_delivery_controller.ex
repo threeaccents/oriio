@@ -43,7 +43,7 @@ defmodule OriioWeb.FileDeliveryController do
   @spec extract_remote_document_path(ServeFileRequest.t()) ::
           {:ok, String.t()} | {:error, :invalid_params}
   defp extract_remote_document_path(%{timestamp: ts, file_name: file_name}) do
-    {:ok, DateTime.to_string(ts) <> "/" <> file_name}
+    {:ok, ts <> "/" <> file_name}
   end
 
   @spec remove_missing_transformations(map()) :: map()

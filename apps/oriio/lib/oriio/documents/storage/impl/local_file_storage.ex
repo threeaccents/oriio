@@ -16,6 +16,10 @@ defimpl Oriio.Storages.FileStorage, for: Oriio.Storages.LocalFileStorage do
       remote_document_path: remote_document_path
     } = file_info
 
+    dir = Path.dirname(remote_document_path)
+
+    File.mkdir_p!(dir)
+
     with {:ok, _bytes} <- File.copy(document_path, remote_document_path) do
       :ok
     end

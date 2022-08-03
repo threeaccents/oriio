@@ -16,7 +16,7 @@ defmodule OriioWeb.ServeFileRequest do
         }
 
   embedded_schema do
-    field(:timestamp, :utc_datetime)
+    field(:timestamp, :string)
     field(:file_name, :string)
     field(:height, :integer)
     field(:width, :integer)
