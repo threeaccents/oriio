@@ -19,7 +19,7 @@ config :oriio_web, OriioWeb.Endpoint,
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
   ]
 
-config :oriio, :base_file_url, "http://localhost:4200"
+config :oriio, :base_url, "http://localhost:4200"
 
 # ## SSL Support
 #

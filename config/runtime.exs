@@ -27,13 +27,15 @@ if config_env() == :prod do
     region: System.get_env("ORIIO_FILE_STORAGE_REGION"),
     bucket: System.get_env("ORIIO_FILE_STORAGE_BUCKET")
 
+  http_host = System.get_env("ORIIO_HOST") || "localhost"
+  http_port = String.to_integer(System.get_env("ORIIO_PORT") || "4000")
+
   config :oriio_web, OriioWeb.Endpoint,
-    url: [host: "oriio.oriio.io", port: 8080],
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
-      port: String.to_integer(System.get_env("PORT") || "8080")
+      port: http_port
     ],
     secret_key_base: secret_key_base
 

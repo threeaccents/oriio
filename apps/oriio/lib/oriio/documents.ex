@@ -60,9 +60,8 @@ defmodule Oriio.Documents do
     ext = get_ext(upload_document_path)
 
     with {:ok, remote_document_path} <-
-           upload_file_to_storage(upload_document_path)
-           |> IO.inspect(label: "upload_file_to_storage") do
-      {:ok, generate_url(remote_document_path, ext)} |> IO.inspect(label: "response")
+           upload_file_to_storage(upload_document_path) do
+      {:ok, generate_url(remote_document_path, ext)}
     end
   end
 
@@ -171,12 +170,12 @@ defmodule Oriio.Documents do
   end
 
   defp generate_url(remote_document_path, extension) do
-    base_file_url() <> "/" <> remote_document_path <> "." <> extension
+    base_url() <> "/" <> remote_document_path <> "." <> extension
   end
 
   defp upload_id, do: UUID.generate()
 
-  defp base_file_url, do: Application.get_env(:oriio, :base_file_url, "http://localhost:4000")
+  defp base_url, do: Application.get_env(:oriio, :base_url)
 
   defp get_ext(path) do
     case Path.extname(path) do

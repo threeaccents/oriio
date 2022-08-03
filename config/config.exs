@@ -9,7 +9,7 @@
 # move said applications out of the umbrella.
 import Config
 
-config :oriio, :file_base_url, "http://localhost:4000"
+config :oriio, :base_url, System.get_env("ORIIO_BASE_URL") || "http://localhost:4200"
 
 # Configure Mix tasks and generators
 
