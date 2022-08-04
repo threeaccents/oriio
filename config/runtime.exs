@@ -26,7 +26,7 @@ if config_env() == :prod do
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
-      port: System.get_env("ORIIO_PORT") || 4200
+      port: String.to_integer(System.get_env("ORIIO_PORT") || "4200")
     ],
     secret_key_base: secret_key_base
 
