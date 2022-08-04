@@ -20,22 +20,13 @@ if config_env() == :prod do
       """
 
   # File storage engine
-  config :oriio, :file_storage,
-    storage_engine: System.get_env("ORIIO_FILE_STORAGE_ENGINE"),
-    access_key: System.get_env("ORIIO_FILE_STORAGE_ACCESS_KEY"),
-    secret_key: System.get_env("ORIIO_FILE_STORAGE_SECRET_KEY"),
-    region: System.get_env("ORIIO_FILE_STORAGE_REGION"),
-    bucket: System.get_env("ORIIO_FILE_STORAGE_BUCKET")
-
-  http_host = System.get_env("ORIIO_HOST") || "localhost"
-  http_port = String.to_integer(System.get_env("ORIIO_PORT") || "4000")
 
   config :oriio_web, OriioWeb.Endpoint,
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
-      port: http_port
+      port: System.get_env("ORIIO_PORT") || 4200
     ],
     secret_key_base: secret_key_base
 
@@ -48,12 +39,6 @@ if config_env() == :prod do
   # to start each relevant endpoint:
   #
   config :oriio_web, OriioWeb.Endpoint, server: true
-
-  config :oriio_web, :auth_secret_key, System.get_env("ORIIO_AUTH_SECRET")
-
-  config :oriio,
-         :signed_upload_secret_key,
-         System.get_env("ORIIO_SIGNED_UPLOAD_SECRET")
 
   #
   # Then you can assemble a release by calling `mix release`.

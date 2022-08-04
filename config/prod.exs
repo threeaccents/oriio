@@ -10,7 +10,7 @@ import Config
 # which you should run after static files are built and
 # before starting your production server.
 http_host = System.get_env("ORIIO_HOST") || "localhost"
-http_port = String.to_integer(System.get_env("ORIIO_PORT")) || 80
+http_port = String.to_integer(System.get_env("ORIIO_PORT") || "4200")
 
 config :oriio_web, OriioWeb.Endpoint,
   url: [host: http_port, port: http_port],
