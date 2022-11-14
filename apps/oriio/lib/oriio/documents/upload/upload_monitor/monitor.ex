@@ -9,8 +9,8 @@ defmodule Oriio.Uploads.UploadMonitor do
 
   alias Oriio.Uploads.{
     UploadMonitorRegistry,
-    ChunkUploadRegistry,
-    ChunkUploadWorker
+    UploadRegistry,
+    UploadWorker
   }
 
   @thirty_minutes 30 * 60 * 1000
@@ -54,13 +54,13 @@ defmodule Oriio.Uploads.UploadMonitor do
   end
 
   defp list_chunk_upload_processes do
-    Horde.Registry.select(ChunkUploadRegistry, [
+    Horde.Registry.select(UploadRegistry, [
       {{:"$1", :"$2", :"$3"}, [], [:"$2"]}
     ])
   end
 
   defp is_upload_stale?(pid) do
-    updated_at = ChunkUploadWorker.updated_at(pid)
+    updated_at = UploadWorker.updated_at(pid)
     expiry_time = DateTime.add(updated_at, @valid_hours * 60, :second)
     DateTime.diff(expiry_time, DateTime.utc_now()) <= 0
   end

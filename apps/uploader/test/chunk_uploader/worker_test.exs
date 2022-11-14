@@ -1,7 +1,7 @@
-defmodule Uploader.ChunkUploadWorkerTest do
+defmodule Uploader.UploadWorkerTest do
   use Oriio.DataCase
 
-  alias Uploader.ChunkUploadWorker
+  alias Uploader.UploadWorker
   alias Oriio.Debug
   alias Ecto.UUID
 
@@ -10,7 +10,7 @@ defmodule Uploader.ChunkUploadWorkerTest do
 
   describe "init/1" do
     test "sets the correct state for the GenServer" do
-      assert {:ok, state, _} = ChunkUploadWorker.init(new_chunk_upload())
+      assert {:ok, state, _} = UploadWorker.init(new_chunk_upload())
 
       assert %{
                id: _id,
@@ -23,11 +23,11 @@ defmodule Uploader.ChunkUploadWorkerTest do
     end
 
     test "calls handle_continue to load potential state" do
-      assert {:ok, _state, {:continue, :load_state}} = ChunkUploadWorker.init(new_chunk_upload())
+      assert {:ok, _state, {:continue, :load_state}} = UploadWorker.init(new_chunk_upload())
     end
 
     test "chunk_document_paths gets properly set based on the total chunks" do
-      assert {:ok, state, _} = ChunkUploadWorker.init(new_chunk_upload())
+      assert {:ok, state, _} = UploadWorker.init(new_chunk_upload())
 
       assert length(state.chunk_document_paths) == @total_chunks
     end
@@ -35,7 +35,7 @@ defmodule Uploader.ChunkUploadWorkerTest do
 
   describe "append_chunk/2" do
     setup ctx do
-      {:ok, pid} = start_supervised({ChunkUploadWorker, new_chunk_upload()})
+      {:ok, pid} = start_supervised({UploadWorker, new_chunk_upload()})
       Map.put(ctx, :pid, pid)
     end
 
@@ -44,7 +44,7 @@ defmodule Uploader.ChunkUploadWorkerTest do
 
       new_chunk = {2, path}
 
-      assert :ok = ChunkUploadWorker.append_chunk(pid, new_chunk)
+      assert :ok = UploadWorker.append_chunk(pid, new_chunk)
 
       %{chunk_document_paths: chunk_document_paths} = :sys.get_state(pid)
 
@@ -63,14 +63,14 @@ defmodule Uploader.ChunkUploadWorkerTest do
 
   describe "complete_chunk/1" do
     setup ctx do
-      {:ok, pid} = start_supervised({ChunkUploadWorker, new_chunk_upload()})
+      {:ok, pid} = start_supervised({UploadWorker, new_chunk_upload()})
       Map.put(ctx, :pid, pid)
     end
 
     test "returns missing chunks if any chunks are missing", %{pid: pid} do
       add_chunks(pid, [1, 2, 3, 4, 5])
 
-      assert {:error, msg} = ChunkUploadWorker.complete_upload(pid)
+      assert {:error, msg} = UploadWorker.complete_upload(pid)
 
       assert msg == "missing chunks [6, 7, 8]"
     end
@@ -83,10 +83,10 @@ defmodule Uploader.ChunkUploadWorkerTest do
         |> Enum.sort()
 
       for {document_path, chunk_number} <- Enum.with_index(document_paths, 1) do
-        ChunkUploadWorker.append_chunk(pid, {chunk_number, document_path})
+        UploadWorker.append_chunk(pid, {chunk_number, document_path})
       end
 
-      assert {:ok, merged_document_path} = ChunkUploadWorker.complete_upload(pid)
+      assert {:ok, merged_document_path} = UploadWorker.complete_upload(pid)
 
       merged_file_hash = file_hash(merged_document_path)
 
@@ -171,7 +171,7 @@ defmodule Uploader.ChunkUploadWorkerTest do
 
     new_chunk = {chunk_number, path}
 
-    :ok = ChunkUploadWorker.append_chunk(pid, new_chunk)
+    :ok = UploadWorker.append_chunk(pid, new_chunk)
   end
 
   defp file_hash(document_path) do

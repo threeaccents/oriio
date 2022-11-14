@@ -1,4 +1,4 @@
-defmodule Oriio.Uploads.ChunkUploadSupervisor do
+defmodule Oriio.Uploads.UploadSupervisor do
   @moduledoc """
   Dyanamic supervisor for managing the chunk upload worker.
   It is a distributed supervisor starting up processes in any server in the cluster.

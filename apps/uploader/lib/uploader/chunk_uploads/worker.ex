@@ -1,4 +1,4 @@
-defmodule Uploader.ChunkUploadWorker do
+defmodule Uploader.UploadWorker do
   @moduledoc """
   GenServer for handling chunk uploads.
   It keeps track of all chunks uploaded and then it merges the chunks once the upload is complete.
@@ -6,50 +6,64 @@ defmodule Uploader.ChunkUploadWorker do
 
   use GenServer, restart: :transient
 
-  alias Uploader.ChunkUploadRegistry
-  alias Uploader.ChunkUploadStateHandoff, as: StateHandoff
+  alias Uploader.UploadRegistry
+  alias Uploader.UploadStateHandoff, as: StateHandoff
+
+  @type chunk() :: %{
+          chunk_number: non_neg_integer(),
+          chunk_file_path: String.t()
+        }
 
   @type state() :: %{
           id: binary(),
           file_name: binary(),
           total_chunks: non_neg_integer(),
-          chunk_document_paths: Keyword.t(),
+          chunks: list(chunk()),
           merged_chunks?: boolean(),
           updated_at: DateTime.t()
         }
 
   @type new_chunk_upload() :: %{
-          id: binary(),
+          upload_id: binary(),
           file_name: binary(),
           total_chunks: non_neg_integer()
         }
 
   @type chunk_number() :: non_neg_integer()
   @type document_path() :: binary()
+  @type chunk_file_paths() :: Keyword.t()
 
   @spec start_link(new_chunk_upload()) :: GenServer.on_start()
   def start_link(new_chunk_upload) do
-    GenServer.start_link(__MODULE__, new_chunk_upload, name: via_tuple(new_chunk_upload.id))
+    GenServer.start_link(__MODULE__, new_chunk_upload, name: via_tuple(new_chunk_upload.upload_id))
   end
 
   @impl true
   def init(%{total_chunks: total_chunks} = new_chunk_upload) do
     Process.flag(:trap_exit, true)
 
-    chunk_document_paths = for chunk_number <- 1..total_chunks, do: {to_string(chunk_number), nil}
+    chunks =
+      for chunk_number <- 1..total_chunks, do: %{chunk_number: chunk_number, chunk_file_path: nil}
+
+    chunks = BST.new(chunks, fn a, b -> a.chunk_number - b.chunk_number end)
 
     state =
       new_chunk_upload
-      |> Map.put(:chunk_document_paths, chunk_document_paths)
+      |> Map.put(:chunks, chunks)
       |> Map.put(:merged_chunks?, false)
       |> Map.put(:updated_at, DateTime.utc_now())
 
     {:ok, state, {:continue, :load_state}}
   end
 
-  @spec append_chunk(pid(), {chunk_number(), document_path()}) :: :ok
-  def append_chunk(server, {chunk_number, chunk_document_path}) do
-    GenServer.call(server, {:append_chunk, {chunk_number, chunk_document_path}})
+  @spec fetch_chunks(pid()) :: list(chunk())
+  def fetch_chunks(server) do
+    GenServer.call(server, :fetch_chunk)
+  end
+
+  @spec append_chunk(pid(), chunk_number(), document_path()) :: :ok
+  def append_chunk(server, chunk_number, chunk_file_path) do
+    GenServer.call(server, {:append_chunk, chunk_number, chunk_file_path})
   end
 
   @spec complete_upload(pid()) :: {:ok, document_path()} | {:error, term()}
@@ -69,29 +83,31 @@ defmodule Uploader.ChunkUploadWorker do
 
   @impl GenServer
   def handle_call(
-        {:append_chunk, {chunk_number, chunk_document_path}},
+        :fetch_chunk,
         _from,
-        %{chunk_document_paths: chunk_document_paths} = state
-      ) do
-    chunk_key = to_string(chunk_number)
+        %{chunks: chunks} = state
+      ),
+      do: {:reply, chunks, state}
 
+  @impl GenServer
+  def handle_call(
+        {:append_chunk, chunk_number, chunk_file_path},
+        _from,
+        %{chunks: chunks} = state
+      ) do
     # since most files passed in are temps file they get removed when the calling proccess is killed.
     # so we need to copy the file to this current process
-    document_path = Briefly.create!()
+    file_path = Briefly.create!()
 
-    File.copy!(chunk_document_path, document_path)
+    File.copy!(chunk_file_path, file_path)
 
-    chunk_document_paths =
-      for {chunk_number, path} <- chunk_document_paths do
-        if chunk_key == chunk_number do
-          {chunk_key, chunk_document_path}
-        else
-          {chunk_number, path}
-        end
-      end
+    chunk = BST.find(chunks, %{chunk_number: chunk_number})
 
-    {:reply, :ok,
-     %{state | chunk_document_paths: chunk_document_paths, updated_at: DateTime.utc_now()}}
+    updated_chunk = Map.put(chunk, :chunk_file_path, chunk_file_path)
+
+    updated_chunks = BST.insert(chunks, updated_chunk)
+
+    {:reply, :ok, %{state | chunks: updated_chunks, updated_at: DateTime.utc_now()}}
   end
 
   def handle_call(:complete_upload, _from, state) do
@@ -118,9 +134,9 @@ defmodule Uploader.ChunkUploadWorker do
     do: {:reply, updated_at, state}
 
   @impl GenServer
-  def handle_continue(:load_state, %{id: id} = state) do
+  def handle_continue(:load_state, %{upload_id: upload_id} = state) do
     new_state =
-      case StateHandoff.pickup(id) do
+      case StateHandoff.pickup(upload_id) do
         nil -> state
         state -> state
       end
@@ -140,8 +156,8 @@ defmodule Uploader.ChunkUploadWorker do
   @impl GenServer
   def terminate(:normal, _state), do: :ok
 
-  def terminate(_reason, %{id: id} = state) do
-    StateHandoff.handoff(id, state)
+  def terminate(_reason, %{upload_id: upload_id} = state) do
+    StateHandoff.handoff(upload_id, state)
     # timeout to make sure the CRDT is propegated to other nodes
     :timer.sleep(3000)
   end
@@ -179,5 +195,5 @@ defmodule Uploader.ChunkUploadWorker do
   end
 
   defp via_tuple(name),
-    do: {:via, Horde.Registry, {ChunkUploadRegistry, name}}
+    do: {:via, Horde.Registry, {UploadRegistry, name}}
 end

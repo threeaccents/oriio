@@ -1,4 +1,4 @@
-defmodule Uploader.ChunkUploadNotFound do
+defmodule Uploader.UploadNotFound do
   @moduledoc """
   Error raised when an upload is not found.
   """

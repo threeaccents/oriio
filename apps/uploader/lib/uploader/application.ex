@@ -10,9 +10,9 @@ defmodule Uploader.Application do
     children = [
       # Starts a worker by calling: Uploader.Worker.start_link(arg)
       # {Uploader.Worker, arg}
-      Uploader.ChunkUploadStateHandoff,
-      Uploader.ChunkUploadRegistry,
-      Uploader.ChunkUploadSupervisor
+      Uploader.UploadStateHandoff,
+      Uploader.UploadRegistry,
+      Uploader.UploadSupervisor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

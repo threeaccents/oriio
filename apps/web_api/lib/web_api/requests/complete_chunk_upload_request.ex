@@ -1,4 +1,4 @@
-defmodule WebApi.CompleteChunkUploadRequest do
+defmodule WebApi.CompleteUploadRequest do
   @moduledoc """
   Validation parameters for completing a chunk upload.
   """

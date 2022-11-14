@@ -7,11 +7,12 @@ defmodule Uploader do
   alias Oriio.Storages.MockFileStorage
   alias Oriio.Storages.LocalFileStorage
   alias Oriio.Storages.FileStorage
-  alias Uploader.ChunkUploadSupervisor
-  alias Uploader.ChunkUploadWorker
-  alias Uploader.ChunkUploadRegistry
-  alias Uploader.ChunkUploadNotFound
+  alias Uploader.UploadSupervisor
+  alias Uploader.UploadWorker
+  alias Uploader.UploadRegistry
+  alias Uploader.UploadNotFound
   alias Ecto.UUID
+  alias Uploader.CreateNewUploadAction
 
   require Logger
 
@@ -23,57 +24,28 @@ defmodule Uploader do
   @type chunk_number() :: non_neg_integer()
   @type remote_document_path() :: binary()
 
-  @spec upload_document(file_name(), document_path()) :: {:ok, url()} | {:error, term()}
-  def upload_document(file_name, document_path) do
-    file_dir = Briefly.create!(directory: true)
+  @spec new_upload(file_name(), total_chunks()) :: {:ok, upload_id()} | {:error, term()}
+  def new_upload(file_name, total_chunks) do
+    params = %{file_name: file_name, total_chunks: total_chunks}
 
-    upload_document_path = Path.join(file_dir, file_name)
-
-    File.copy!(document_path, upload_document_path)
-
-    ext = get_ext(upload_document_path)
-
-    with {:ok, remote_document_path} <- upload_file_to_storage(upload_document_path) do
-      {:ok, generate_url(remote_document_path, ext)}
-    end
-  end
-
-  @spec new_chunk_upload(file_name(), total_chunks()) :: {:ok, upload_id()} | {:error, term()}
-  def new_chunk_upload(file_name, total_chunks) do
-    id = upload_id()
-
-    new_chunk_upload =
-      Map.new()
-      |> Map.put(:file_name, file_name)
-      |> Map.put(:total_chunks, total_chunks)
-      |> Map.put(:id, id)
-
-    case ChunkUploadSupervisor.start_child({ChunkUploadWorker, new_chunk_upload}) do
-      {:ok, _pid} ->
-        {:ok, id}
-
-      {:error, reason} ->
-        Logger.error("failed to start ChunkUploadWorker. Reason: #{inspect(reason)}")
-        {:error, :failed_to_start_chunk_upload}
+    case CreateNewUploadAction.perform(params) do
+      {:ok, %{upload_id: upload_id}} -> {:ok, upload_id}
+      {:error, reason} -> {:error, reason}
     end
   end
 
   @spec append_chunk(upload_id(), {chunk_number(), document_path()}) :: :ok
-  def append_chunk(upload_id, {chunk_number, chunk_document_path}) do
-    document_path = Briefly.create!()
+  def append_chunk(upload_id, {chunk_number, chunk_file_path}) do
+    pid = get_upload_pid!(upload_id)
 
-    File.copy!(chunk_document_path, document_path)
-
-    pid = get_chunk_upload_pid!(upload_id)
-
-    ChunkUploadWorker.append_chunk(pid, {chunk_number, document_path})
+    UploadWorker.append_chunk(pid, {chunk_number, chunk_file_path})
   end
 
-  @spec complete_chunk_upload(upload_id()) :: {:ok, url()} | {:error, term()}
-  def complete_chunk_upload(upload_id) do
-    pid = get_chunk_upload_pid!(upload_id)
+  @spec complete_upload(upload_id()) :: {:ok, url()} | {:error, term()}
+  def complete_upload(upload_id) do
+    pid = get_upload_pid!(upload_id)
 
-    with {:ok, document_path} <- ChunkUploadWorker.complete_upload(pid),
+    with {:ok, document_path} <- UploadWorker.complete_upload(pid),
          extension <- get_ext(document_path),
          {:ok, remote_document_path} <-
            upload_file_to_storage(document_path) do
@@ -147,10 +119,10 @@ defmodule Uploader do
     end
   end
 
-  defp get_chunk_upload_pid!(upload_id) do
-    case GenServer.whereis({:via, Horde.Registry, {ChunkUploadRegistry, upload_id}}) do
+  defp get_upload_pid!(upload_id) do
+    case GenServer.whereis({:via, Horde.Registry, {UploadRegistry, upload_id}}) do
       nil ->
-        raise ChunkUploadNotFound
+        raise UploadNotFound
 
       pid ->
         pid

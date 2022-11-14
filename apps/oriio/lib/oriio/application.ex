@@ -9,9 +9,9 @@ defmodule Oriio.Application do
     UploadMonitorSupervisor,
     UploadMonitorRegistry,
     UploadMonitor,
-    ChunkUploadStateHandoff,
-    ChunkUploadRegistry,
-    ChunkUploadSupervisor,
+    UploadStateHandoff,
+    UploadRegistry,
+    UploadSupervisor,
     SignedUploadStateHandoff,
     SignedUploadRegistry,
     SignedUploadSupervisor
@@ -29,9 +29,9 @@ defmodule Oriio.Application do
       # Clustering
       {Cluster.Supervisor, [topologies, [name: Oriio.ClusterSupervisor]]},
       # Chunk Uploads
-      ChunkUploadStateHandoff,
-      ChunkUploadRegistry,
-      ChunkUploadSupervisor,
+      UploadStateHandoff,
+      UploadRegistry,
+      UploadSupervisor,
       UploadMonitorRegistry,
       UploadMonitorSupervisor,
       %{

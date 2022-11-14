@@ -4,10 +4,10 @@ defmodule Oriio.Documents do
   This context manages the upload, download, and transformation of documents.
   """
 
-  alias Oriio.Uploads.ChunkUploadWorker
-  alias Oriio.Uploads.ChunkUploadSupervisor
-  alias Oriio.Uploads.ChunkUploadRegistry
-  alias Oriio.ChunkUploadNotFound
+  alias Oriio.Uploads.UploadWorker
+  alias Oriio.Uploads.UploadSupervisor
+  alias Oriio.Uploads.UploadRegistry
+  alias Oriio.UploadNotFound
   alias Oriio.Storages.S3FileStorage
   alias Oriio.Storages.MockFileStorage
   alias Oriio.Storages.LocalFileStorage

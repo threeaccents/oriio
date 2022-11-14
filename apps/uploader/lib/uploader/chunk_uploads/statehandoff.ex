@@ -1,14 +1,14 @@
-defmodule Uploader.ChunkUploadStateHandoff do
+defmodule Uploader.UploadStateHandoff do
   @moduledoc """
   Handles state handoff between processes. It uses DeltaCRDT to manage the distributed state syncronization.
   """
 
   use Oriio.DeltaCrdt
 
-  alias Uploader.ChunkUploadWorker
+  alias Uploader.UploadWorker
 
   @type upload_id() :: binary()
-  @type upload_state() :: ChunkUploadWorker.state()
+  @type upload_state() :: UploadWorker.state()
 
   @spec handoff(upload_id(), upload_state()) :: DeltaCrdt.t()
   def handoff(upload_id, state) do

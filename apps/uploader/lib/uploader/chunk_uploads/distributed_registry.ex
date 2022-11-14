@@ -1,4 +1,4 @@
-defmodule Uploader.ChunkUploadRegistry do
+defmodule Uploader.UploadRegistry do
   @moduledoc """
   Distributed registry for chunk upload worker.
   """

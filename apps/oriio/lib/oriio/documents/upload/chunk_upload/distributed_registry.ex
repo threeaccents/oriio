@@ -1,4 +1,4 @@
-defmodule Oriio.Uploads.ChunkUploadRegistry do
+defmodule Oriio.Uploads.UploadRegistry do
   @moduledoc """
   Distributed registry for chunk upload worker.
   """

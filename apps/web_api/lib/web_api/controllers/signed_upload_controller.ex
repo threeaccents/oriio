@@ -3,8 +3,8 @@ defmodule WebApi.SignedUploadController do
 
   alias Oriio.SignedUploads
   alias WebApi.UploadRequest
-  alias WebApi.CompleteChunkUploadRequest
-  alias WebApi.NewChunkUploadRequest
+  alias WebApi.CompleteUploadRequest
+  alias WebApi.NewUploadRequest
   alias WebApi.CreateSignedUploadRequest
 
   action_fallback WebApi.FallbackController
@@ -41,7 +41,7 @@ defmodule WebApi.SignedUploadController do
     signed_upload_id = conn.assigns.signed_upload_id
 
     with {:ok, %{file_name: file_name, total_chunks: total_chunks}} <-
-           NewChunkUploadRequest.from_params(params),
+           NewUploadRequest.from_params(params),
          {:ok, upload_id} <-
            SignedUploads.new_chunk_upload(signed_upload_id, file_name, total_chunks) do
       data = to_camel_case(%{data: %{upload_id: upload_id}})
@@ -56,7 +56,7 @@ defmodule WebApi.SignedUploadController do
   def complete_chunk_upload(conn, params) do
     signed_upload_id = conn.assigns.signed_upload_id
 
-    with {:ok, %{upload_id: upload_id}} <- CompleteChunkUploadRequest.from_params(params),
+    with {:ok, %{upload_id: upload_id}} <- CompleteUploadRequest.from_params(params),
          {:ok, file_url} <- SignedUploads.complete_chunk_upload(signed_upload_id, upload_id) do
       data = to_camel_case(%{data: %{url: file_url}})
 

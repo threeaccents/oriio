@@ -1,4 +1,4 @@
-defmodule Oriio.Uploads.ChunkUploadWorker do
+defmodule Oriio.Uploads.UploadWorker do
   @moduledoc """
   GenServer for handling chunk uploads.
   It keeps track of all chunks uploaded and then it merges the chunks once the upload is complete.
@@ -6,8 +6,8 @@ defmodule Oriio.Uploads.ChunkUploadWorker do
 
   use GenServer, restart: :transient
 
-  alias Oriio.Uploads.ChunkUploadRegistry
-  alias Oriio.Uploads.ChunkUploadStateHandoff, as: StateHandoff
+  alias Oriio.Uploads.UploadRegistry
+  alias Oriio.Uploads.UploadStateHandoff, as: StateHandoff
 
   @type state() :: %{
           id: binary(),
@@ -179,5 +179,5 @@ defmodule Oriio.Uploads.ChunkUploadWorker do
   end
 
   defp via_tuple(name),
-    do: {:via, Horde.Registry, {ChunkUploadRegistry, name}}
+    do: {:via, Horde.Registry, {UploadRegistry, name}}
 end

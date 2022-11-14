@@ -1,4 +1,4 @@
-defmodule WebApi.NewChunkUploadRequest do
+defmodule WebApi.NewUploadRequest do
   @moduledoc """
   Validation parameters for creating a new chunk uplod.
   """

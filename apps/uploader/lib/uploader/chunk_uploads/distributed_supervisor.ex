@@ -1,4 +1,4 @@
-defmodule Uploader.ChunkUploadSupervisor do
+defmodule Uploader.UploadSupervisor do
   @moduledoc """
   Dyanamic supervisor for managing the chunk upload worker.
   It is a distributed supervisor starting up processes in any server in the cluster.
