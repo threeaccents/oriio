@@ -49,31 +49,31 @@ defmodule OrderedMap do
       rotate_right(%__MODULE__{node | left: rotate_left(left_node)})
     end
 
-    def balance(%__MODULE__{} = node) do
+    def height_balance(%__MODULE__{} = node) do
       height(node.left) - height(node.right)
     end
 
-    def balance(nil), do: 0
+    def height_balance(nil), do: 0
 
     def height(%__MODULE__{height: height}), do: height
     def height(nil), do: 0
 
-    def apply_rotation(%Node{left: left_node, right: right_node} = node) do
-      balance = balance(node)
-      left_node_balance = balance(left_node)
-      right_node_balance = balance(right_node)
+    def balance(%Node{left: left_node, right: right_node} = node) do
+      node = fix_height(node)
+
+      balance = height_balance(node)
+      left_node_balance = height_balance(left_node)
+      right_node_balance = height_balance(right_node)
 
       cond do
         balance > 1 and left_node_balance < 0 ->
-          node = %__MODULE__{node | left: rotate_left(left_node)}
-          rotate_right(node)
+          big_rotate_left(node)
 
         balance > 1 ->
           rotate_right(node)
 
         balance < -1 and right_node_balance > 0 ->
-          node = %__MODULE__{node | right: rotate_right(right_node)}
-          rotate_left(node)
+          big_rotate_right(node)
 
         balance < -1 ->
           rotate_left(node)
@@ -123,36 +123,10 @@ defmodule OrderedMap do
   def insert_node(nil, key, value), do: %Node{key: key, value: value, height: 1}
 
   def insert_node(%Node{key: node_key} = node, key, value) do
-    updated_node =
-      case compare(node_key, key) do
-        :eq -> %Node{node | key: key, value: value}
-        :lt -> %Node{node | left: insert_node(node.left, key, value)}
-        :gt -> %Node{node | right: insert_node(node.right, key, value)}
-      end
-
-    balance(updated_node)
-  end
-
-  defp balance(%Node{left: left_node, right: right_node} = node) do
-    node = Node.fix_height(node)
-
-    cond do
-      Node.height(right_node) - Node.height(left_node) == 2 ->
-        if Node.height(right_node.left) <= Node.height(right_node.right) do
-          Node.rotate_left(node)
-        else
-          Node.big_rotate_left(node)
-        end
-
-      Node.height(left_node) - Node.height(right_node) == 2 ->
-        if Node.height(left_node.right) <= Node.height(left_node.left) do
-          Node.rotate_right(node)
-        else
-          Node.big_rotate_right(node)
-        end
-
-      true ->
-        node
+    case compare(node_key, key) do
+      :eq -> %Node{node | key: key, value: value}
+      :lt -> Node.balance(%Node{node | left: insert_node(node.left, key, value)})
+      :gt -> Node.balance(%Node{node | right: insert_node(node.right, key, value)})
     end
   end
 
