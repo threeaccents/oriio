@@ -1,4 +1,4 @@
-defmodule Node do
+defmodule OrderedMap.Node do
   @compile {:inline,
             height: 1,
             rotate_left: 1,
@@ -46,7 +46,7 @@ defmodule Node do
   def height(%__MODULE__{height: height}), do: height
   def height(nil), do: 0
 
-  def balance(%Node{left: left_node, right: right_node} = node) do
+  def balance(%__MODULE__{left: left_node, right: right_node} = node) do
     node = fix_height(node)
 
     balance = height_balance(node)

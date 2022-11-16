@@ -239,4 +239,16 @@ defmodule OrderedMapTest do
       assert "bar" == OrderedMap.get(map, 10)
     end
   end
+
+  describe "to_list/1" do
+    test "transoforms bst to ordered list" do
+      map =
+        OrderedMap.new()
+        |> OrderedMap.put(10, "bar")
+        |> OrderedMap.put(15, "faz")
+        |> OrderedMap.put(13, "foo")
+
+      assert [{10, "bar"}, {13, "foo"}, {15, "faz"}] == OrderedMap.to_list(map)
+    end
+  end
 end

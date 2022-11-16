@@ -13,8 +13,9 @@ defmodule OrderedMap do
 
 
   """
+  alias OrderedMap.Node
 
-  defstruct ~w(root)a
+  defstruct ~w(root size)a
 
   def new(), do: %__MODULE__{}
 
@@ -28,6 +29,20 @@ defmodule OrderedMap do
       node -> node.value
     end
   end
+
+  def to_list(map) do
+    []
+    |> traverse_in_order(map.root)
+    |> Enum.reverse()
+  end
+
+  defp traverse_in_order(acc, %Node{} = node) do
+    acc = traverse_in_order(acc, node.left)
+    acc = [{node.key, node.value} | acc]
+    traverse_in_order(acc, node.right)
+  end
+
+  defp traverse_in_order(acc, nil), do: acc
 
   defp search_node(nil, _), do: nil
 
@@ -56,4 +71,17 @@ defmodule OrderedMap do
       a > b -> :lt
     end
   end
+
+  # defimpl Enumerable do
+  #   def reduce(i, w, r) do
+  #   end
+  #
+  #   def count(%OrderedMap{size: size}), do: {:ok, 10}
+  #
+  #   def member?(%OrderedMap{} = map, value) do
+  #     {:ok, OrderedMap.member?(map, value)}
+  #   end
+  #
+  #   def slice(_), do: {:error, __MODULE__}
+  # end
 end

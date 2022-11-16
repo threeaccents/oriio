@@ -53,17 +53,12 @@ defmodule Uploader.UploadWorker do
 
   @spec fetch_chunks(pid()) :: list(chunk())
   def fetch_chunks(server) do
-    GenServer.call(server, :fetch_chunk)
+    GenServer.call(server, :fetch_chunks)
   end
 
   @spec append_chunk(pid(), chunk_number(), document_path()) :: :ok
   def append_chunk(server, chunk_number, chunk_file_path) do
     GenServer.call(server, {:append_chunk, chunk_number, chunk_file_path})
-  end
-
-  @spec complete_upload(pid()) :: {:ok, document_path()} | {:error, term()}
-  def complete_upload(server) do
-    GenServer.call(server, :complete_upload)
   end
 
   @spec updated_at(pid()) :: DateTime.t()
@@ -78,11 +73,14 @@ defmodule Uploader.UploadWorker do
 
   @impl GenServer
   def handle_call(
-        :fetch_chunk,
+        :fetch_chunks,
         _from,
         %{chunks: chunks} = state
-      ),
-      do: {:reply, chunks, state}
+      ) do
+    chunk_list = Enum.to_list(chunks)
+
+    {:reply, chunk_list, state}
+  end
 
   @impl GenServer
   def handle_call(
