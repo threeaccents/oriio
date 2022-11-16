@@ -77,7 +77,7 @@ defmodule Uploader.UploadWorker do
         _from,
         %{chunks: chunks} = state
       ) do
-    chunk_list = Enum.to_list(chunks)
+    chunk_list = OrderedMap.to_list(chunks)
 
     {:reply, chunk_list, state}
   end
