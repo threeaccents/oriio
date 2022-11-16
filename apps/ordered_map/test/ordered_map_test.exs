@@ -227,4 +227,16 @@ defmodule OrderedMapTest do
              } = map
     end
   end
+
+  describe "get/2" do
+    test "it gets value from key" do
+      map =
+        OrderedMap.new()
+        |> OrderedMap.put(10, "bar")
+        |> OrderedMap.put(9, "foo")
+        |> OrderedMap.put(8, "faz")
+
+      assert "bar" == OrderedMap.get(map, 10)
+    end
+  end
 end
