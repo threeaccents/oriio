@@ -17,32 +17,78 @@ defmodule OrderedMap do
   defstruct ~w(root)a
 
   defmodule Node do
-    @compile {:inline,
-              height: 1, rotate_left: 1, rotate_right: 1, big_rotate_left: 1, big_rotate_right: 1}
+    @compile {:inline, height: 1, rotate_left: 1, rotate_right: 1, balance: 1}
 
-    def rotate_left({k, v, l, {rk, rv, rl, rr, rh}, h}) do
-      fix_height({rk, rv, fix_height({k, v, l, rl, h}), rr, rh})
+    defstruct ~w(key value left right height)a
+
+    def rotate_left(%__MODULE__{right: right_node} = node) do
+      center_node = right_node.left
+
+      updated_node = %__MODULE__{node | right: center_node} |> fix_height()
+
+      updated_right_node = %__MODULE__{right_node | left: updated_node} |> fix_height()
+
+      updated_right_node
     end
 
-    def rotate_right({k, v, {lk, lv, ll, lr, lh}, r, h}) do
-      fix_height({lk, lv, ll, fix_height({k, v, lr, r, h}), lh})
+    def rotate_right(%__MODULE__{left: left_node} = node) do
+      center_node = left_node.right
+
+      updated_node = %__MODULE__{node | left: center_node} |> fix_height()
+
+      updated_left_node = %__MODULE__{left_node | right: updated_node} |> fix_height()
+
+      updated_left_node
     end
 
-    def big_rotate_left({k, v, l, r, h}) do
-      rotate_left({k, v, l, rotate_right(r), h})
+    def big_rotate_left(%__MODULE__{right: right_node} = node) do
+      rotate_left(%__MODULE__{node | right: rotate_right(right_node)})
     end
 
-    def big_rotate_right({k, v, l, r, h}) do
-      rotate_right({k, v, rotate_left(l), r, h})
+    def big_rotate_right(%__MODULE__{left: left_node} = node) do
+      rotate_right(%__MODULE__{node | left: rotate_left(left_node)})
     end
 
-    def height(_, _, _, _, height), do: height
+    def balance(%__MODULE__{} = node) do
+      height(node.left) - height(node.right)
+    end
+
+    def balance(nil), do: 0
+
+    def height(%__MODULE__{height: height}), do: height
     def height(nil), do: 0
 
-    def fix_height({node_key, node_value, left_child, right_child, _height}) do
-      height = max(height(left_child), height(right_child))
+    def apply_rotation(%Node{left: left_node, right: right_node} = node) do
+      balance = balance(node)
+      left_node_balance = balance(left_node)
+      right_node_balance = balance(right_node)
 
-      {node_key, node_value, left_child, right_child, height}
+      cond do
+        balance > 1 and left_node_balance < 0 ->
+          node = %__MODULE__{node | left: rotate_left(left_node)}
+          rotate_right(node)
+
+        balance > 1 ->
+          rotate_right(node)
+
+        balance < -1 and right_node_balance > 0 ->
+          node = %__MODULE__{node | right: rotate_right(right_node)}
+          rotate_left(node)
+
+        balance < -1 ->
+          rotate_left(node)
+
+        true ->
+          node
+      end
+    end
+
+    def fix_height(%__MODULE__{left: left_node, right: right_node} = node) do
+      node_heights = [height(left_node), height(right_node)]
+
+      max_hight = Enum.max(node_heights)
+
+      %__MODULE__{node | height: max_hight + 1}
     end
   end
 
@@ -57,55 +103,49 @@ defmodule OrderedMap do
     %__MODULE__{map | root: insert_node(map.root, key, value)}
   end
 
-  # def get(map, key) do
-  #   case search_node(map.root, key) do
-  #     nil -> nil
-  #     node -> node.value
-  #   end
-  # end
-
-  # defp search_node(nil, _), do: nil
-  #
-  # defp search_node(%Node{key: node_key} = node, key) do
-  #   case compare(node_key, key) do
-  #     :eq -> node
-  #     :lt -> search_node(node.left, key)
-  #     :gt -> search_node(node.right, key)
-  #   end
-  # end
-
-  def insert_node(nil, key, value), do: {key, value, nil, nil, 1}
-
-  def insert_node({node_key, node_value, left_node, right_node, height}, key, value) do
-    case compare(node_key, key) do
-      :eq ->
-        {key, value, left_node, right_node, height}
-
-      :lt ->
-        balance({node_key, node_value, insert_node(left_node, key, value)})
-
-      :gt ->
-        balance({node_key, node_value, left_node, insert_node(right_node, key, value)})
+  def get(map, key) do
+    case search_node(map.root, key) do
+      nil -> nil
+      node -> node.value
     end
   end
 
-  defp balance({_node_key, _node_value, left_child, right_child, _height} = node) do
+  defp search_node(nil, _), do: nil
+
+  defp search_node(%Node{key: node_key} = node, key) do
+    case compare(node_key, key) do
+      :eq -> node
+      :lt -> search_node(node.left, key)
+      :gt -> search_node(node.right, key)
+    end
+  end
+
+  def insert_node(nil, key, value), do: %Node{key: key, value: value, height: 1}
+
+  def insert_node(%Node{key: node_key} = node, key, value) do
+    updated_node =
+      case compare(node_key, key) do
+        :eq -> %Node{node | key: key, value: value}
+        :lt -> %Node{node | left: insert_node(node.left, key, value)}
+        :gt -> %Node{node | right: insert_node(node.right, key, value)}
+      end
+
+    balance(updated_node)
+  end
+
+  defp balance(%Node{left: left_node, right: right_node} = node) do
     node = Node.fix_height(node)
 
     cond do
-      Node.height(right_child) - Node.height(left_child) == 2 ->
-        {_, _, right_node_left_child, right_node_right_child, _} = right_child
-
-        if Node.height(right_node_left_child) <= Node.height(right_node_right_child) do
+      Node.height(right_node) - Node.height(left_node) == 2 ->
+        if Node.height(right_node.left) <= Node.height(right_node.right) do
           Node.rotate_left(node)
         else
           Node.big_rotate_left(node)
         end
 
-      Node.height(left_child) - Node.height(right_child) == 2 ->
-        {_, _, left_node_left_child, left_node_right_child, _} = left_child
-
-        if Node.height(left_node_right_child) <= Node.height(left_node_left_child) do
+      Node.height(left_node) - Node.height(right_node) == 2 ->
+        if Node.height(left_node.right) <= Node.height(left_node.left) do
           Node.rotate_right(node)
         else
           Node.big_rotate_right(node)

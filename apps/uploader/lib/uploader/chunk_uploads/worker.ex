@@ -113,9 +113,9 @@ defmodule Uploader.UploadWorker do
       ) do
     # since most files passed in are temps file they get removed when the calling proccess is killed.
     # so we need to copy the file to this current process
-    file_path = Briefly.create!()
-
-    File.copy!(chunk_file_path, file_path)
+    # file_path = Briefly.create!()
+    #
+    # File.copy!(chunk_file_path, file_path)
 
     chunk = %{chunk_number: chunk_number, chunk_file_path: chunk_file_path}
 
@@ -131,9 +131,9 @@ defmodule Uploader.UploadWorker do
       ) do
     # since most files passed in are temps file they get removed when the calling proccess is killed.
     # so we need to copy the file to this current process
-    file_path = Briefly.create!()
-
-    File.copy!(chunk_file_path, file_path)
+    # file_path = Briefly.create!()
+    #
+    # File.copy!(chunk_file_path, file_path)
 
     chunk = %{chunk_file_path: chunk_file_path, chunk_number: chunk_number}
 
@@ -149,11 +149,13 @@ defmodule Uploader.UploadWorker do
       ) do
     # since most files passed in are temps file they get removed when the calling proccess is killed.
     # so we need to copy the file to this current process
-    file_path = Briefly.create!()
+    # file_path = Briefly.create!()
+    #
+    # File.copy!(chunk_file_path, file_path)
 
-    File.copy!(chunk_file_path, file_path)
+    chunk = %{chunk_file_path: chunk_file_path, chunk_number: chunk_number}
 
-    updated_chunks = OrderedMap.put(chunks, chunk_number, chunk_file_path)
+    updated_chunks = OrderedMap.put(chunks, chunk_number, chunk)
 
     {:reply, :ok, %{state | chunks_map: updated_chunks, updated_at: DateTime.utc_now()}}
   end
@@ -165,9 +167,9 @@ defmodule Uploader.UploadWorker do
       ) do
     # since most files passed in are temps file they get removed when the calling proccess is killed.
     # so we need to copy the file to this current process
-    file_path = Briefly.create!()
-
-    File.copy!(chunk_file_path, file_path)
+    # file_path = Briefly.create!()
+    #
+    # File.copy!(chunk_file_path, file_path)
 
     chunks_list =
       for chunk <- chunks do
