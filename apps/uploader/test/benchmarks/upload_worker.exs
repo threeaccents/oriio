@@ -20,7 +20,8 @@ test_chunk_file =
   "/home/threeaccents/work/threeaccents/code/threeaccents/oriio/data/fixtures/uploads/segmentaa"
 
 Benchee.run(%{
-  "bst" => fn -> Uploader.UploadWorker.append_chunk(pid, 500, test_chunk_file) end,
   "order_map" => fn -> Uploader.UploadWorker.append_chunk_map(pid, 500, test_chunk_file) end,
+  "avl" => fn -> Uploader.UploadWorker.append_chunk_avl(pid, 500, test_chunk_file) end,
+  "bst" => fn -> Uploader.UploadWorker.append_chunk(pid, 500, test_chunk_file) end,
   "list" => fn -> Uploader.UploadWorker.append_chunk_list(pid, 500, test_chunk_file) end
 })

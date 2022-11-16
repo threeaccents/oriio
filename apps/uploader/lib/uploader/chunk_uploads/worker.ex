@@ -46,12 +46,14 @@ defmodule Uploader.UploadWorker do
       for chunk_number <- 1..total_chunks, do: %{chunk_number: chunk_number, chunk_file_path: nil}
 
     chunks = BST.new([], fn a, b -> a.chunk_number - b.chunk_number end)
+    avl_chunks = AVLTree.new(fn a, b -> a.chunk_number - b.chunk_number end)
 
     state =
       new_chunk_upload
       |> Map.put(:chunks, chunks)
       |> Map.put(:chunks_list, chunks_list)
       |> Map.put(:chunks_map, OrderedMap.new())
+      |> Map.put(:chunks_avl, avl_chunks)
       |> Map.put(:merged_chunks?, false)
       |> Map.put(:updated_at, DateTime.utc_now())
 
@@ -66,6 +68,10 @@ defmodule Uploader.UploadWorker do
   @spec append_chunk(pid(), chunk_number(), document_path()) :: :ok
   def append_chunk(server, chunk_number, chunk_file_path) do
     GenServer.call(server, {:append_chunk, chunk_number, chunk_file_path})
+  end
+
+  def append_chunk_avl(server, chunk_number, chunk_file_path) do
+    GenServer.call(server, {:append_chunk_avl, chunk_number, chunk_file_path})
   end
 
   def append_chunk_map(server, chunk_number, chunk_file_path) do
@@ -116,6 +122,24 @@ defmodule Uploader.UploadWorker do
     updated_chunks = BST.insert(chunks, chunk)
 
     {:reply, :ok, %{state | chunks: updated_chunks, updated_at: DateTime.utc_now()}}
+  end
+
+  def handle_call(
+        {:append_chunk_avl, chunk_number, chunk_file_path},
+        _from,
+        %{chunks_avl: chunks} = state
+      ) do
+    # since most files passed in are temps file they get removed when the calling proccess is killed.
+    # so we need to copy the file to this current process
+    file_path = Briefly.create!()
+
+    File.copy!(chunk_file_path, file_path)
+
+    chunk = %{chunk_file_path: chunk_file_path, chunk_number: chunk_number}
+
+    updated_chunks = AVLTree.put(chunks, chunk)
+
+    {:reply, :ok, %{state | chunks_avl: updated_chunks, updated_at: DateTime.utc_now()}}
   end
 
   def handle_call(
