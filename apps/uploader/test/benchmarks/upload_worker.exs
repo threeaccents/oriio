@@ -24,30 +24,30 @@ test_chunk_file =
   "/home/threeaccents/work/threeaccents/code/threeaccents/oriio/data/fixtures/uploads/segmentaa"
 
 Benchee.run(%{
-  "single_order_map" => fn ->
-    Uploader.UploadWorker.append_chunk_map(pid, 500, test_chunk_file)
-  end,
-  "single_avl" => fn -> Uploader.UploadWorker.append_chunk_avl(pid, 500, test_chunk_file) end,
-  "single_bst" => fn -> Uploader.UploadWorker.append_chunk(pid, 500, test_chunk_file) end,
-  "single_list" => fn -> Uploader.UploadWorker.append_chunk_list(pid, 500, test_chunk_file) end,
-  "multiple_order_map" => fn ->
+  # "single_order_map" => fn ->
+  #   Uploader.UploadWorker.append_chunk_map(pid, 500, test_chunk_file)
+  # end,
+  # "single_avl" => fn -> Uploader.UploadWorker.append_chunk_avl(pid, 500, test_chunk_file) end,
+  # "single_bst" => fn -> Uploader.UploadWorker.append_chunk(pid, 500, test_chunk_file) end,
+  # "single_list" => fn -> Uploader.UploadWorker.append_chunk_list(pid, 500, test_chunk_file) end,
+  "multiple_orderd_order_map" => fn ->
     for iter <- 1..1000 do
-      Uploader.UploadWorker.append_chunk_map(pid, TO.rand_number(), test_chunk_file)
+      Uploader.UploadWorker.append_chunk_map(pid, iter, test_chunk_file)
     end
   end,
-  "multiple_avl" => fn ->
+  "multiple_ordered_avl" => fn ->
     for iter <- 1..1000 do
-      Uploader.UploadWorker.append_chunk_avl(pid, TO.rand_number(), test_chunk_file)
+      Uploader.UploadWorker.append_chunk_avl(pid, iter, test_chunk_file)
     end
   end,
-  "multiple_bst" => fn ->
+  "multiple_orrederd_bst" => fn ->
     for iter <- 1..1000 do
-      Uploader.UploadWorker.append_chunk(pid, TO.rand_number(), test_chunk_file)
+      Uploader.UploadWorker.append_chunk(pid, iter, test_chunk_file)
     end
   end,
-  "multiple_list" => fn ->
+  "multiple_orderd_list" => fn ->
     for iter <- 1..1000 do
-      Uploader.UploadWorker.append_chunk_list(pid, TO.rand_number(), test_chunk_file)
+      Uploader.UploadWorker.append_chunk_list(pid, iter, test_chunk_file)
     end
   end
 })
