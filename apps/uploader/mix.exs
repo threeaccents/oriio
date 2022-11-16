@@ -27,7 +27,7 @@ defmodule Uploader.MixProject do
   defp deps do
     [
       {:oriio, in_umbrella: true},
-      {:bst, in_umbrella: true},
+      {:ordered_map, in_umbrella: true},
       {:banzai, in_umbrella: true},
       {:briefly, "~> 0.3"},
       {:ex_mime, in_umbrella: true},

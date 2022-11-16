@@ -1,9 +1,9 @@
-defmodule Bst.MixProject do
+defmodule OrderedMap.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :bst,
+      app: :ordered_map,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",

@@ -17,7 +17,13 @@ defmodule OrderedMap do
   defstruct ~w(root)a
 
   defmodule Node do
-    @compile {:inline, height: 1, rotate_left: 1, rotate_right: 1, balance: 1}
+    @compile {:inline,
+              height: 1,
+              rotate_left: 1,
+              big_rotate_left: 1,
+              big_rotate_right: 1,
+              rotate_right: 1,
+              balance: 1}
 
     defstruct ~w(key value left right height)a
 
@@ -67,13 +73,13 @@ defmodule OrderedMap do
 
       cond do
         balance > 1 and left_node_balance < 0 ->
-          big_rotate_left(node)
+          big_rotate_right(node)
 
         balance > 1 ->
           rotate_right(node)
 
         balance < -1 and right_node_balance > 0 ->
-          big_rotate_right(node)
+          big_rotate_left(node)
 
         balance < -1 ->
           rotate_left(node)
@@ -93,11 +99,6 @@ defmodule OrderedMap do
   end
 
   def new(), do: %__MODULE__{}
-
-  # def new(elements) when is_list(elements) do
-  #  map = %__MODULE__{}
-  #
-  # end
 
   def put(map, key, value) do
     %__MODULE__{map | root: insert_node(map.root, key, value)}

@@ -42,6 +42,8 @@ defmodule BstTest do
       OrderedMap.new()
       |> OrderedMap.put(1, "hello")
       |> OrderedMap.put(2, "world")
+      |> OrderedMap.put(3, "ipsum")
+      |> OrderedMap.put(4, "lorem")
 
     IO.inspect(map)
 
