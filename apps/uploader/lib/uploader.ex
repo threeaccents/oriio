@@ -7,7 +7,6 @@ defmodule Uploader do
   alias Oriio.Storages.MockFileStorage
   alias Oriio.Storages.LocalFileStorage
   alias Oriio.Storages.FileStorage
-  alias Uploader.UploadSupervisor
   alias Uploader.UploadWorker
   alias Uploader.UploadRegistry
   alias Uploader.UploadNotFound
@@ -38,7 +37,7 @@ defmodule Uploader do
   def append_chunk(upload_id, {chunk_number, chunk_file_path}) do
     pid = get_upload_pid!(upload_id)
 
-    UploadWorker.append_chunk(pid, {chunk_number, chunk_file_path})
+    UploadWorker.append_chunk(pid, chunk_number, chunk_file_path)
   end
 
   @spec complete_upload(upload_id()) :: {:ok, url()} | {:error, term()}
