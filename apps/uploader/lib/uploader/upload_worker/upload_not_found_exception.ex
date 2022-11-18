@@ -3,5 +3,5 @@ defmodule Uploader.UploadNotFound do
   Error raised when an upload is not found.
   """
 
-  defexception message: "chunk upload not found"
+  defexception message: "upload not found"
 end

@@ -33,13 +33,7 @@ defmodule Uploader.CompleteUploadAction do
   defp validate_input(action), do: {:ok, action}
 
   defp get_upload_worker_pid(action = %__MODULE__{upload_id: upload_id}) do
-    case GenServer.whereis({:via, Horde.Registry, {UploadRegistry, upload_id}}) do
-      nil ->
-        {:error, :upload_not_found}
-
-      pid ->
-        {:ok, %__MODULE__{action | upload_pid: pid}}
-    end
+    %__MODULE__{action | upload_pid: Uploader.get_upload_pid!(upload_id)}
   end
 
   defp get_upload_chunks(action = %__MODULE__{upload_pid: upload_pid}) do
