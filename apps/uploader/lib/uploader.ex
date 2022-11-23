@@ -9,7 +9,6 @@ defmodule Uploader do
   alias Uploader.CreateNewUploadAction
   alias Uploader.CompleteUploadAction
   alias Uploader.Domain.Types
-  alias Uploader.Domain.MissingChunkError
 
   require Logger
 
@@ -24,8 +23,8 @@ defmodule Uploader do
     end
   end
 
-  @spec append_chunk(Types.upload_id(), {Types.chunk_number(), Types.document_path()}) :: :ok
-  def append_chunk(upload_id, {chunk_number, chunk_file_path}) do
+  @spec append_chunk(Types.upload_id(), Types.chunk_number(), Types.document_path()) :: :ok
+  def append_chunk(upload_id, chunk_number, chunk_file_path) do
     pid = get_upload_pid!(upload_id)
 
     UploadWorker.append_chunk(pid, chunk_number, chunk_file_path)

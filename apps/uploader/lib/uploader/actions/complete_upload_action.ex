@@ -13,7 +13,7 @@ defmodule Uploader.CompleteUploadAction do
     embeds_one(:upload_pid, PID)
     embeds_many(:chunks, Chunk)
 
-    field(:merged_file_path, :string)
+    field(:concatenated_file_path, :string)
   end
 
   def perform(params) do
@@ -23,13 +23,9 @@ defmodule Uploader.CompleteUploadAction do
     |> step(&get_upload_worker_pid/1)
     |> step(&get_upload_chunks/1)
     |> step(&check_missing_chunks/1)
-    |> step(&merge_chunks/1)
-    # |> step(&get_file_extension/1)
-    # |> step(&get_file_mime/1)
-    # |> step(&generate_remote_file_path/1)
-    # |> step(&generate_url/1)
-    # |> step(&upload_file_to_storage/1)
-    # |> step(&kill_upload_worker_process/1)
+    |> step(&concatenate_chunks/1)
+    |> step(&upload_file_to_storage/1)
+    |> step(&kill_upload_worker_process/1)
     |> run()
   end
 
@@ -61,7 +57,7 @@ defmodule Uploader.CompleteUploadAction do
     |> Enum.map(& &1.chunk_number)
   end
 
-  defp merge_chunks(%__MODULE__{chunks: chunks} = action) do
+  defp concatenate_chunks(%__MODULE__{chunks: chunks} = action) do
     # the chunks are sorted by chunk number so we can just loop over them and concat them.
 
     file_path = Briefly.create!()
@@ -73,6 +69,20 @@ defmodule Uploader.CompleteUploadAction do
     |> Stream.into(File.stream!(file_path))
     |> Stream.run()
 
-    {:ok, %__MODULE__{action | merged_file_path: file_path}}
+    {:ok, %__MODULE__{action | concatenated_file_path: file_path}}
+  end
+
+  defp upload_file_to_storage(%__MODULE__{concatenated_file_path: file_path} = action) do
+    # IDEA OF STORAGE API
+    # case Storage.file_path(file_path) do
+    #   :ok -> {:ok, action}
+    #   {:error, reason} -> {:error, reason}
+    # end
+  end
+
+  defp kill_upload_worker_process(%__MODULE__{upload_pid: upload_pid} = action) do
+    Process.exit(upload_pid, :normal)
+
+    {:ok, action}
   end
 end
