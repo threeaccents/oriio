@@ -8,7 +8,8 @@ defmodule Uploader do
   alias Uploader.UploadNotFound
   alias Uploader.CreateNewUploadAction
   alias Uploader.CompleteUploadAction
-  alias Uploader.Types
+  alias Uploader.Domain.Types
+  alias Uploader.Domain.MissingChunkError
 
   require Logger
 

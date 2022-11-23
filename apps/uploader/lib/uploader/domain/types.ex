@@ -1,4 +1,4 @@
-defmodule Uploader.Types do
+defmodule Uploader.Domain.Types do
   @type upload_id() :: binary()
   @type file_name() :: binary()
   @type document_path() :: binary()
