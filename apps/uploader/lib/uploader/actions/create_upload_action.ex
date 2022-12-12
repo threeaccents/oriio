@@ -51,7 +51,7 @@ defmodule Uploader.CreateNewUploadAction do
 
     case UploadSupervisor.start_child({UploadWorker, initial_upload_state}) do
       {:ok, _pid} ->
-        {:ok, action}
+        {:ok, %__MODULE__{action | worker_started?: true}}
 
       {:error, reason} ->
         Logger.error("failed to start UploadWorker. Reason: #{inspect(reason)}")
