@@ -1,4 +1,9 @@
 defmodule Uploader.CompleteUploadAction do
+  @moduledoc """
+  CompleteUploadAction validates that all chunks have been uploaded.
+  It then concatenates all the chunks into 1 file and uploads that file to storage.
+  Once storage upload is complete the UploadWorker for this upload is cleaned up.
+  """
   use Banzai
 
   alias Uploader.UploadWorker
@@ -73,10 +78,9 @@ defmodule Uploader.CompleteUploadAction do
   end
 
   defp upload_file_to_storage(%__MODULE__{concatenated_file_path: file_path} = action) do
-    # IDEA OF STORAGE API
-    # case Storage.file_path(file_path) do
-    #   :ok -> {:ok, action}
-    #   {:error, reason} -> {:error, reason}
+    # potential storage api
+    # case Storage.save(file_path) do
+    # ..
     # end
   end
 
