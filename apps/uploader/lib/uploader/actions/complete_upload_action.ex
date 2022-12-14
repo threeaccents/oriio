@@ -19,6 +19,7 @@ defmodule Uploader.CompleteUploadAction do
     embeds_many(:chunks, Chunk)
 
     field(:concatenated_file_path, :string)
+    field(:file_key, :string)
   end
 
   def perform(params) do
@@ -62,26 +63,51 @@ defmodule Uploader.CompleteUploadAction do
     |> Enum.map(& &1.chunk_number)
   end
 
-  defp concatenate_chunks(%__MODULE__{chunks: chunks} = action) do
-    # the chunks are sorted by chunk number so we can just loop over them and concat them.
+  defp concatenate_chunks(%__MODULE__{chunks: chunks, upload_pid: upload_pid} = action) do
+    file_name = UploadWorker.get_file_name(upload_pid)
 
     file_path = Briefly.create!()
 
+    # the chunks are sorted by chunk number so we can just loop over them and concat them.
     file_streams = Enum.map(chunks, &File.stream!(&1.file_path, [], 200_000))
+
+    first_chunk = List.first(chunks)
+
+    # we only need the first 216 bytes to determine the file mime.
+    # so we can just pass in the first chunk of the file
+    {mime, mimetype} =
+      first_chunk.file_path
+      |> File.open!()
+      |> ExMime.check_magic_bytes()
+
+    metadata =
+      %{mime: mime, mimetype: mimetype, original_filename: file_name}
+      |> :erlang.term_to_binary()
+      |> :erlang.binary_to_list()
+
+    stream = File.stream!(file_path)
+
+    Stream.into(metadata, file_path)
 
     file_streams
     |> Stream.concat()
-    |> Stream.into(File.stream!(file_path))
+    |> Stream.into(stream)
     |> Stream.run()
 
     {:ok, %__MODULE__{action | concatenated_file_path: file_path}}
   end
 
-  defp upload_file_to_storage(%__MODULE__{concatenated_file_path: file_path} = action) do
-    # potential storage api
-    # case Storage.save(file_path) do
-    # ..
+  defp upload_file_to_storage(
+         %__MODULE__{file_key: file_key, concatenated_file_path: file_path} = action
+       ) do
+    # case Storage.save(file_key, file_path) do
+    #   :ok ->
+    #     action
+    #
+    #   {:error, reason} ->
+    #     {:error, reason}
     # end
+    {:ok, action}
   end
 
   defp kill_upload_worker_process(%__MODULE__{upload_pid: upload_pid} = action) do

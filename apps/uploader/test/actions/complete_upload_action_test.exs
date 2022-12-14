@@ -47,6 +47,8 @@ defmodule Uploader.CompleteUploadActionTest do
 
       concat_file_hash = file_hash(concatenated_file_path)
 
+      IO.inspect(concat_file_hash)
+
       assert concat_file_hash == original_file_hash
     end
 

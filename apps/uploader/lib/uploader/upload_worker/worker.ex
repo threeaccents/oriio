@@ -66,6 +66,11 @@ defmodule Uploader.UploadWorker do
     GenServer.call(server, :fetch_chunks)
   end
 
+  @spec get_file_name(pid()) :: String.t()
+  def get_file_name(server) do
+    GenServer.call(server, :get_file_name)
+  end
+
   @spec append_chunk(pid(), chunk_number(), document_path()) :: :ok
   def append_chunk(server, chunk_number, chunk_file_path) do
     GenServer.call(server, {:append_chunk, chunk_number, chunk_file_path})
@@ -90,6 +95,11 @@ defmodule Uploader.UploadWorker do
     chunk_list = OrderedMap.to_list(chunks)
 
     {:reply, chunk_list, state}
+  end
+
+  @impl GenServer
+  def handle_call(:get_file_name, _from, %{file_name: file_name} = state) do
+    {:reply, file_name, state}
   end
 
   @impl GenServer
