@@ -8,6 +8,7 @@ defmodule Uploader.UploadWorker do
 
   alias Uploader.UploadRegistry
   alias Uploader.UploadStateHandoff, as: StateHandoff
+  alias Uploader.Domain.Chunk
 
   @type chunk() :: %{
           chunk_number: non_neg_integer(),
@@ -42,18 +43,32 @@ defmodule Uploader.UploadWorker do
   def init(%{total_chunks: total_chunks} = new_chunk_upload) do
     Process.flag(:trap_exit, true)
 
+    chunks = generate_chunks(total_chunks)
+
     state =
       new_chunk_upload
-      |> Map.put(:chunks, OrderedMap.new())
+      |> Map.put(:chunks, chunks)
       |> Map.put(:merged_chunks?, false)
       |> Map.put(:updated_at, DateTime.utc_now())
 
     {:ok, state, {:continue, :load_state}}
   end
 
+  defp generate_chunks(total_chunks) do
+    for chunk_number <- 1..total_chunks, reduce: OrderedMap.new() do
+      acc ->
+        OrderedMap.put(acc, chunk_number, %Chunk{chunk_number: chunk_number, file_path: nil})
+    end
+  end
+
   @spec fetch_chunks(pid()) :: list(chunk())
   def fetch_chunks(server) do
     GenServer.call(server, :fetch_chunks)
+  end
+
+  @spec get_file_name(pid()) :: String.t()
+  def get_file_name(server) do
+    GenServer.call(server, :get_file_name)
   end
 
   @spec append_chunk(pid(), chunk_number(), document_path()) :: :ok
@@ -83,6 +98,11 @@ defmodule Uploader.UploadWorker do
   end
 
   @impl GenServer
+  def handle_call(:get_file_name, _from, %{file_name: file_name} = state) do
+    {:reply, file_name, state}
+  end
+
+  @impl GenServer
   def handle_call(
         {:append_chunk, chunk_number, chunk_file_path},
         _from,
@@ -94,7 +114,7 @@ defmodule Uploader.UploadWorker do
 
     File.copy!(chunk_file_path, file_path)
 
-    chunk = %{chunk_number: chunk_number, chunk_file_path: file_path}
+    chunk = %Chunk{chunk_number: chunk_number, file_path: file_path}
 
     updated_chunks = OrderedMap.put(chunks, chunk_number, chunk)
 

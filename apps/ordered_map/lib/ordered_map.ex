@@ -38,7 +38,7 @@ defmodule OrderedMap do
 
   defp traverse_in_order(acc, %Node{} = node) do
     acc = traverse_in_order(acc, node.left)
-    acc = [{node.key, node.value} | acc]
+    acc = [node.value | acc]
     traverse_in_order(acc, node.right)
   end
 
